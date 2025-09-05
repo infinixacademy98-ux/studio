@@ -24,28 +24,36 @@ export default function WithAuthLayout({
     if (!loading && !user) {
       router.push("/signin");
     }
+  }, [user, loading, router]);
 
-    if (!loading && user) {
-      const checkNotifications = async () => {
-        const notificationsRef = collection(db, "users", user.uid, "notifications");
-        const q = query(notificationsRef, where("read", "==", false));
-        const querySnapshot = await getDocs(q);
+  useEffect(() => {
+    const checkNotifications = async () => {
+      if (user) {
+        try {
+          const notificationsRef = collection(db, "users", user.uid, "notifications");
+          const q = query(notificationsRef, where("read", "==", false));
+          const querySnapshot = await getDocs(q);
 
-        querySnapshot.forEach((notificationDoc) => {
-          const notificationData = notificationDoc.data();
-          toast({
-            title: "Listing Approved!",
-            description: notificationData.message,
+          querySnapshot.forEach(async (notificationDoc) => {
+            const notificationData = notificationDoc.data();
+            toast({
+              title: "Listing Approved!",
+              description: notificationData.message,
+            });
+            // Mark notification as read
+            const notifDocRef = doc(db, "users", user.uid, "notifications", notificationDoc.id);
+            await updateDoc(notifDocRef, { read: true });
           });
-          // Mark notification as read
-          const notifDocRef = doc(db, "users", user.uid, "notifications", notificationDoc.id);
-          updateDoc(notifDocRef, { read: true });
-        });
-      };
-      
-      checkNotifications();
+        } catch (error) {
+            console.error("Error checking notifications:", error);
+        }
+      }
+    };
+
+    if (!loading) {
+       checkNotifications();
     }
-  }, [user, loading, router, toast]);
+  }, [user, loading, toast]);
 
   if (loading || !user) {
     return (
