@@ -203,7 +203,7 @@ export const businessListings: Business[] = [
     "id": "9",
     "name": "VAISHNAV CATERERS",
     "category": "Catering Services",
-    "description": "We Accept all types of Indoor, Out door, Catering Graha Pravesh, Marriage, Upanayan, Birthday Parties, Reception, Kitty Parties & Corporate Events Services Pure Vegetarian. Timing: 10:00 am to 9:30 pm",
+    "description": "We Accept all types of Indoor, Out door, Catering Graha Pravesh, Marriage, Upanayan, Birthday Parties, Reception, Kitty Parties & Corporate Events Services Pure Vegetarian.",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -219,7 +219,8 @@ export const businessListings: Business[] = [
       "zip": "590001"
     },
     "images": [],
-    "reviews": []
+    "reviews": [],
+    "timing": "10:00 am to 9:30 pm"
   },
   {
     "id": "10",

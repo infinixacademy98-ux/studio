@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "./star-rating";
-import { MapPin, Building2 } from "lucide-react";
+import { MapPin, Building2, Clock } from "lucide-react";
 
 interface BusinessCardProps {
   listing: Business;
@@ -24,7 +24,7 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
     (listing.reviews.length || 1);
 
   return (
-    <Link href={`/listing/${listing.id}`} className="group block">
+    <Link href={`/listing/${listing.id}`} className="group block h-full">
       <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1 bg-card">
         <CardHeader className="p-0">
           <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
@@ -43,7 +43,7 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-4 flex-grow">
+        <CardContent className="p-4 flex-grow space-y-2">
           <Badge variant="secondary" className="mb-2">{listing.category}</Badge>
           <CardTitle className="text-lg font-semibold leading-tight mb-1 group-hover:text-primary">
             {listing.name}
@@ -52,8 +52,14 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
             <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0" />
             {listing.address.city}
           </CardDescription>
+          {listing.timing && (
+             <CardDescription className="flex items-center text-sm text-muted-foreground">
+              <Clock className="mr-1.5 h-4 w-4 flex-shrink-0" />
+              {listing.timing}
+            </CardDescription>
+          )}
         </CardContent>
-        <CardFooter className="p-4 pt-0">
+        <CardFooter className="p-4 pt-0 mt-auto">
           <div className="flex items-center justify-between w-full">
             <StarRating rating={averageRating} />
             <span className="text-xs text-muted-foreground">

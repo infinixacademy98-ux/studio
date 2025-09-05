@@ -34,4 +34,5 @@ export interface Business {
   status: 'pending' | 'approved' | 'rejected';
   ownerId: string;
   createdAt: any;
+  timing?: string;
 }
