@@ -43,6 +43,11 @@ export default function SignUpPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { user, loading } = useAuth();
+  const [isHydrating, setIsHydrating] = useState(true);
+
+  useEffect(() => {
+    setIsHydrating(false);
+  }, []);
 
   useEffect(() => {
     if (!loading && user) {
@@ -65,10 +70,9 @@ export default function SignUpPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       
-      // Create a document in the 'users' collection
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
-        role: "user", // Default role
+        role: "user",
         createdAt: new Date(),
       });
 
@@ -91,7 +95,7 @@ export default function SignUpPage() {
     }
   }
 
-  if (loading || user) {
+  if (isHydrating || loading || user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />

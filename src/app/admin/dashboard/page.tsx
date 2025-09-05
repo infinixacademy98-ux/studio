@@ -27,11 +27,14 @@ export default function AdminDashboardPage() {
   const [listings, setListings] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
+  const [isHydrating, setIsHydrating] = useState(true);
 
   useEffect(() => {
-    // Wait until auth is resolved
+    setIsHydrating(false);
+  }, []);
+
+  useEffect(() => {
     if (!authLoading) {
-      // If there's no user or the user is not an admin, redirect
       if (!user || !isAdmin) {
         router.push("/admin/signin");
       }
@@ -60,7 +63,6 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    // Only fetch listings if we have a confirmed admin user
     if (user && isAdmin) {
       fetchListings();
     }
@@ -77,7 +79,6 @@ export default function AdminDashboardPage() {
         title: "Success!",
         description: "Listing has been approved.",
       });
-      // Refresh the list to show the updated status
       setListings(prevListings => 
         prevListings.map(listing => 
           listing.id === id ? { ...listing, status: 'approved' } : listing
@@ -95,8 +96,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // While auth is loading or if we are redirecting, show a loader
-  if (authLoading || !user || !isAdmin) {
+  if (isHydrating || authLoading || !user || !isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />

@@ -40,9 +40,13 @@ export default function SignInPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, isAdmin, loading: authLoading } = useAuth();
+  const [isHydrating, setIsHydrating] = useState(true);
 
   useEffect(() => {
-    // This effect handles redirection for users who are already logged in
+    setIsHydrating(false);
+  }, []);
+
+  useEffect(() => {
     if (!authLoading && user) {
        if (isAdmin) {
         router.push("/admin/dashboard");
@@ -69,7 +73,6 @@ export default function SignInPage() {
         title: "Signed In!",
         description: "Welcome back!",
       });
-      // The useEffect hook will handle redirection based on the user's role.
     } catch (error) {
       toast({
         variant: "destructive",
@@ -80,8 +83,7 @@ export default function SignInPage() {
     }
   }
 
-  // Show a loading spinner while checking auth state or redirecting a logged in user.
-  if (authLoading || user) {
+  if (isHydrating || authLoading || user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
