@@ -163,8 +163,8 @@ export default function HomeContent() {
       
 
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
-        <div className="flex gap-4">
-          <div className="relative flex-1">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1 sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
@@ -174,9 +174,24 @@ export default function HomeContent() {
               className="pl-10"
             />
           </div>
+          <div className="flex-1 sm:flex-initial sm:min-w-[180px]">
+            <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger>
+                    <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                        {cat}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+          </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="flex-1 sm:flex-initial">
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
                 Filter
               </Button>
@@ -190,22 +205,6 @@ export default function HomeContent() {
                   </p>
                 </div>
                 <div className="grid gap-2">
-                   <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="category">Category</Label>
-                    <Select value={category} onValueChange={setCategory}>
-                        <SelectTrigger id="category" className="col-span-2 h-8">
-                            <SelectValue placeholder="All Categories" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Categories</SelectItem>
-                            {categories.map((cat) => (
-                            <SelectItem key={cat} value={cat}>
-                                {cat}
-                            </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                  </div>
                    <div className="grid grid-cols-3 items-center gap-4">
                     <Label htmlFor="city">City</Label>
                     <Select value={city} onValueChange={setCity}>
