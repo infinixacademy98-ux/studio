@@ -17,6 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Building2, PlusCircle, LogOut, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ModeToggle } from "./mode-toggle";
 
 function getInitials(email?: string | null) {
   if (!email) return "U";
@@ -74,6 +75,7 @@ export default function Header() {
               <PlusCircle className="mr-2 h-4 w-4" /> Add Listing
             </Link>
           </Button>
+          <ModeToggle />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
