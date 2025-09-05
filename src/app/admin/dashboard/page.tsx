@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, doc, updateDoc, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, query, orderBy, addDoc, serverTimestamp } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
@@ -74,17 +74,33 @@ export default function AdminDashboardPage() {
     }
   }, [isAdmin]);
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (listingToApprove: Business) => {
+    const { id, ownerId, name } = listingToApprove;
     setIsUpdating(prev => ({ ...prev, [id]: true }));
     try {
+      // 1. Update listing status
       const listingRef = doc(db, "listings", id);
       await updateDoc(listingRef, {
         status: "approved",
       });
+
+      // 2. Create a notification for the business owner
+      if (ownerId) {
+        const notificationsRef = collection(db, "users", ownerId, "notifications");
+        await addDoc(notificationsRef, {
+          message: `Congratulations! Your business listing "${name}" has been approved.`,
+          listingId: id,
+          createdAt: serverTimestamp(),
+          read: false,
+        });
+      }
+
       toast({
         title: "Success!",
-        description: "Listing has been approved.",
+        description: "Listing has been approved and owner notified.",
       });
+
+      // 3. Update local state
       setListings(prevListings => 
         prevListings.map(listing => 
           listing.id === id ? { ...listing, status: 'approved' } : listing
@@ -205,7 +221,7 @@ export default function AdminDashboardPage() {
                       {listing.status === "pending" && (
                         <Button
                           size="sm"
-                          onClick={() => handleApprove(listing.id)}
+                          onClick={() => handleApprove(listing)}
                           disabled={isUpdating[listing.id]}
                         >
                           {isUpdating[listing.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
