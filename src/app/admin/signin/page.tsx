@@ -35,26 +35,18 @@ const formSchema = z.object({
   password: z.string().min(1, { message: "Password is required." }),
 });
 
-const ADMIN_EMAIL = "admin@example.com";
-
 export default function AdminSignInPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const { user, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
 
   useEffect(() => {
-    // If a user is already logged in, redirect them.
-    if (!loading && user) {
-       if (user.email === ADMIN_EMAIL) {
-        router.push("/admin/dashboard");
-      } else {
-        // A non-admin is already logged in on the admin page.
-        // Let them stay here in case they want to sign in as admin.
-        // Or you could sign them out. For now, we do nothing.
-      }
+    // If a user is already logged in and is an admin, redirect them.
+    if (!loading && user && isAdmin) {
+      router.push("/admin/dashboard");
     }
-  }, [user, loading, router]);
+  }, [user, isAdmin, loading, router]);
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -68,21 +60,15 @@ export default function AdminSignInPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      if (userCredential.user.email === ADMIN_EMAIL) {
-        toast({
-          title: "Admin Signed In!",
-          description: "Welcome to the dashboard!",
-        });
-        router.push("/admin/dashboard");
-      } else {
-        // A non-admin user logged in from the admin page
-        toast({
-            title: "Signed In!",
-            description: "Redirecting to homepage. Use the main sign in for user accounts.",
-        });
-        router.push("/");
-      }
+      // The useAuth hook will automatically pick up the new user state,
+      // determine if they are an admin, and the useEffect will redirect.
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      // We don't need to manually check role here, the provider handles it.
+      // The useEffect will fire upon successful login and redirect.
+      toast({
+          title: "Signed In!",
+          description: "Redirecting...",
+      });
     } catch (error) {
       toast({
         variant: "destructive",
@@ -95,7 +81,7 @@ export default function AdminSignInPage() {
   }
   
   // Show a loader if we are still checking auth state or if an admin is already logged in and redirecting.
-  if (loading || (user && user.email === ADMIN_EMAIL)) {
+  if (loading || (user && isAdmin)) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />

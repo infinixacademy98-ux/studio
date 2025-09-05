@@ -20,11 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// In a real app, this would be managed through custom claims or a user roles collection
-const ADMIN_EMAIL = "admin@example.com";
-
 export default function AdminDashboardPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [listings, setListings] = useState<Business[]>([]);
@@ -33,11 +30,11 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     if (!authLoading) {
-      if (!user || user.email !== ADMIN_EMAIL) {
+      if (!user || !isAdmin) {
         router.push("/admin/signin");
       }
     }
-  }, [user, authLoading, router]);
+  }, [user, isAdmin, authLoading, router]);
 
   const fetchListings = async () => {
     setLoading(true);
@@ -61,10 +58,10 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    if (user && user.email === ADMIN_EMAIL) {
+    if (user && isAdmin) {
       fetchListings();
     }
-  }, [user]);
+  }, [user, isAdmin]);
 
   const handleApprove = async (id: string) => {
     setIsUpdating(prev => ({ ...prev, [id]: true }));
@@ -103,7 +100,7 @@ export default function AdminDashboardPage() {
     );
   }
 
-  if (!user || user.email !== ADMIN_EMAIL) {
+  if (!user || !isAdmin) {
     // This is a fallback while redirecting
     return null;
   }

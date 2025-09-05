@@ -35,23 +35,21 @@ const formSchema = z.object({
   password: z.string().min(1, { message: "Password is required." }),
 });
 
-const ADMIN_EMAIL = "admin@example.com";
-
 export default function SignInPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const { user, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
 
   useEffect(() => {
     if (!loading && user) {
-       if (user.email === ADMIN_EMAIL) {
+       if (isAdmin) {
         router.push("/admin/dashboard");
       } else {
         router.push("/");
       }
     }
-  }, [user, loading, router]);
+  }, [user, isAdmin, loading, router]);
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -65,16 +63,12 @@ export default function SignInPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: "Signed In!",
         description: "Welcome back!",
       });
-      if (userCredential.user.email === ADMIN_EMAIL) {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/");
-      }
+      // The useEffect hook will handle redirection based on the user's role
     } catch (error) {
       toast({
         variant: "destructive",
