@@ -43,8 +43,13 @@ export default function AdminSignInPage() {
 
   useEffect(() => {
     if (!authLoading) {
-      if (user && isAdmin) {
-        router.push("/admin/dashboard");
+      if (user) {
+        if (isAdmin) {
+            router.push("/admin/dashboard");
+        } else {
+            // Logged-in but not an admin, send to homepage
+            router.push("/");
+        }
       }
     }
   }, [user, isAdmin, authLoading, router]);
@@ -72,19 +77,9 @@ export default function AdminSignInPage() {
     }
   }
 
-  if (authLoading) {
+  if (authLoading || user) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  // If user is logged in but not admin, they shouldn't be here. Redirect them.
-  if (user && !isAdmin) {
-    router.push('/');
-    return (
-       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
