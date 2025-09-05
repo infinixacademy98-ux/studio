@@ -27,9 +27,9 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MarqueeContent = ({ listings }: { listings: Business[] }) => (
-    <div className="flex flex-nowrap animate-marquee [animation-play-state:running] hover:[animation-play-state:paused] gap-6">
+    <div className="flex flex-nowrap animate-marquee [animation-play-state:running] gap-8">
         {listings.map((listing) => (
-            <div key={`${listing.id}-marquee`} className="w-full max-w-xs shrink-0">
+            <div key={`${listing.id}-marquee`} className="w-80 shrink-0">
                 <BusinessCard listing={listing} />
             </div>
         ))}
@@ -37,9 +37,9 @@ const MarqueeContent = ({ listings }: { listings: Business[] }) => (
 );
 
 const MarqueeSkeleton = () => (
-    <div className="flex flex-nowrap animate-marquee gap-6">
+    <div className="flex flex-nowrap animate-marquee gap-8">
         {[...Array(8)].map((_, i) => (
-            <div key={`skeleton-${i}`} className="w-full max-w-xs shrink-0">
+            <div key={`skeleton-${i}`} className="w-80 shrink-0">
                 <Card className="h-full flex flex-col">
                     <Skeleton className="h-48 w-full rounded-t-lg rounded-b-none" />
                     <CardContent className="p-4 flex-grow">
@@ -223,7 +223,7 @@ export default function HomeContent() {
       </div>
 
       <h2 className="text-2xl font-bold tracking-tight mb-4">
-        {city !== "all" ? `Businesses in ${city}` : "All Businesses"}
+        All Businesses in Belgaum
       </h2>
       {loading ? (
          <div className="flex items-center justify-center py-16">
