@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 const formSchema = z.object({
   name: z.string().min(2, "Business name must be at least 2 characters."),
   category: z.string().min(1, "Please select a category."),
+  otherCategory: z.string().optional(),
   description: z.string().min(10, "Description must be at least 10 characters."),
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
@@ -39,6 +40,14 @@ const formSchema = z.object({
   city: z.string().min(2, "Please enter a city."),
   state: z.string().min(2, "Please enter a state."),
   zip: z.string().min(5, "Please enter a zip code."),
+}).refine(data => {
+    if (data.category === 'Other') {
+        return !!data.otherCategory && data.otherCategory.length > 0;
+    }
+    return true;
+}, {
+    message: "Please specify the category",
+    path: ["otherCategory"],
 });
 
 type AddListingFormProps = {
@@ -57,6 +66,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     defaultValues: {
       name: "",
       category: "",
+      otherCategory: "",
       description: "",
       phone: "",
       email: "",
@@ -79,10 +89,12 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     }
     setIsSubmitting(true);
     try {
+      const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
+      
       await addDoc(collection(db, "listings"), {
         ownerId: user.uid,
         name: values.name,
-        category: values.category,
+        category: categoryToSave,
         description: values.description,
         contact: {
           phone: values.phone,
@@ -125,10 +137,23 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     const result = await suggestCategoryAction(description);
     setIsSuggesting(false);
     if ("category" in result) {
-      form.setValue("category", result.category, { shouldValidate: true });
+      const suggestedCategory = result.category;
+      // Check if the suggested category exists in our predefined list
+      const isPredefined = categories.some(c => c.toLowerCase() === suggestedCategory.toLowerCase() && c !== 'Other');
+
+      if (isPredefined) {
+        // Find the correct casing
+        const matchingCategory = categories.find(c => c.toLowerCase() === suggestedCategory.toLowerCase());
+        form.setValue("category", matchingCategory!, { shouldValidate: true });
+        form.setValue("otherCategory", "", { shouldValidate: true });
+      } else {
+        form.setValue("category", "Other", { shouldValidate: true });
+        form.setValue("otherCategory", suggestedCategory, { shouldValidate: true });
+      }
+
        toast({
         title: "Category Suggested!",
-        description: `We've suggested "${result.category}" based on your description.`,
+        description: `We've suggested "${suggestedCategory}" based on your description.`,
       });
     } else {
       toast({
@@ -139,6 +164,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     }
   };
 
+  const selectedCategory = form.watch("category");
 
   return (
     <Card>
@@ -186,19 +212,36 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                    <div className="flex gap-2 items-center">
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((cat) => (
-                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <div className="flex gap-2 items-start">
+                      <div className="flex-1 space-y-2">
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {categories.map((cat) => (
+                              <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                         {selectedCategory === 'Other' && (
+                            <FormField
+                            control={form.control}
+                            name="otherCategory"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormControl>
+                                    <Input placeholder="Please specify category" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                        )}
+                      </div>
+
                       <Button type="button" variant="outline" onClick={handleSuggestCategory} disabled={isSuggesting}>
                         {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
                         Suggest

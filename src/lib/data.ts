@@ -8,6 +8,8 @@ export const categories: string[] = [
   "Clothing",
   "Hotel",
   "General Store",
+  "Education",
+  "Other",
 ];
 
 export const cities: string[] = ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi"];

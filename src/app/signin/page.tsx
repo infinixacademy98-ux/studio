@@ -155,7 +155,7 @@ export default function SignInPage() {
             </Link>
           </div>
           <div className="mt-2 text-center text-xs">
-            <Link href="/signin" className="text-muted-foreground underline">
+            <Link href="/admin/dashboard" className="text-muted-foreground underline">
               Admin Login
             </Link>
           </div>
