@@ -20,7 +20,7 @@ export const categories: string[] = [
   "Other",
 ];
 
-export const cities: string[] = ["Belgaum", "Gokak", "Athani", "Sankeshwar", "Bailhongal", "Shinoli (BK)", "Vadgaon"];
+export const cities: string[] = ["Belgaum"];
 
 export const businessListings: Business[] = [
   {
@@ -42,7 +42,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/yatra/600/400"],
     "reviews": []
   },
   {
@@ -64,7 +64,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/modak/600/400"],
     "reviews": []
   },
   {
@@ -86,7 +86,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/crafts/600/400"],
     "reviews": []
   },
   {
@@ -108,7 +108,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "416507"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/school/600/400"],
     "reviews": []
   },
   {
@@ -130,7 +130,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590005"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/classroom/600/400"],
     "reviews": []
   },
   {
@@ -152,7 +152,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590010"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/marketing/600/400"],
     "reviews": []
   },
   {
@@ -174,7 +174,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/water/600/400"],
     "reviews": []
   },
   {
@@ -196,7 +196,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590006"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/rice/600/400"],
     "reviews": []
   },
   {
@@ -218,7 +218,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/catering/600/400"],
     "reviews": [],
     "timing": "10:00 am to 9:30 pm"
   },
@@ -241,7 +241,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": [],
+    "images": ["https://picsum.photos/seed/academy/600/400"],
     "reviews": [
         {
             "id": "rev1",
