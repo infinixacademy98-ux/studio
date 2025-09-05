@@ -4,7 +4,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, getDocs, doc, updateDoc, query, orderBy } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
 import type { Business } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AdminDashboardPage() {
@@ -29,10 +30,8 @@ export default function AdminDashboardPage() {
   const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!user || !isAdmin) {
-        router.push("/admin/signin");
-      }
+    if (!authLoading && !isAdmin) {
+      router.push("/admin/signin");
     }
   }, [user, isAdmin, authLoading, router]);
 
@@ -91,6 +90,24 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      toast({
+        title: "Signed Out",
+        description: "You have been successfully signed out.",
+      });
+      router.push("/admin/signin");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+      });
+    }
+  };
+
+
   if (authLoading || !user || !isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -101,9 +118,15 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Manage business listings</p>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <p className="text-muted-foreground">Manage business listings</p>
+        </div>
+        <Button variant="outline" onClick={handleSignOut}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
+        </Button>
       </div>
       <div className="rounded-lg border">
         <Table>
