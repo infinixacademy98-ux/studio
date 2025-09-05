@@ -141,7 +141,7 @@ export default function HomeContent() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredCities.map((city) => (
             <Link href="#" key={city.name} onClick={() => setCity(city.name)} className="group">
-              <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:shadow-primary/30">
+              <Card className="overflow-hidden transition-all duration-300 hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)] hover:-translate-y-1">
                 <CardContent className="p-0">
                   <div className="relative h-48 w-full">
                     <Image
