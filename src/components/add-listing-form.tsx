@@ -72,7 +72,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
       email: "",
       website: "",
       street: "",
-      city: "",
+      city: "Belgaum",
       state: "Karnataka",
       zip: "",
     },
@@ -186,7 +186,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
                 <FormItem>
                   <FormLabel>Business Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Vidyarthi Bhavan" {...field} />
+                    <Input placeholder="e.g., Ajanta Cafe" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -268,7 +268,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      <Input placeholder="+91 80 2667 7588" {...field} />
+                      <Input placeholder="+91 831 242 1234" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -312,7 +312,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
                 <FormItem>
                   <FormLabel>Street Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="32, Gandhi Bazaar Main Rd" {...field} />
+                    <Input placeholder="College Road" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -327,7 +327,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
                   <FormItem>
                     <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input placeholder="Bengaluru" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -353,7 +353,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
                   <FormItem>
                     <FormLabel>Zip Code</FormLabel>
                     <FormControl>
-                      <Input placeholder="560004" {...field} />
+                      <Input placeholder="590001" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

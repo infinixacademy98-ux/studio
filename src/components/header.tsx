@@ -48,7 +48,7 @@ export default function Header() {
         <div className="mr-6 flex items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Building2 className="h-6 w-6 text-primary" />
-            <span className="font-bold">MVS Karnataka</span>
+            <span className="font-bold">MVS Belgaum</span>
           </Link>
         </div>
         <nav className="flex items-center space-x-6 text-sm font-medium">

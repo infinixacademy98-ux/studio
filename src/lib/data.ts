@@ -13,7 +13,7 @@ export const categories: string[] = [
   "Other",
 ];
 
-export const cities: string[] = ["Belagavi", "Bengaluru", "Mysuru", "Mangaluru", "Hubballi"];
+export const cities: string[] = ["Belgaum", "Gokak", "Athani", "Sankeshwar", "Bailhongal"];
 
 export const businessListings: Business[] = [
   // Mock data is removed. Data will be fetched from Firestore.

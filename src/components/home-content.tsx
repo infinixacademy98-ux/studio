@@ -28,10 +28,10 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 const featuredCities = [
-  { name: "Bengaluru", image: "https://picsum.photos/seed/bengaluru/600/400", hint: "modern city" },
-  { name: "Mysuru", image: "https://picsum.photos/seed/mysuru/600/400", hint: "historic palace" },
-  { name: "Mangaluru", image: "https://picsum.photos/seed/mangaluru/600/400", hint: "beach sunset" },
-  { name: "Hubballi", image: "https://picsum.photos/seed/hubballi/600/400", hint: "town center" },
+  { name: "Belgaum", image: "https://picsum.photos/seed/belgaum/600/400", hint: "historic city" },
+  { name: "Gokak", image: "https://picsum.photos/seed/gokak/600/400", hint: "waterfall nature" },
+  { name: "Athani", image: "https://picsum.photos/seed/athani/600/400", hint: "small town" },
+  { name: "Sankeshwar", image: "https://picsum.photos/seed/sankeshwar/600/400", hint: "rural town" },
 ];
 
 export default function HomeContent() {
@@ -82,7 +82,7 @@ export default function HomeContent() {
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight text-primary font-headline">
-          Discover Businesses in Karnataka
+          Discover Businesses in Belgaum
         </h1>
         <p className="mt-2 text-lg text-muted-foreground">
           Find the best local services, right at your fingertips.

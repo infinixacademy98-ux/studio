@@ -9,8 +9,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "MVS Karnataka",
-  description: "Your guide to businesses in Karnataka.",
+  title: "MVS Belgaum",
+  description: "Your guide to businesses in Belgaum.",
 };
 
 export default function RootLayout({

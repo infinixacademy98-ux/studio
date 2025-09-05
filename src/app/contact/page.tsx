@@ -26,8 +26,8 @@ function ContactPageContent() {
                 <Mail className="h-6 w-6 text-primary" />
                 <div>
                   <h3 className="font-semibold">Email</h3>
-                  <a href="mailto:support@mvskarnataka.com" className="text-muted-foreground hover:text-primary">
-                    support@mvskarnataka.com
+                  <a href="mailto:support@mvsbelgaum.com" className="text-muted-foreground hover:text-primary">
+                    support@mvsbelgaum.com
                   </a>
                 </div>
               </div>
@@ -45,7 +45,7 @@ function ContactPageContent() {
                 <div>
                   <h3 className="font-semibold">Address</h3>
                   <p className="text-muted-foreground">
-                    123 MG Road, Bengaluru, <br/>Karnataka, 560001
+                    123 College Road, Belgaum, <br/>Karnataka, 590001
                   </p>
                 </div>
               </div>
