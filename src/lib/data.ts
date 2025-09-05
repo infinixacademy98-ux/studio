@@ -1,3 +1,4 @@
+
 import type { Business } from "./types";
 
 export const categories: string[] = [
@@ -12,7 +13,7 @@ export const categories: string[] = [
   "Other",
 ];
 
-export const cities: string[] = ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi"];
+export const cities: string[] = ["Belagavi", "Bengaluru", "Mysuru", "Mangaluru", "Hubballi"];
 
 export const businessListings: Business[] = [
   {
@@ -191,6 +192,35 @@ export const businessListings: Business[] = [
         rating: 4,
         comment: "Good collection of products and helpful staff.",
         date: "2024-05-30",
+      },
+    ],
+  },
+  {
+    id: "6",
+    name: "Infinix Academy",
+    category: "Education",
+    description: "Leading coaching center in Belgaum for competitive exams. We provide quality education and guidance to help students achieve their career goals.",
+    contact: {
+      phone: "+91 987 654 3210",
+      email: "info@infinixacademy.com",
+      website: "https://infinixacademy.com",
+    },
+    address: {
+      street: "123, College Road",
+      city: "Belagavi",
+      state: "Karnataka",
+      zip: "590001",
+    },
+    images: [
+      "https://picsum.photos/seed/infinix/600/400",
+    ],
+    reviews: [
+      {
+        id: "r8",
+        author: "Sneha Patil",
+        rating: 5,
+        comment: "Excellent coaching and very supportive faculty. Highly recommended!",
+        date: "2024-07-20",
       },
     ],
   },
