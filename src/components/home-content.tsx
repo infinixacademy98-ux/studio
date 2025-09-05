@@ -26,13 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const featuredCities = [
-  { name: "Belgaum", image: "https://picsum.photos/seed/belgaum/600/400", hint: "historic city" },
-  { name: "Gokak", image: "https://picsum.photos/seed/gokak/600/400", hint: "waterfall nature" },
-  { name: "Athani", image: "https://picsum.photos/seed/athani/600/400", hint: "small town" },
-  { name: "Sankeshwar", image: "https://picsum.photos/seed/sankeshwar/600/400", hint: "rural town" },
-];
-
 const MarqueeContent = ({ listings }: { listings: Business[] }) => (
     <div className="flex flex-nowrap animate-marquee [animation-play-state:running] hover:[animation-play-state:paused] gap-6">
         {listings.map((listing) => (
@@ -228,33 +221,6 @@ export default function HomeContent() {
           </Popover>
         </div>
       </div>
-      
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold tracking-tight mb-4">Featured Cities</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredCities.map((city) => (
-            <Link href="#" key={city.name} onClick={() => setCity(city.name)} className="group">
-              <Card className="overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
-                <CardContent className="p-0">
-                  <div className="relative h-48 w-full">
-                    <Image
-                      src={city.image}
-                      alt={`Image of ${city.name}`}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      data-ai-hint={city.hint}
-                    />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                     <h3 className="absolute bottom-4 left-4 text-xl font-bold text-white">
-                        {city.name}
-                     </h3>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
 
       <h2 className="text-2xl font-bold tracking-tight mb-4">
         {city !== "all" ? `Businesses in ${city}` : "All Businesses"}
