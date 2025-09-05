@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { businessListings, categories, cities } from "@/lib/data";
+import { categories, cities } from "@/lib/data";
 import type { Business } from "@/lib/types";
 import BusinessCard from "@/components/business-card";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const featuredCities = [
   { name: "Bengaluru", image: "https://picsum.photos/seed/bengaluru/600/400", hint: "modern city" },
@@ -25,13 +27,35 @@ const featuredCities = [
 ];
 
 export default function HomeContent() {
+  const [listings, setListings] = useState<Business[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
   const [city, setCity] = useState("all");
   const [rating, setRating] = useState("all");
 
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true);
+      try {
+        const querySnapshot = await getDocs(collection(db, "listings"));
+        const listingsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Business[];
+        setListings(listingsData);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
+
   const filteredListings = useMemo(() => {
-    return businessListings.filter((listing) => {
+    return listings.filter((listing) => {
       const averageRating =
         listing.reviews.reduce((acc, review) => acc + review.rating, 0) /
         (listing.reviews.length || 1);
@@ -44,7 +68,7 @@ export default function HomeContent() {
         (rating === "all" || Math.floor(averageRating) >= parseInt(rating))
       );
     });
-  }, [searchTerm, category, city, rating]);
+  }, [searchTerm, category, city, rating, listings]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -140,7 +164,11 @@ export default function HomeContent() {
       <h2 className="text-2xl font-bold tracking-tight mb-4">
         {city !== "all" ? `Businesses in ${city}` : "All Businesses"}
       </h2>
-      {filteredListings.length > 0 ? (
+      {loading ? (
+         <div className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+         </div>
+      ) : filteredListings.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredListings.map((listing: Business) => (
             <BusinessCard key={listing.id} listing={listing} />
@@ -148,7 +176,7 @@ export default function HomeContent() {
         </div>
       ) : (
         <div className="text-center py-16">
-            <p className="text-muted-foreground">No businesses found. Try adjusting your search filters.</p>
+            <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
         </div>
       )}
     </div>

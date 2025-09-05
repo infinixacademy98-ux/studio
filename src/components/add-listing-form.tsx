@@ -21,6 +21,11 @@ import { Loader2, Wand2 } from "lucide-react";
 import { useState } from "react";
 import { categories } from "@/lib/data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "./auth-provider";
+import { useRouter } from "next/navigation";
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Business name must be at least 2 characters."),
@@ -41,6 +46,9 @@ type AddListingFormProps = {
 
 export default function AddListingForm({ suggestCategoryAction }: AddListingFormProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,14 +67,55 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: "Listing Submitted!",
-      description: "Your business listing has been submitted for review.",
-    });
-    form.reset();
+ async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Not Authenticated",
+        description: "You must be logged in to create a listing.",
+      });
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const docRef = await addDoc(collection(db, "listings"), {
+        ownerId: user.uid,
+        name: values.name,
+        category: values.category,
+        description: values.description,
+        contact: {
+          phone: values.phone,
+          email: values.email,
+          website: values.website,
+        },
+        address: {
+          street: values.street,
+          city: values.city,
+          state: values.state,
+          zip: values.zip,
+        },
+        images: [`https://picsum.photos/seed/${Math.random()}/600/400`], // Placeholder image
+        reviews: [],
+        createdAt: new Date(),
+      });
+      toast({
+        title: "Listing Submitted!",
+        description: "Your business listing has been successfully added.",
+      });
+      form.reset();
+      router.push(`/listing/${docRef.id}`);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description: "There was an error submitting your listing. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
+
 
   const handleSuggestCategory = async () => {
     const description = form.getValues("description");
@@ -263,7 +312,10 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
             </div>
 
 
-            <Button type="submit" size="lg" className="w-full">Submit Listing</Button>
+            <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Submit Listing
+            </Button>
           </form>
         </Form>
       </CardContent>

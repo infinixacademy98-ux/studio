@@ -1,6 +1,7 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { businessListings } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/star-rating";
 import ReviewCard from "@/components/review-card";
@@ -27,8 +28,13 @@ import {
   Globe,
   MapPin,
   Star,
+  Loader2,
 } from "lucide-react";
 import WithAuthLayout from "@/components/with-auth-layout";
+import { useEffect, useState } from "react";
+import type { Business } from "@/lib/types";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 type BusinessDetailsPageProps = {
   params: {
@@ -37,10 +43,43 @@ type BusinessDetailsPageProps = {
 };
 
 function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
-  const listing = businessListings.find((l) => l.id === params.id);
+  const [listing, setListing] = useState<Business | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      if (!params.id) return;
+      setLoading(true);
+      try {
+        const docRef = doc(db, "listings", params.id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setListing({ id: docSnap.id, ...docSnap.data() } as Business);
+        } else {
+          notFound();
+        }
+      } catch (error) {
+        console.error("Error fetching listing:", error);
+        notFound();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListing();
+  }, [params.id]);
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!listing) {
-    notFound();
+    return notFound();
   }
   
   const averageRating =
@@ -86,8 +125,12 @@ function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-4" />
-            <CarouselNext className="right-4" />
+            {listing.images.length > 1 && (
+              <>
+                <CarouselPrevious className="left-4" />
+                <CarouselNext className="right-4" />
+              </>
+            )}
           </Carousel>
           
           {/* --- Description --- */}
@@ -101,11 +144,15 @@ function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
            {/* --- Reviews --- */}
           <div>
             <h2 className="text-2xl font-bold mb-4">Reviews</h2>
-            <div className="space-y-6">
-                {listing.reviews.map(review => (
-                    <ReviewCard key={review.id} review={review} />
-                ))}
-            </div>
+             {listing.reviews.length > 0 ? (
+                <div className="space-y-6">
+                    {listing.reviews.map(review => (
+                        <ReviewCard key={review.id} review={review} />
+                    ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No reviews yet. Be the first to write one!</p>
+              )}
           </div>
           
           <Separator />
@@ -148,10 +195,12 @@ function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
                   <Mail className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
                   <span className="group-hover:text-primary">{listing.contact.email}</span>
                 </a>
-                <a href={listing.contact.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                  <Globe className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
-                  <span className="group-hover:text-primary">Website</span>
-                </a>
+                 {listing.contact.website && (
+                  <a href={listing.contact.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
+                    <Globe className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                    <span className="group-hover:text-primary">Website</span>
+                  </a>
+                )}
               </div>
               <Separator />
               <div className="flex items-start gap-3">
