@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { categories, cities } from "@/lib/data";
@@ -26,14 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const featuredCities = [
@@ -43,27 +35,35 @@ const featuredCities = [
   { name: "Sankeshwar", image: "https://picsum.photos/seed/sankeshwar/600/400", hint: "rural town" },
 ];
 
-function TopRatedSkeleton() {
-    return (
-        <div className="flex space-x-4">
-            {[...Array(4)].map((_, i) => (
-                <div key={i} className="min-w-0 shrink-0 grow-0 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 pl-4">
-                    <Card className="h-full flex flex-col">
-                        <Skeleton className="h-48 w-full rounded-t-lg rounded-b-none" />
-                        <CardContent className="p-4 flex-grow">
-                            <Skeleton className="h-4 w-1/2 mb-2" />
-                            <Skeleton className="h-5 w-3/4 mb-2" />
-                            <Skeleton className="h-4 w-1/3" />
-                        </CardContent>
-                        <CardContent className="p-4 pt-0">
-                             <Skeleton className="h-5 w-full" />
-                        </CardContent>
-                    </Card>
-                </div>
-            ))}
-        </div>
-    )
-}
+const MarqueeContent = ({ listings }: { listings: Business[] }) => (
+    <div className="flex flex-nowrap animate-marquee [animation-play-state:running] hover:[animation-play-state:paused] gap-6">
+        {listings.map((listing) => (
+            <div key={`${listing.id}-marquee`} className="w-full max-w-xs shrink-0">
+                <BusinessCard listing={listing} />
+            </div>
+        ))}
+    </div>
+);
+
+const MarqueeSkeleton = () => (
+    <div className="flex flex-nowrap animate-marquee gap-6">
+        {[...Array(8)].map((_, i) => (
+            <div key={`skeleton-${i}`} className="w-full max-w-xs shrink-0">
+                <Card className="h-full flex flex-col">
+                    <Skeleton className="h-48 w-full rounded-t-lg rounded-b-none" />
+                    <CardContent className="p-4 flex-grow">
+                        <Skeleton className="h-4 w-1/2 mb-2" />
+                        <Skeleton className="h-5 w-3/4 mb-2" />
+                        <Skeleton className="h-4 w-1/3" />
+                    </CardContent>
+                    <CardContent className="p-4 pt-0">
+                            <Skeleton className="h-5 w-full" />
+                    </CardContent>
+                </Card>
+            </div>
+        ))}
+    </div>
+);
 
 
 export default function HomeContent() {
@@ -73,10 +73,6 @@ export default function HomeContent() {
   const [category, setCategory] = useState("all");
   const [city, setCity] = useState("all");
   const [rating, setRating] = useState("all");
-
-  const autoplayPlugin = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: true })
-  );
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -145,34 +141,24 @@ export default function HomeContent() {
             <TrendingUp className="text-primary" />
             Top Rated Businesses
           </h2>
-          {loading ? (
-             <TopRatedSkeleton />
-          ) : topRatedListings.length > 0 ? (
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              plugins={[autoplayPlugin.current]}
-              onMouseEnter={() => autoplayPlugin.current.stop()}
-              onMouseLeave={() => autoplayPlugin.current.reset()}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-4">
-                {topRatedListings.map((listing) => (
-                  <CarouselItem key={listing.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                      <BusinessCard listing={listing} />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
-            </Carousel>
-           ) : (
-             <div className="relative -ml-4">
-               <TopRatedSkeleton />
-             </div>
-          )}
+           <div className="relative w-full overflow-hidden">
+                {loading ? (
+                    <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                ) : topRatedListings.length > 0 ? (
+                    <div className="flex flex-nowrap">
+                        <MarqueeContent listings={topRatedListings} />
+                        <MarqueeContent listings={topRatedListings} />
+                    </div>
+                ) : (
+                     <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                )}
+                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
+            </div>
        </section>
       
 
