@@ -34,6 +34,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const featuredCities = [
   { name: "Belgaum", image: "https://picsum.photos/seed/belgaum/600/400", hint: "historic city" },
@@ -41,6 +42,29 @@ const featuredCities = [
   { name: "Athani", image: "https://picsum.photos/seed/athani/600/400", hint: "small town" },
   { name: "Sankeshwar", image: "https://picsum.photos/seed/sankeshwar/600/400", hint: "rural town" },
 ];
+
+function TopRatedSkeleton() {
+    return (
+        <div className="flex space-x-4">
+            {[...Array(4)].map((_, i) => (
+                <div key={i} className="min-w-0 shrink-0 grow-0 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 pl-4">
+                    <Card className="h-full flex flex-col">
+                        <Skeleton className="h-48 w-full rounded-t-lg rounded-b-none" />
+                        <CardContent className="p-4 flex-grow">
+                            <Skeleton className="h-4 w-1/2 mb-2" />
+                            <Skeleton className="h-5 w-3/4 mb-2" />
+                            <Skeleton className="h-4 w-1/3" />
+                        </CardContent>
+                        <CardContent className="p-4 pt-0">
+                             <Skeleton className="h-5 w-full" />
+                        </CardContent>
+                    </Card>
+                </div>
+            ))}
+        </div>
+    )
+}
+
 
 export default function HomeContent() {
   const [listings, setListings] = useState<Business[]>([]);
@@ -116,9 +140,11 @@ export default function HomeContent() {
         </p>
       </header>
       
-      {topRatedListings.length > 0 && (
-         <section className="mb-12">
-            <h2 className="text-2xl font-bold tracking-tight mb-4">Top Rated Businesses</h2>
+       <section className="mb-12">
+          <h2 className="text-2xl font-bold tracking-tight mb-4">Top Rated Businesses</h2>
+          {loading ? (
+             <TopRatedSkeleton />
+          ) : topRatedListings.length > 0 ? (
             <Carousel
               opts={{
                 align: "start",
@@ -139,8 +165,13 @@ export default function HomeContent() {
               <CarouselPrevious className="hidden sm:flex" />
               <CarouselNext className="hidden sm:flex" />
             </Carousel>
-         </section>
-      )}
+           ) : (
+             <div className="relative -ml-4">
+               <TopRatedSkeleton />
+             </div>
+          )}
+       </section>
+      
 
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
         <div className="flex gap-4">
@@ -272,5 +303,3 @@ export default function HomeContent() {
     </div>
   );
 }
-
-    
