@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Building2, PlusCircle, LogOut, User as UserIcon } from "lucide-react";
+import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
 
@@ -51,20 +51,6 @@ export default function Header() {
             <span className="font-bold">MVS Belgaum</span>
           </Link>
         </div>
-        <nav className="flex items-center space-x-6 text-sm font-medium">
-          <Link
-            href="/about"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            About
-          </Link>
-          <Link
-            href="/contact"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Contact
-          </Link>
-        </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Button asChild>
             <Link href="/add-listing">
@@ -93,6 +79,18 @@ export default function Header() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/about">
+                    <Info className="mr-2 h-4 w-4" />
+                    <span>About</span>
+                  </Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                  <Link href="/contact">
+                    <Mail className="mr-2 h-4 w-4" />
+                    <span>Contact</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <UserIcon className="mr-2 h-4 w-4" />
                   <span>Profile</span>
