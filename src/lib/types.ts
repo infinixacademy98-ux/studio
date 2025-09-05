@@ -1,3 +1,4 @@
+
 export interface Review {
   id: string;
   author: string;
@@ -30,4 +31,7 @@ export interface Business {
   address: Address;
   images: string[];
   reviews: Review[];
+  status: 'pending' | 'approved' | 'rejected';
+  ownerId: string;
+  createdAt: any;
 }

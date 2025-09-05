@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Search } from "lucide-react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 const featuredCities = [
@@ -38,7 +39,8 @@ export default function HomeContent() {
     const fetchListings = async () => {
       setLoading(true);
       try {
-        const querySnapshot = await getDocs(collection(db, "listings"));
+        const q = query(collection(db, "listings"), where("status", "==", "approved"));
+        const querySnapshot = await getDocs(q);
         const listingsData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),

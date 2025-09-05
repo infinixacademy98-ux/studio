@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -78,7 +79,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     }
     setIsSubmitting(true);
     try {
-      const docRef = await addDoc(collection(db, "listings"), {
+      await addDoc(collection(db, "listings"), {
         ownerId: user.uid,
         name: values.name,
         category: values.category,
@@ -97,13 +98,14 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
         images: [`https://picsum.photos/seed/${Math.random()}/600/400`], // Placeholder image
         reviews: [],
         createdAt: new Date(),
+        status: "pending", // Add status for admin approval
       });
       toast({
         title: "Listing Submitted!",
-        description: "Your business listing has been successfully added.",
+        description: "Your business listing has been submitted for approval.",
       });
       form.reset();
-      router.push(`/listing/${docRef.id}`);
+      router.push(`/`);
     } catch (error) {
       console.error("Error adding document: ", error);
       toast({
@@ -314,7 +316,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
 
             <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Submit Listing
+              Submit for Approval
             </Button>
           </form>
         </Form>

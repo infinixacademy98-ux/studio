@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -34,6 +35,8 @@ const formSchema = z.object({
   password: z.string().min(1, { message: "Password is required." }),
 });
 
+const ADMIN_EMAIL = "admin@example.com";
+
 export default function SignInPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -42,7 +45,11 @@ export default function SignInPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push("/");
+       if (user.email === ADMIN_EMAIL) {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/");
+      }
     }
   }, [user, loading, router]);
 
@@ -58,12 +65,16 @@ export default function SignInPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: "Signed In!",
         description: "Welcome back!",
       });
-      router.push("/");
+      if (userCredential.user.email === ADMIN_EMAIL) {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -141,6 +152,11 @@ export default function SignInPage() {
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="underline">
               Sign up
+            </Link>
+          </div>
+          <div className="mt-2 text-center text-xs">
+            <Link href="/signin" className="text-muted-foreground underline">
+              Admin Login
             </Link>
           </div>
         </CardContent>
