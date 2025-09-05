@@ -1,3 +1,4 @@
+
 "use client";
 
 import { notFound } from "next/navigation";
@@ -48,10 +49,11 @@ function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
 
   useEffect(() => {
     const fetchListing = async () => {
-      if (!params.id) return;
+      const id = params.id;
+      if (!id) return;
       setLoading(true);
       try {
-        const docRef = doc(db, "listings", params.id);
+        const docRef = doc(db, "listings", id);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
