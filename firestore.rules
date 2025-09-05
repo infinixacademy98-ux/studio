@@ -1,4 +1,3 @@
-
 rules_version = '2';
 
 service cloud.firestore {
@@ -12,17 +11,22 @@ service cloud.firestore {
 
     // Rules for the 'listings' collection
     match /listings/{listingId} {
-      // READ: Anyone can read a listing if its status is 'approved'. Admins can read any listing.
-      allow read: if (resource.data.status == 'approved' || isAdmin());
+      
+      // READ: Anyone can read a listing if its status is 'approved'.
+      allow read: if resource.data.status == 'approved';
 
       // CREATE: Any authenticated user can create a new listing.
       // The new listing must have a 'pending' status and the ownerId must match the user's UID.
       allow create: if request.auth != null &&
-                      request.resource.data.status == 'pending' &&
-                      request.resource.data.ownerId == request.auth.uid;
+                       request.resource.data.status == 'pending' &&
+                       request.resource.data.ownerId == request.auth.uid;
 
-      // UPDATE: Only admins can update listings (e.g., to approve them).
-      allow update: if isAdmin();
+      // UPDATE: Only admins can update any listing. 
+      // A business owner can only update their own listing and cannot change the status or ownerId.
+      allow update: if isAdmin() || 
+                       (request.auth.uid == resource.data.ownerId &&
+                        request.resource.data.status == resource.data.status &&
+                        request.resource.data.ownerId == resource.data.ownerId);
 
       // DELETE: Only admins can delete listings.
       allow delete: if isAdmin();
@@ -30,12 +34,16 @@ service cloud.firestore {
 
     // Rules for the 'users' collection
     match /users/{userId} {
-      // READ, WRITE: A user can only access their own user document. Admins can access any user document.
-      allow read, write: if request.auth.uid == userId || isAdmin();
+    
+      // READ: Users can only read their own document. Admins can read any user document.
+      allow read: if request.auth.uid == userId || isAdmin();
+      
+      // WRITE: Users can only write to their own document. Admins can write to any user document.
+      allow write: if request.auth.uid == userId || isAdmin();
 
-      // Rules for user-specific notifications subcollection
+      // Rules for user notifications subcollection
       match /notifications/{notificationId} {
-        // READ, WRITE: A user can only read/write their own notifications.
+        // READ/WRITE: Users can only manage their own notifications.
         allow read, write: if request.auth.uid == userId;
       }
     }
