@@ -37,7 +37,7 @@ const formSchema = z.object({
 
 const ADMIN_EMAIL = "admin@example.com";
 
-export default function SignInPage() {
+export default function AdminSignInPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -66,20 +66,24 @@ export default function SignInPage() {
     setIsLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      toast({
-        title: "Signed In!",
-        description: "Welcome back!",
-      });
       if (userCredential.user.email === ADMIN_EMAIL) {
+        toast({
+          title: "Admin Signed In!",
+          description: "Welcome to the dashboard!",
+        });
         router.push("/admin/dashboard");
       } else {
+        toast({
+            title: "Signed In!",
+            description: "Redirecting to homepage.",
+        });
         router.push("/");
       }
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Sign In Failed",
-        description: "Please check your email and password and try again.",
+        description: "Please check your credentials and try again.",
       });
     } finally {
       setIsLoading(false);
@@ -98,9 +102,9 @@ export default function SignInPage() {
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign In</CardTitle>
+          <CardTitle className="text-2xl">Admin Sign In</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your admin credentials to access the dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -114,7 +118,7 @@ export default function SignInPage() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="m@example.com"
+                        placeholder="admin@example.com"
                         {...field}
                         disabled={isLoading}
                       />
@@ -148,15 +152,10 @@ export default function SignInPage() {
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="underline">
-              Sign up
-            </Link>
-          </div>
-          <div className="mt-2 text-center text-xs">
-            <Link href="/admin/signin" className="text-muted-foreground underline">
-              Admin Login
+           <div className="mt-4 text-center text-sm">
+            Not an admin?{" "}
+            <Link href="/signin" className="underline">
+              User Sign In
             </Link>
           </div>
         </CardContent>

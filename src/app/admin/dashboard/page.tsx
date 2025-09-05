@@ -34,7 +34,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     if (!authLoading) {
       if (!user || user.email !== ADMIN_EMAIL) {
-        router.push("/signin");
+        router.push("/admin/signin");
       }
     }
   }, [user, authLoading, router]);
