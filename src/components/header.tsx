@@ -53,7 +53,7 @@ export default function Header() {
               alt="MVS Belgaum Logo" 
               width={40} 
               height={40}
-              className="h-10 w-10"
+              className="h-10 w-10 bg-white rounded-full p-1"
             />
             <span className="font-bold">MVS Belgaum</span>
           </Link>
