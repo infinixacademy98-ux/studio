@@ -27,7 +27,7 @@ export const businessListings: Business[] = [
     "id": "1",
     "name": "Shri Datta Digambar Yatra",
     "category": "Travel & Tourism",
-    "description": "Agra, Mathura Yatra Agra Red Fort, Taj Mahal Mathura - Krishna Janmabhoomi, Bake Bihari Temple, Prem Temple, Vrindavan, Govardhan Parvat Parikrama, Barsana Radha Mahal and other places of interest Delhi - Akshardham, India Gate, Qutub Minar, Lotus Temple. Services: Religious tours, Temple visits, Pilgrimage packages",
+    "description": "Agra, Mathura Yatra Agra Red Fort, Taj Mahal Mathura - Krishna Janmabhoomi, Bake Bihari Temple, Prem Temple, Vrindavan, Govardhan Parvat Parikrama, Barsana Radha Mahal and other places of interest Delhi - Akshardham, India Gate, Qutub Minar, Lotus Temple travel day8 travel fee travel date",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -40,7 +40,7 @@ export const businessListings: Business[] = [
       "street": "Pangul Galli",
       "city": "Belgaum",
       "state": "Karnataka",
-      "zip": "590001",
+      "zip": "590001"
     },
     "images": ["https://picsum.photos/seed/1/600/400"],
     "reviews": []
@@ -49,7 +49,7 @@ export const businessListings: Business[] = [
     "id": "2",
     "name": "AROH FOODS",
     "category": "Food & Beverages",
-    "description": "Specializing in Ukadi Modaks available 365 days a year! Price 30/- per piece. Pre-booking required. Special occasion orders available. Minimum quantity 6 pieces. Services: Traditional sweets, Ukadi Modaks, Festival specials",
+    "description": "Bookings for Ukadi Modaks are open for Ganeshotsav, hurry up. Modak of Ukdi We have Ukadi Modak available 365 days a year! Price 30/-per piece only Pre-booking required! Moreover, for special occasions, Ukadi Modaks can be made to order. Minimum quantity 6 pcs.",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -59,10 +59,10 @@ export const businessListings: Business[] = [
       "website": ""
     },
     "address": {
-      "street": "6th Cross Road, Gokul Nagar, Near Deccan Hospital, Over Railway Bridge",
+      "street": "6th x Road, Gokul Nagar Near: Deccan hospital, Over Railway bridge",
       "city": "Belgaum",
       "state": "Karnataka",
-      "zip": "590001",
+      "zip": "590001"
     },
     "images": ["https://picsum.photos/seed/2/600/400"],
     "reviews": []
@@ -71,7 +71,7 @@ export const businessListings: Business[] = [
     "id": "3",
     "name": "D.K. Arts & Enterprise",
     "category": "Arts & Crafts",
-    "description": "All Types Of Thermocol Items, Diwali Kandils, Rangoli, Holi Colors, Christmas Stars & Trees, Marriage Decorations & Seasonal Items. Services: Festival decorations, Thermocol items, Party supplies",
+    "description": "All Types Of Thermocol Items, Diwali Kandil, Rangoli, Holi Colors, Christmas Stars & Trees, Marriage Feta & Seasonable Items Available",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -84,7 +84,7 @@ export const businessListings: Business[] = [
       "street": "H. No. 2176, Kawale Complex, Pangul Galli",
       "city": "Belgaum",
       "state": "Karnataka",
-      "zip": "590001",
+      "zip": "590001"
     },
     "images": ["https://picsum.photos/seed/3/600/400"],
     "reviews": []
@@ -93,7 +93,7 @@ export const businessListings: Business[] = [
     "id": "4",
     "name": "NOBEL Digital English Medium School",
     "category": "Education",
-    "description": "Digital English Medium School offering Play Group, Nursery, LKG, UKG with modern facilities, qualified staff, affordable fees, safe environment. Services: Pre-primary education, Digital learning, Dance & Yoga",
+    "description": "ADMISSION OPEN #PLAY GROUP #NURSERY #LKG #UKG #FACILITIES #Learning Activities / Projector #Learning with Caring Atmosphere #Highly Qualified Trained Staff #Dance & Yoga #Affordable Fee Structure. #Safe and Hygienic Environment. #Joyfully Classroom #Playing Garden #No Donation #ACA #Highly Qualified",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -106,7 +106,7 @@ export const businessListings: Business[] = [
       "street": "Belgaum Vengurla Road, Opp. Aqua Alloys Foundry",
       "city": "Shinoli (BK)",
       "state": "Karnataka",
-      "zip": "416507",
+      "zip": "416507"
     },
     "images": ["https://picsum.photos/seed/4/600/400"],
     "reviews": []
@@ -115,7 +115,7 @@ export const businessListings: Business[] = [
     "id": "5",
     "name": "GRACEFUL PRE PRIMARY ENGLISH MEDIUM SCHOOL",
     "category": "Education",
-    "description": "Pre-primary English Medium School with safe environment, qualified staff, learning activities, affordable fees. Services: Play Group, Nursery, LKG, UKG, Dance & Yoga",
+    "description": "Admissions ...OPEN #OUR SCHOOL FEATURES #Safe & Hygienic Environment #Joyful Classroom #PLAY GROUP #Highly Qualified Management & Staff #High Rated & Recommended Parents. #NURSERY #Learning Activities #LKG #Learning & Caring Atmosphere #UKG #Highly Qualified Trained Staff #Dance & Yoga #Affordable",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -128,7 +128,7 @@ export const businessListings: Business[] = [
       "street": "Karbar Galli, Yellur Road",
       "city": "Vadgaon",
       "state": "Karnataka",
-      "zip": "590005",
+      "zip": "590005"
     },
     "images": ["https://picsum.photos/seed/5/600/400"],
     "reviews": []
@@ -137,7 +137,7 @@ export const businessListings: Business[] = [
     "id": "6",
     "name": "INNOVATIVE BUSINESS SOLUTIONS",
     "category": "Digital Marketing",
-    "description": "Digital Marketing Agency providing innovative strategies for business success and competitive edge. Services: Digital marketing, Business consulting, Sales strategies",
+    "description": "DIGITAL MARKETING AGENCY SALES OFFICER,Discover innovative strategies to overcome challenges and gain a competitive edge for business success. Meta f G",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -147,10 +147,10 @@ export const businessListings: Business[] = [
       "website": "http://www.innovative.com"
     },
     "address": {
-      "street": "Sadashiv Nagar, Uras Colony",
+      "street": "Sadashiv Nagar Uras colony",
       "city": "Belgaum",
       "state": "Karnataka",
-      "zip": "590010",
+      "zip": "590010"
     },
     "images": ["https://picsum.photos/seed/6/600/400"],
     "reviews": []
@@ -159,7 +159,7 @@ export const businessListings: Business[] = [
     "id": "7",
     "name": "SHRI BALAJI DISTRIBUTOR",
     "category": "Water Supply",
-    "description": "Packaged Drinking Water supplier - 20 Liter bottles, both cold and normal water available. Services: Packaged drinking water, Water delivery, Bulk supply",
+    "description": "AVAILABLE IN PACKAGED DRINKING WATER 20 Liter Cold & Normal Water are Available Here FA50000, SERVICE CMOTORS",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -172,16 +172,16 @@ export const businessListings: Business[] = [
       "street": "Jyoti Nagar, APMC Road",
       "city": "Belgaum",
       "state": "Karnataka",
-      "zip": "590001",
+      "zip": "590001"
     },
     "images": ["https://picsum.photos/seed/7/600/400"],
     "reviews": []
   },
   {
     "id": "8",
-    "name": "INDIA TREAT NOURISHING EXCELLENCE",
+    "name": "INDIA TREAT nourishing excellence",
     "category": "Food Distribution",
-    "description": "Rice distributor and exporter supplying high-quality rice varieties including Delhi Basmati, Belgaum Basmati, Sona Masuri, Kolam, Indrayani. Services: Rice supply, Rice export, Wholesale rice distribution",
+    "description": "Distributor of Rice Supply & Export, We source, pack and supply high-quality rice to retail, wholesale and institutional 1) Delhi Basmati 2)Belgaum Basmati 3)Sona Masuri 4)Kolam 5)• Indrayani Packaging options: bulk (26kg sacks), poly-woven retail packs (5 kg,1 kg)",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -194,7 +194,7 @@ export const businessListings: Business[] = [
       "street": "CCB 292, Bhatkhande Building, Hindunagar, Tilakwadi",
       "city": "Belgaum",
       "state": "Karnataka",
-      "zip": "590006",
+      "zip": "590006"
     },
     "images": ["https://picsum.photos/seed/8/600/400"],
     "reviews": []
@@ -203,7 +203,7 @@ export const businessListings: Business[] = [
     "id": "9",
     "name": "VAISHNAV CATERERS",
     "category": "Catering Services",
-    "description": "Pure Vegetarian catering services for all occasions - Indoor, Outdoor, Marriages, Birthday parties, Corporate events. Timing: 10:00 AM to 9:30 PM. Services: Wedding catering, Event catering, Corporate catering",
+    "description": "We Accept all types of Indoor, Out door, Catering Graha Pravesh, Marriage, Upanayan, Birthday Parties, Reception, Kitty Parties & Corporate Events Services Pure Vegetarian. Timing: 10:00 am to 9:30 pm",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -216,7 +216,7 @@ export const businessListings: Business[] = [
       "street": "R.P.D. Road, Gomtesh Circle, Near Vijay Bakery, Hindwadi",
       "city": "Belgaum",
       "state": "Karnataka",
-      "zip": "590001",
+      "zip": "590001"
     },
     "images": ["https://picsum.photos/seed/9/600/400"],
     "reviews": []
