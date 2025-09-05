@@ -116,6 +116,12 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const isNew = (createdAt: any) => {
+    if (!createdAt?.toDate) return false;
+    const oneDay = 24 * 60 * 60 * 1000;
+    return new Date().getTime() - createdAt.toDate().getTime() < oneDay;
+  }
+
   if (authLoading || !isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -161,7 +167,12 @@ export default function AdminDashboardPage() {
               ) : listings.length > 0 ? (
                 listings.map((listing) => (
                   <TableRow key={listing.id}>
-                    <TableCell className="font-medium">{listing.name}</TableCell>
+                    <TableCell className="font-medium flex items-center gap-2">
+                      {listing.name}
+                      {isNew(listing.createdAt) && (
+                        <Badge variant="outline" className="text-blue-500 border-blue-500">New</Badge>
+                      )}
+                    </TableCell>
                     <TableCell>{listing.contact.email}</TableCell>
                     <TableCell>{listing.category}</TableCell>
                     <TableCell>{listing.address.city}</TableCell>
