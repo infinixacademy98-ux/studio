@@ -5,7 +5,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} All rights reserved.
+            © 2025 MVS Belgaum All rights reserved.
           </p>
         </div>
       </div>
