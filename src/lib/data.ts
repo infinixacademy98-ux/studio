@@ -42,7 +42,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/1/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -64,7 +64,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/2/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -86,7 +86,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/3/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -108,7 +108,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "416507"
     },
-    "images": ["https://picsum.photos/seed/4/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -130,7 +130,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590005"
     },
-    "images": ["https://picsum.photos/seed/5/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -152,7 +152,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590010"
     },
-    "images": ["https://picsum.photos/seed/6/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -174,7 +174,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/7/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -196,7 +196,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590006"
     },
-    "images": ["https://picsum.photos/seed/8/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -218,7 +218,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/9/600/400"],
+    "images": [],
     "reviews": []
   },
   {
@@ -240,7 +240,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/infinix/600/400"],
+    "images": [],
     "reviews": [
         {
             "id": "rev1",

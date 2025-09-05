@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "./star-rating";
-import { MapPin } from "lucide-react";
+import { MapPin, Building2 } from "lucide-react";
 
 interface BusinessCardProps {
   listing: Business;
@@ -28,14 +28,19 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
       <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1 bg-card">
         <CardHeader className="p-0">
           <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
-            <Image
-              src={listing.images[0]}
-              alt={listing.name}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              data-ai-hint="business exterior"
-            />
+            {listing.images && listing.images.length > 0 ? (
+              <Image
+                src={listing.images[0]}
+                alt={listing.name}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            ) : (
+                <div className="flex h-full w-full items-center justify-center bg-muted">
+                    <Building2 className="h-16 w-16 text-muted-foreground/50" />
+                </div>
+            )}
           </div>
         </CardHeader>
         <CardContent className="p-4 flex-grow">
