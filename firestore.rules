@@ -1,45 +1,42 @@
-
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+    // Helper function to check if a user is an admin
     function isAdmin() {
-      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Listings collection rules
     match /listings/{listingId} {
-      // Public can read approved listings
-      allow get: if resource.data.status == 'approved';
-      allow list: if true; // Allow querying, but rules on get will enforce status check for results
+      // Anyone can read a listing if its status is 'approved'
+      allow read: if resource.data.status == 'approved';
 
-      // Authenticated users can create new listings
-      allow create: if request.auth != null;
-      
-      // Only the owner or an admin can update a listing
-      allow update: if request.auth.uid == resource.data.ownerId || isAdmin();
+      // Only authenticated users can create a new listing.
+      // They must own the listing and set the status to 'pending'.
+      allow create: if request.auth != null 
+                    && request.resource.data.ownerId == request.auth.uid
+                    && request.resource.data.status == 'pending';
 
-      // Only an admin can delete a listing
-      allow delete: if isAdmin();
+      // Only an admin can update or delete a listing
+      allow update, delete: if isAdmin();
     }
 
+    // Users collection rules
     match /users/{userId} {
-      // Users can read their own document, admins can read any
-      allow get: if request.auth.uid == userId || isAdmin();
-      // Users can create their own user document (on signup)
+      // A user can read their own document, or an admin can read any user document
+      allow read: if request.auth.uid == userId || isAdmin();
+      
+      // A user can create their own user document upon signup
       allow create: if request.auth.uid == userId;
 
-      // Admins can manage all user documents
-      allow list, update, delete: if isAdmin();
+      // A user can update their own document, but cannot change their role
+      allow update: if request.auth.uid == userId && request.resource.data.role == resource.data.role;
+    }
 
-      // Notifications subcollection
-      match /notifications/{notificationId} {
-        // Users can read and update their own notifications
-        allow read, update, list: if request.auth.uid == userId;
-        // Admins can do anything
-        allow write, delete: if isAdmin();
-      }
+    // Notifications subcollection rules
+    match /users/{userId}/notifications/{notificationId} {
+        // Only the user themselves can access their notifications
+        allow list, read, write, delete: if request.auth.uid == userId;
     }
   }
 }
