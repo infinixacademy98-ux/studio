@@ -17,12 +17,12 @@ export function ModeToggle() {
 
   if (!mounted) {
     // return a placeholder button to avoid layout shift
-    return <Button variant="outline" size="icon" disabled className="h-8 w-8" />
+    return <Button variant="ghost" size="icon" disabled className="h-8 w-8" />
   }
 
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="icon"
       className="h-8 w-8"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
