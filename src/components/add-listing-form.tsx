@@ -35,7 +35,7 @@ const formSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters."),
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
-  website: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  website: z.string().optional(),
   street: z.string().min(5, "Please enter a street address."),
   city: z.string().min(2, "Please enter a city."),
   state: z.string().min(2, "Please enter a state."),
@@ -91,6 +91,11 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     try {
       const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
       
+      let websiteUrl = values.website;
+      if (websiteUrl && !/^https?:\/\//i.test(websiteUrl)) {
+        websiteUrl = 'https://' + websiteUrl;
+      }
+
       await addDoc(collection(db, "listings"), {
         ownerId: user.uid,
         name: values.name,
@@ -99,7 +104,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
         contact: {
           phone: values.phone,
           email: values.email,
-          website: values.website,
+          website: websiteUrl,
         },
         address: {
           street: values.street,
