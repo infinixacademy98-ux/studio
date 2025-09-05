@@ -12,7 +12,6 @@ import type { User } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { Loader2 } from "lucide-react";
 
 type AuthContextType = {
   user: User | null;
@@ -33,10 +32,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setLoading(true); // Start loading when auth state changes
       if (user) {
         setUser(user);
-        // Check for admin role in Firestore
         const userDocRef = doc(db, "users", user.uid);
         const userDocSnap = await getDoc(userDocRef);
         if (userDocSnap.exists() && userDocSnap.data().role === "admin") {
@@ -48,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         setIsAdmin(false);
       }
-      setLoading(false); // Finish loading after all checks are done
+      setLoading(false);
     });
 
     return () => unsubscribe();

@@ -25,13 +25,8 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [listings, setListings] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingListings, setLoadingListings] = useState(true);
   const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
-  const [isHydrating, setIsHydrating] = useState(true);
-
-  useEffect(() => {
-    setIsHydrating(false);
-  }, []);
 
   useEffect(() => {
     if (!authLoading) {
@@ -42,7 +37,7 @@ export default function AdminDashboardPage() {
   }, [user, isAdmin, authLoading, router]);
 
   const fetchListings = async () => {
-    setLoading(true);
+    setLoadingListings(true);
     try {
       const q = query(collection(db, "listings"), orderBy("createdAt", "desc"));
       const querySnapshot = await getDocs(q);
@@ -58,7 +53,7 @@ export default function AdminDashboardPage() {
         description: "Failed to fetch listings.",
       });
     } finally {
-      setLoading(false);
+      setLoadingListings(false);
     }
   };
 
@@ -96,7 +91,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  if (isHydrating || authLoading || !user || !isAdmin) {
+  if (authLoading || !user || !isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -123,7 +118,7 @@ export default function AdminDashboardPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {loadingListings ? (
                 <TableRow>
                     <TableCell colSpan={6} className="text-center">
                         <div className="flex justify-center py-16">

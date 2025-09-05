@@ -39,22 +39,13 @@ export default function SignInPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, isAdmin, loading: authLoading } = useAuth();
-  const [isHydrating, setIsHydrating] = useState(true);
-
-  useEffect(() => {
-    setIsHydrating(false);
-  }, []);
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     if (!authLoading && user) {
-       if (isAdmin) {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/");
-      }
+      router.push("/");
     }
-  }, [user, isAdmin, authLoading, router]);
+  }, [user, authLoading, router]);
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -69,10 +60,7 @@ export default function SignInPage() {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      toast({
-        title: "Signed In!",
-        description: "Welcome back!",
-      });
+      // Let the useEffect handle redirection
     } catch (error) {
       toast({
         variant: "destructive",
@@ -83,7 +71,7 @@ export default function SignInPage() {
     }
   }
 
-  if (isHydrating || authLoading || user) {
+  if (authLoading || user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />

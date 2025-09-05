@@ -43,11 +43,6 @@ export default function SignUpPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { user, loading } = useAuth();
-  const [isHydrating, setIsHydrating] = useState(true);
-
-  useEffect(() => {
-    setIsHydrating(false);
-  }, []);
 
   useEffect(() => {
     if (!loading && user) {
@@ -76,11 +71,7 @@ export default function SignUpPage() {
         createdAt: new Date(),
       });
 
-      toast({
-        title: "Account Created!",
-        description: "You have been successfully signed up.",
-      });
-      router.push("/");
+      // Let the useEffect handle redirection.
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -95,7 +86,7 @@ export default function SignUpPage() {
     }
   }
 
-  if (isHydrating || loading || user) {
+  if (loading || user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />

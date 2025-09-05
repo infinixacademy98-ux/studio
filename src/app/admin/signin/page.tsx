@@ -40,11 +40,6 @@ export default function AdminSignInPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, isAdmin, loading: authLoading } = useAuth();
-  const [isHydrating, setIsHydrating] = useState(true);
-
-  useEffect(() => {
-    setIsHydrating(false);
-  }, []);
 
   useEffect(() => {
     if (!authLoading) {
@@ -66,10 +61,7 @@ export default function AdminSignInPage() {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      toast({
-        title: "Signed In!",
-        description: "Redirecting to dashboard...",
-      });
+      // Let the useEffect handle redirection
     } catch (error) {
       toast({
         variant: "destructive",
@@ -80,9 +72,19 @@ export default function AdminSignInPage() {
     }
   }
 
-  if (isHydrating || authLoading || (user && isAdmin)) {
+  if (authLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // If user is logged in but not admin, they shouldn't be here. Redirect them.
+  if (user && !isAdmin) {
+    router.push('/');
+    return (
+       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );

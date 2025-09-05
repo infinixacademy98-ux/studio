@@ -3,7 +3,7 @@
 
 import { useAuth } from "@/components/auth-provider";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import HomeContent from "@/components/home-content";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/header";
@@ -12,11 +12,6 @@ import Footer from "@/components/footer";
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [isHydrating, setIsHydrating] = useState(true);
-
-  useEffect(() => {
-    setIsHydrating(false);
-  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -24,7 +19,7 @@ export default function Home() {
     }
   }, [user, loading, router]);
 
-  if (isHydrating || loading || !user) {
+  if (loading || !user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
