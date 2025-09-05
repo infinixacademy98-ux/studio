@@ -44,12 +44,14 @@ export default function AdminSignInPage() {
   const { user, loading } = useAuth();
 
   useEffect(() => {
+    // If a user is already logged in, redirect them.
     if (!loading && user) {
        if (user.email === ADMIN_EMAIL) {
         router.push("/admin/dashboard");
       } else {
-        // A non-admin is already logged in, send them to the homepage
-        router.push("/");
+        // A non-admin is already logged in on the admin page.
+        // Let them stay here in case they want to sign in as admin.
+        // Or you could sign them out. For now, we do nothing.
       }
     }
   }, [user, loading, router]);
@@ -77,7 +79,7 @@ export default function AdminSignInPage() {
         // A non-admin user logged in from the admin page
         toast({
             title: "Signed In!",
-            description: "Redirecting to homepage.",
+            description: "Redirecting to homepage. Use the main sign in for user accounts.",
         });
         router.push("/");
       }
@@ -92,7 +94,8 @@ export default function AdminSignInPage() {
     }
   }
   
-  if (loading || user) {
+  // Show a loader if we are still checking auth state or if an admin is already logged in and redirecting.
+  if (loading || (user && user.email === ADMIN_EMAIL)) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
