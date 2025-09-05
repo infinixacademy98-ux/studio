@@ -34,15 +34,10 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     if (!authLoading) {
       if (!user || user.email !== ADMIN_EMAIL) {
-        toast({
-          variant: "destructive",
-          title: "Access Denied",
-          description: "You do not have permission to view this page.",
-        });
         router.push("/signin");
       }
     }
-  }, [user, authLoading, router, toast]);
+  }, [user, authLoading, router]);
 
   const fetchListings = async () => {
     setLoading(true);
