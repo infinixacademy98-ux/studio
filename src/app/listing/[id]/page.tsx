@@ -1,7 +1,7 @@
 
 "use client";
 
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import StarRating from "@/components/star-rating";
@@ -43,10 +43,11 @@ type BusinessDetailsPageProps = {
   };
 };
 
-function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
+function BusinessDetailsPageContent() {
   const [listing, setListing] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
-  const { id } = params;
+  const params = useParams();
+  const id = params.id as string;
 
   useEffect(() => {
     if (!id) return;
@@ -250,7 +251,7 @@ function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
 export default function BusinessDetailsPage({ params }: BusinessDetailsPageProps) {
     return (
         <WithAuthLayout>
-            <BusinessDetailsPageContent params={params} />
+            <BusinessDetailsPageContent />
         </WithAuthLayout>
     )
 }
