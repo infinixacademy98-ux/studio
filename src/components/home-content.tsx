@@ -137,7 +137,7 @@ export default function HomeContent() {
       </header>
       
        <section className="mb-12">
-          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center gap-2">
+          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
             <TrendingUp className="text-primary" />
             Top Rated Businesses
           </h2>
