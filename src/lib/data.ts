@@ -27,7 +27,7 @@ export const businessListings: Business[] = [
     "id": "1",
     "name": "Shri Datta Digambar Yatra",
     "category": "Travel & Tourism",
-    "description": "Agra, Mathura Yatra Agra Red Fort, Taj Mahal Mathura - Krishna Janmabhoomi, Bake Bihari Temple, Prem Temple, Vrindavan, Govardhan Parvat Parikrama, Barsana Radha Mahal and other places of interest Delhi - Akshardham, India Gate, Qutub Minar, Lotus Temple travel day8 travel fee travel date",
+    "description": "Agra, Mathura Yatra Agra Red Fort, Taj Mahal Mathura - Krishna Janmabhoomi, Bake Bihari Temple, Prem Temple, Vrindavan, Govardhan Parvat Parikrama, Barsana Radha Mahal and other places of interest Delhi - Akshardham, India Gate, Qutub Minar, Lotus Temple",
     "ownerId": "mock-owner",
     "status": "approved",
     "createdAt": new Date("2023-10-27T10:00:00Z"),
@@ -220,5 +220,35 @@ export const businessListings: Business[] = [
     },
     "images": ["https://picsum.photos/seed/9/600/400"],
     "reviews": []
+  },
+  {
+    "id": "10",
+    "name": "Infinix Academy",
+    "category": "Education",
+    "description": "Infinix Academy is a premier institution offering a wide range of courses in software development, digital marketing, and other in-demand tech skills. We empower students to build successful careers in the tech industry.",
+    "ownerId": "mock-owner",
+    "status": "approved",
+    "createdAt": new Date(),
+    "contact": {
+      "phone": "123-456-7890",
+      "email": "contact@infinixacademy.in",
+      "website": "https://www.infinixacademy.in/"
+    },
+    "address": {
+      "street": "Kulkarni Galli",
+      "city": "Belgaum",
+      "state": "Karnataka",
+      "zip": "590001"
+    },
+    "images": ["https://picsum.photos/seed/infinix/600/400"],
+    "reviews": [
+        {
+            "id": "rev1",
+            "author": "Priya S.",
+            "rating": 5,
+            "comment": "Excellent courses and great instructors. Highly recommended!",
+            "date": "2024-07-20T10:00:00Z"
+        }
+    ]
   }
 ];
