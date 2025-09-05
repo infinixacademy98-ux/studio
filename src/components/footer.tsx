@@ -11,7 +11,7 @@ export default function Footer() {
             MVS Belgaum
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            Designed by <a href="https://infinixacademy.in" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">infinixacademy.in</a>
+            Designed by <a href="https://www.infinixacademy.in/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">infinixacademy.in</a>
           </p>
         </div>
       </div>
