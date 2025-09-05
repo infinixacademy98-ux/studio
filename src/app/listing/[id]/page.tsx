@@ -34,8 +34,7 @@ import {
 import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
 import type { Business } from "@/lib/types";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { businessListings } from "@/lib/data";
 
 type BusinessDetailsPageProps = {
   params: {
@@ -52,23 +51,16 @@ function BusinessDetailsPageContent() {
   useEffect(() => {
     if (!id) return;
 
-    const fetchListing = async () => {
+    const fetchListing = () => {
       setLoading(true);
-      try {
-        const docRef = doc(db, "listings", id);
-        const docSnap = await getDoc(docRef);
+      const foundListing = businessListings.find((l) => l.id === id);
 
-        if (docSnap.exists()) {
-          setListing({ id: docSnap.id, ...docSnap.data() } as Business);
-        } else {
-          notFound();
-        }
-      } catch (error) {
-        console.error("Error fetching listing:", error);
+      if (foundListing) {
+        setListing(foundListing);
+      } else {
         notFound();
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     fetchListing();

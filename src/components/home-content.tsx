@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories, cities } from "@/lib/data";
+import { categories, cities, businessListings } from "@/lib/data";
 import type { Business } from "@/lib/types";
 import BusinessCard from "@/components/business-card";
 import { Input } from "@/components/ui/input";
@@ -24,8 +24,6 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const featuredCities = [
@@ -75,20 +73,11 @@ export default function HomeContent() {
   const [rating, setRating] = useState("all");
 
   useEffect(() => {
-    const fetchListings = async () => {
+    const fetchListings = () => {
       setLoading(true);
-      try {
-        const q = query(collection(db, "listings"), where("status", "==", "approved"));
-        const querySnapshot = await getDocs(q);
-        const listingsData = querySnapshot.docs.map(
-          (doc) => ({ id: doc.id, ...doc.data() } as Business)
-        );
-        setListings(listingsData);
-      } catch (error) {
-        console.error("Error fetching listings:", error);
-      } finally {
-        setLoading(false);
-      }
+      // Using local data instead of Firestore
+      setListings(businessListings);
+      setLoading(false);
     };
 
     fetchListings();
