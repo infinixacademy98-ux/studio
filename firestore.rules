@@ -2,49 +2,47 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
+    
+    // Helper function to check if a user is an admin
     function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // USERS collection
-    // - Users can read their own document
-    // - Users can be created by anyone (during signup)
-    // - Only admins can update user roles
-    match /users/{userId} {
-      allow read: if isSignedIn() && (isOwner(userId) || isAdmin());
-      allow create: if true;
-      allow update: if isAdmin(); // Protect role field
-      allow delete: if isAdmin();
-
-      // NOTIFICATIONS subcollection
-      // - Users can read, create, update their own notifications
-      match /notifications/{notificationId} {
-        allow read, write: if isSignedIn() and isOwner(userId);
-      }
-    }
-
-    // LISTINGS collection
-    // - Anyone can read approved listings.
-    // - Signed-in users can create new listings (status must be 'pending').
-    // - Only the owner or an admin can update a listing.
-    // - Admins can approve listings by changing status.
-    // - Only admins can delete listings.
+    // Rules for the 'listings' collection
     match /listings/{listingId} {
-      allow read: if resource.data.status == 'approved';
-      allow create: if isSignedIn() && request.resource.data.status == 'pending';
-      allow update: if isSignedIn() && (isOwner(resource.data.ownerId) || isAdmin());
+      // READ: Anyone can read approved listings. Admins can read any listing.
+      allow read: if (resource.data.status == 'approved') || isAdmin();
+      
+      // CREATE: Any authenticated user can create a new listing.
+      // The new listing must have a 'pending' status and the ownerId must match the user's UID.
+      allow create: if request.auth != null &&
+                      request.resource.data.status == 'pending' &&
+                      request.resource.data.ownerId == request.auth.uid;
+                      
+      // UPDATE: Only admins can update listings (e.g., to approve them).
+      allow update: if isAdmin();
+      
+      // DELETE: Only admins can delete listings.
       allow delete: if isAdmin();
+    }
+
+    // Rules for the 'users' collection
+    match /users/{userId} {
+      // READ: A user can read their own document. Admins can read any user document.
+      allow read: if request.auth.uid == userId || isAdmin();
+      
+      // CREATE: A user can create their own user document upon signup.
+      allow create: if request.auth.uid == userId;
+      
+      // UPDATE, DELETE: Not allowed for now to prevent users from changing their own roles.
+      allow update, delete: if false;
+
+      // Nested 'notifications' subcollection rules
+      match /notifications/{notificationId} {
+        // READ, WRITE: A user can read and write (which includes deleting or marking as read) their own notifications.
+        allow read, write: if request.auth.uid == userId;
+      }
     }
   }
 }
-    
