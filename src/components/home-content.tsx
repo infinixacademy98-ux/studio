@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories, cities } from "@/lib/data";
+import { categories, cities, businessListings as mockListings } from "@/lib/data";
 import type { Business } from "@/lib/types";
 import BusinessCard from "@/components/business-card";
 import { Input } from "@/components/ui/input";
@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import {
   Popover,
   PopoverContent,
@@ -35,33 +33,12 @@ const featuredCities = [
 ];
 
 export default function HomeContent() {
-  const [listings, setListings] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState<Business[]>(mockListings);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
   const [city, setCity] = useState("all");
   const [rating, setRating] = useState("all");
-
-  useEffect(() => {
-    const fetchListings = async () => {
-      setLoading(true);
-      try {
-        const q = query(collection(db, "listings"), where("status", "==", "approved"));
-        const querySnapshot = await getDocs(q);
-        const listingsData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Business[];
-        setListings(listingsData);
-      } catch (error) {
-        console.error("Error fetching listings:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchListings();
-  }, []);
 
   const filteredListings = useMemo(() => {
     return listings.filter((listing) => {
