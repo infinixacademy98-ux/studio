@@ -46,11 +46,12 @@ type BusinessDetailsPageProps = {
 function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
   const [listing, setListing] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
+  const { id } = params;
 
   useEffect(() => {
+    if (!id) return;
+
     const fetchListing = async () => {
-      const id = params.id;
-      if (!id) return;
       setLoading(true);
       try {
         const docRef = doc(db, "listings", id);
@@ -70,7 +71,7 @@ function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
     };
 
     fetchListing();
-  }, [params.id]);
+  }, [id]);
   
   if (loading) {
     return (
