@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { categories, cities } from "@/lib/data";
@@ -26,6 +26,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 const featuredCities = [
   { name: "Belgaum", image: "https://picsum.photos/seed/belgaum/600/400", hint: "historic city" },
@@ -41,6 +49,10 @@ export default function HomeContent() {
   const [category, setCategory] = useState("all");
   const [city, setCity] = useState("all");
   const [rating, setRating] = useState("all");
+
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: true })
+  );
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -62,11 +74,26 @@ export default function HomeContent() {
     fetchListings();
   }, []);
 
+  const getAverageRating = (listing: Business) => {
+    if (!listing.reviews || listing.reviews.length === 0) {
+      return 0;
+    }
+    return listing.reviews.reduce((acc, review) => acc + review.rating, 0) / listing.reviews.length;
+  };
+
+  const topRatedListings = useMemo(() => {
+    return listings
+      .map(listing => ({
+        ...listing,
+        averageRating: getAverageRating(listing),
+      }))
+      .filter(listing => listing.averageRating >= 4)
+      .sort((a, b) => b.averageRating - a.averageRating);
+  }, [listings]);
+
   const filteredListings = useMemo(() => {
     return listings.filter((listing) => {
-      const averageRating =
-        listing.reviews.reduce((acc, review) => acc + review.rating, 0) /
-        (listing.reviews.length || 1);
+      const averageRating = getAverageRating(listing);
 
       return (
         (listing.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -88,6 +115,32 @@ export default function HomeContent() {
           Find the best local services, right at your fingertips.
         </p>
       </header>
+      
+      {topRatedListings.length > 0 && (
+         <section className="mb-12">
+            <h2 className="text-2xl font-bold tracking-tight mb-4">Top Rated Businesses</h2>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[autoplayPlugin.current]}
+              onMouseEnter={() => autoplayPlugin.current.stop()}
+              onMouseLeave={() => autoplayPlugin.current.reset()}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {topRatedListings.map((listing) => (
+                  <CarouselItem key={listing.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                      <BusinessCard listing={listing} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+         </section>
+      )}
 
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
         <div className="flex gap-4">
@@ -157,10 +210,10 @@ export default function HomeContent() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Any Rating</SelectItem>
-                            <SelectItem value="4">4 Stars & Up</SelectItem>
-                            <SelectItem value="3">3 Stars & Up</SelectItem>
-                            <SelectItem value="2">2 Stars & Up</SelectItem>
-                            <SelectItem value="1">1 Star & Up</SelectItem>
+                            <SelectItem value="4">4 Stars &amp; Up</SelectItem>
+                            <SelectItem value="3">3 Stars &amp; Up</SelectItem>
+                            <SelectItem value="2">2 Stars &amp; Up</SelectItem>
+                            <SelectItem value="1">1 Star &amp; Up</SelectItem>
                         </SelectContent>
                     </Select>
                   </div>
@@ -219,3 +272,5 @@ export default function HomeContent() {
     </div>
   );
 }
+
+    
