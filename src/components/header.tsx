@@ -59,13 +59,13 @@ export default function Header() {
             </Link>
           </Button>
           <ModeToggle />
-           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => router.back()}>
-                <ArrowLeft className="h-4 w-4" />
+           <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.back()}>
+                <ArrowLeft className="h-5 w-5" />
                 <span className="sr-only">Go back</span>
             </Button>
-            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => router.forward()}>
-                <ArrowRight className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.forward()}>
+                <ArrowRight className="h-5 w-5" />
                 <span className="sr-only">Go forward</span>
             </Button>
           </div>
