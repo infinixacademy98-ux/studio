@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ChevronDown } from "lucide-react";
+import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ChevronDown, ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
 
@@ -51,6 +51,18 @@ export default function Header() {
             <span className="font-bold">MVS Belgaum</span>
           </Link>
         </div>
+        
+        <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => router.back()}>
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Go back</span>
+            </Button>
+            <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => router.forward()}>
+                <ArrowRight className="h-4 w-4" />
+                <span className="sr-only">Go forward</span>
+            </Button>
+        </div>
+
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Button asChild>
             <Link href="/add-listing">
@@ -61,7 +73,7 @@ export default function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 flex items-center gap-2 px-2">
+                <Button variant="ghost" className="relative h-8 flex items-center gap-2 px-2 group">
                    <Avatar className="h-8 w-8">
                     <AvatarFallback>
                         <UserIcon className="h-5 w-5" />
