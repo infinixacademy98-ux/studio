@@ -42,9 +42,14 @@ export default function AdminSignInPage() {
   const { user, isAdmin, loading } = useAuth();
 
   useEffect(() => {
-    // If a user is already logged in and is an admin, redirect them.
-    if (!loading && user && isAdmin) {
-      router.push("/admin/dashboard");
+    // If auth is not loading and a user is logged in...
+    if (!loading && user) {
+      // ...and they are an admin, redirect them to the dashboard.
+      if (isAdmin) {
+        router.push("/admin/dashboard");
+      }
+      // If they are not an admin, we don't redirect them away from this page,
+      // allowing them to sign out and sign in with an admin account if they need to.
     }
   }, [user, isAdmin, loading, router]);
 
@@ -63,11 +68,11 @@ export default function AdminSignInPage() {
       // The useAuth hook will automatically pick up the new user state,
       // determine if they are an admin, and the useEffect will redirect.
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      // We don't need to manually check role here, the provider handles it.
       // The useEffect will fire upon successful login and redirect.
+      // A toast here is good for user feedback.
       toast({
           title: "Signed In!",
-          description: "Redirecting...",
+          description: "Redirecting to dashboard...",
       });
     } catch (error) {
       toast({
@@ -75,12 +80,12 @@ export default function AdminSignInPage() {
         title: "Sign In Failed",
         description: "Please check your credentials and try again.",
       });
-    } finally {
       setIsLoading(false);
     }
+    // We don't set loading to false here because the redirect will happen.
   }
-  
-  // Show a loader if we are still checking auth state or if an admin is already logged in and redirecting.
+
+  // Show a loader if we are still checking auth state OR if an admin is logged in and is being redirected.
   if (loading || (user && isAdmin)) {
     return (
       <div className="flex items-center justify-center h-screen">

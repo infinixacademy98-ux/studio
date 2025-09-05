@@ -42,10 +42,13 @@ export default function SignInPage() {
   const { user, isAdmin, loading } = useAuth();
 
   useEffect(() => {
+    // Wait until the auth state is fully loaded
     if (!loading && user) {
+       // If the user is an admin, always send them to the admin dashboard
        if (isAdmin) {
         router.push("/admin/dashboard");
       } else {
+        // If they are a regular user, send them to the homepage
         router.push("/");
       }
     }
@@ -75,11 +78,11 @@ export default function SignInPage() {
         title: "Sign In Failed",
         description: "Please check your email and password and try again.",
       });
-    } finally {
       setIsLoading(false);
     }
   }
-  
+
+  // Show a loading spinner while checking for an existing session or during login
   if (loading || user) {
     return (
       <div className="flex items-center justify-center h-screen">
