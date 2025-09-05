@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import type { Business } from "@/lib/types";
@@ -24,7 +25,7 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
 
   return (
     <Link href={`/listing/${listing.id}`} className="group block">
-      <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+      <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         <CardHeader className="p-0">
           <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
             <Image
