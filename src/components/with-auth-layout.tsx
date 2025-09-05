@@ -3,12 +3,15 @@
 import { useAuth } from "@/components/auth-provider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import HomeContent from "@/components/home-content";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 
-export default function Home() {
+export default function WithAuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -29,9 +32,7 @@ export default function Home() {
   return (
     <div className="relative flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
-        <HomeContent />
-      </main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

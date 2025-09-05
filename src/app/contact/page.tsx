@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin } from "lucide-react";
+import WithAuthLayout from "@/components/with-auth-layout";
 
-export default function ContactPage() {
+function ContactPageContent() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
       <div className="text-center mb-12">
@@ -71,4 +72,12 @@ export default function ContactPage() {
       </div>
     </div>
   );
+}
+
+export default function ContactPage() {
+    return (
+        <WithAuthLayout>
+            <ContactPageContent />
+        </WithAuthLayout>
+    )
 }

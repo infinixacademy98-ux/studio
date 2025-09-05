@@ -1,7 +1,8 @@
 import AddListingForm from "@/components/add-listing-form";
 import { categorizeBusinessListing } from "@/ai/flows/categorize-business-listing";
+import WithAuthLayout from "@/components/with-auth-layout";
 
-export default function AddListingPage() {
+function AddListingPageContent() {
   async function suggestCategoryAction(
     description: string
   ): Promise<{ category: string } | { error: string }> {
@@ -29,4 +30,12 @@ export default function AddListingPage() {
       <AddListingForm suggestCategoryAction={suggestCategoryAction} />
     </div>
   );
+}
+
+export default function AddListingPage() {
+    return (
+        <WithAuthLayout>
+            <AddListingPageContent />
+        </WithAuthLayout>
+    )
 }

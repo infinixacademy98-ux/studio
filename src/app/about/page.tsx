@@ -1,6 +1,7 @@
 import { Building2, Users, Handshake } from "lucide-react";
+import WithAuthLayout from "@/components/with-auth-layout";
 
-export default function AboutPage() {
+function AboutPageContent() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
       <div className="text-center mb-12">
@@ -49,4 +50,13 @@ export default function AboutPage() {
       </div>
     </div>
   );
+}
+
+
+export default function AboutPage() {
+    return (
+        <WithAuthLayout>
+            <AboutPageContent />
+        </WithAuthLayout>
+    )
 }

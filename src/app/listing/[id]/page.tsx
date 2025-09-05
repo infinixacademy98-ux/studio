@@ -28,6 +28,7 @@ import {
   MapPin,
   Star,
 } from "lucide-react";
+import WithAuthLayout from "@/components/with-auth-layout";
 
 type BusinessDetailsPageProps = {
   params: {
@@ -35,9 +36,7 @@ type BusinessDetailsPageProps = {
   };
 };
 
-export default function BusinessDetailsPage({
-  params,
-}: BusinessDetailsPageProps) {
+function BusinessDetailsPageContent({ params }: BusinessDetailsPageProps) {
   const listing = businessListings.find((l) => l.id === params.id);
 
   if (!listing) {
@@ -194,4 +193,12 @@ export default function BusinessDetailsPage({
       </div>
     </div>
   );
+}
+
+export default function BusinessDetailsPage({ params }: BusinessDetailsPageProps) {
+    return (
+        <WithAuthLayout>
+            <BusinessDetailsPageContent params={params} />
+        </WithAuthLayout>
+    )
 }
