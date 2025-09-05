@@ -90,14 +90,11 @@ export default function HomeContent() {
     return listing.reviews.reduce((acc, review) => acc + review.rating, 0) / listing.reviews.length;
   };
 
-  const topRatedListings = useMemo(() => {
-    return listings
-      .map(listing => ({
-        ...listing,
-        averageRating: getAverageRating(listing),
-      }))
-      .filter(listing => listing.averageRating >= 4)
-      .sort((a, b) => b.averageRating - a.averageRating);
+  const featuredListings = useMemo(() => {
+    // Sort by creation date descending to get the newest first, and take the top 6
+    return [...listings]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 6);
   }, [listings]);
 
   const filteredListings = useMemo(() => {
@@ -128,17 +125,17 @@ export default function HomeContent() {
        <section className="mb-12">
           <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
             <TrendingUp className="text-primary" />
-            Top Rated Businesses
+            Recently Added Businesses
           </h2>
            <div className="relative w-full overflow-hidden">
                 {loading ? (
                     <div className="flex flex-nowrap">
                         <MarqueeSkeleton />
                     </div>
-                ) : topRatedListings.length > 0 ? (
+                ) : featuredListings.length > 0 ? (
                     <div className="flex flex-nowrap">
-                        <MarqueeContent listings={topRatedListings} />
-                        <MarqueeContent listings={topRatedListings} />
+                        <MarqueeContent listings={featuredListings} />
+                        <MarqueeContent listings={featuredListings} />
                     </div>
                 ) : (
                      <div className="flex flex-nowrap">
