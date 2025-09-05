@@ -119,10 +119,10 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const isNew = (createdAt: any) => {
-    if (!createdAt?.toDate) return false;
+  const isNew = (listing: Business) => {
+    if (listing.status !== 'pending' || !listing.createdAt?.toDate) return false;
     const oneDay = 24 * 60 * 60 * 1000;
-    return new Date().getTime() - createdAt.toDate().getTime() < oneDay;
+    return new Date().getTime() - listing.createdAt.toDate().getTime() < oneDay;
   }
 
   const formatDate = (timestamp: any) => {
@@ -180,7 +180,7 @@ export default function AdminDashboardPage() {
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
                         <span>{listing.name}</span>
-                        {isNew(listing.createdAt) && (
+                        {isNew(listing) && (
                           <Badge variant="outline" className="text-blue-500 border-blue-500">New</Badge>
                         )}
                       </div>
