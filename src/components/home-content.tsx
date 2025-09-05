@@ -16,9 +16,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal } from "lucide-react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 const featuredCities = [
   { name: "Bengaluru", image: "https://picsum.photos/seed/bengaluru/600/400", hint: "modern city" },
@@ -84,8 +91,8 @@ export default function HomeContent() {
       </header>
 
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div className="relative">
+        <div className="flex gap-4">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
@@ -95,44 +102,73 @@ export default function HomeContent() {
               className="pl-10"
             />
           </div>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="All Categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={city} onValueChange={setCity}>
-            <SelectTrigger>
-              <SelectValue placeholder="All Cities" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Cities</SelectItem>
-              {cities.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {c}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={rating} onValueChange={setRating}>
-            <SelectTrigger>
-              <SelectValue placeholder="Any Rating" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Any Rating</SelectItem>
-              <SelectItem value="4">4 Stars & Up</SelectItem>
-              <SelectItem value="3">3 Stars & Up</SelectItem>
-              <SelectItem value="2">2 Stars & Up</SelectItem>
-              <SelectItem value="1">1 Star & Up</SelectItem>
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                Filter
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Filters</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Refine your search results.
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                   <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger id="category" className="col-span-2 h-8">
+                            <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Categories</SelectItem>
+                            {categories.map((cat) => (
+                            <SelectItem key={cat} value={cat}>
+                                {cat}
+                            </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                  </div>
+                   <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="city">City</Label>
+                    <Select value={city} onValueChange={setCity}>
+                        <SelectTrigger id="city" className="col-span-2 h-8">
+                           <SelectValue placeholder="All Cities" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Cities</SelectItem>
+                            {cities.map((c) => (
+                            <SelectItem key={c} value={c}>
+                                {c}
+                            </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                  </div>
+                   <div className="grid grid-cols-3 items-center gap-4">
+                    <Label htmlFor="rating">Rating</Label>
+                    <Select value={rating} onValueChange={setRating}>
+                        <SelectTrigger id="rating" className="col-span-2 h-8">
+                           <SelectValue placeholder="Any Rating" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Any Rating</SelectItem>
+                            <SelectItem value="4">4 Stars & Up</SelectItem>
+                            <SelectItem value="3">3 Stars & Up</SelectItem>
+                            <SelectItem value="2">2 Stars & Up</SelectItem>
+                            <SelectItem value="1">1 Star & Up</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
       
