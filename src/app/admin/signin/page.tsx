@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,17 +43,20 @@ export default function AdminSignInPage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
+    // This effect handles redirection for already logged-in users.
     if (!authLoading) {
       if (user) {
         if (isAdmin) {
-            router.push("/admin/dashboard");
+          router.push("/admin/dashboard");
         } else {
-            // Logged-in but not an admin, send to homepage
-            router.push("/");
+          // If a non-admin user is already logged in and lands here,
+          // it's best to keep them on this page and let them sign in as admin.
+          // Or we could sign them out. For now, we do nothing and let them attempt login.
         }
       }
     }
   }, [user, isAdmin, authLoading, router]);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,20 +69,54 @@ export default function AdminSignInPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      // Let the useEffect handle redirection
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+      const loggedInUser = userCredential.user;
+
+      // After successful sign-in, immediately check for admin role.
+      const userDocRef = doc(db, "users", loggedInUser.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists() && userDocSnap.data().role === "admin") {
+        // Role is admin, allow login. The useEffect will handle redirection.
+        toast({
+            title: "Success!",
+            description: "Admin signed in successfully."
+        })
+      } else {
+        // NOT an admin. Sign them out immediately and show an error.
+        await signOut(auth);
+        toast({
+          variant: "destructive",
+          title: "Access Denied",
+          description: "You do not have admin privileges.",
+        });
+      }
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Sign In Failed",
         description: "Please check your credentials and try again.",
       });
+    } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (authLoading || user) {
+  if (authLoading) {
     return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // If user is logged in AND is an admin, show loader while redirecting
+  if (user && isAdmin) {
+     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
