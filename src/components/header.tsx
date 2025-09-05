@@ -52,7 +52,14 @@ export default function Header() {
           </Link>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          <Button asChild>
+            <Link href="/add-listing">
+              <PlusCircle className="mr-2 h-4 w-4" /> Add Listing
+            </Link>
+          </Button>
+          <ModeToggle />
+           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => router.back()}>
                 <ArrowLeft className="h-4 w-4" />
                 <span className="sr-only">Go back</span>
@@ -61,15 +68,7 @@ export default function Header() {
                 <ArrowRight className="h-4 w-4" />
                 <span className="sr-only">Go forward</span>
             </Button>
-        </div>
-
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <Button asChild>
-            <Link href="/add-listing">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Listing
-            </Link>
-          </Button>
-          <ModeToggle />
+          </div>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
