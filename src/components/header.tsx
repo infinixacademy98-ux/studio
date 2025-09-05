@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -14,15 +15,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Building2, PlusCircle, LogOut, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
-
-function getInitials(email?: string | null) {
-  if (!email) return "U";
-  return email.substring(0, 2).toUpperCase();
-}
 
 export default function Header() {
   const { user } = useAuth();
@@ -81,8 +77,9 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="secondary" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                     <AvatarImage src={`https://api.dicebear.com/8.x/initials/svg?seed=${user.email}`} alt={user.email || 'User'} />
-                    <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
+                    <AvatarFallback>
+                        <UserIcon className="h-5 w-5" />
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
