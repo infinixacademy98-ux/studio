@@ -29,7 +29,9 @@ export default function AdminDashboardPage() {
   const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    // Wait until auth is resolved
     if (!authLoading) {
+      // If there's no user or the user is not an admin, redirect
       if (!user || !isAdmin) {
         router.push("/admin/signin");
       }
@@ -58,6 +60,7 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
+    // Only fetch listings if we have a confirmed admin user
     if (user && isAdmin) {
       fetchListings();
     }
@@ -92,17 +95,13 @@ export default function AdminDashboardPage() {
     }
   };
 
-  if (authLoading || loading) {
+  // While auth is loading or if we are redirecting, show a loader
+  if (authLoading || !user || !isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
-  }
-
-  if (!user || !isAdmin) {
-    // This is a fallback while redirecting
-    return null;
   }
 
   return (
@@ -124,44 +123,55 @@ export default function AdminDashboardPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {listings.map((listing) => (
-              <TableRow key={listing.id}>
-                <TableCell className="font-medium">{listing.name}</TableCell>
-                <TableCell>{listing.contact.email}</TableCell>
-                <TableCell>{listing.category}</TableCell>
-                <TableCell>{listing.address.city}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      listing.status === "approved" ? "default" : "secondary"
-                    }
-                    className={listing.status === "approved" ? "bg-green-500" : ""}
-                  >
-                    {listing.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  {listing.status === "pending" && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleApprove(listing.id)}
-                      disabled={isUpdating[listing.id]}
+            {loading ? (
+                <TableRow>
+                    <TableCell colSpan={6} className="text-center">
+                        <div className="flex justify-center py-16">
+                            <Loader2 className="h-8 w-8 animate-spin" />
+                        </div>
+                    </TableCell>
+                </TableRow>
+            ) : listings.length > 0 ? (
+              listings.map((listing) => (
+                <TableRow key={listing.id}>
+                  <TableCell className="font-medium">{listing.name}</TableCell>
+                  <TableCell>{listing.contact.email}</TableCell>
+                  <TableCell>{listing.category}</TableCell>
+                  <TableCell>{listing.address.city}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        listing.status === "approved" ? "default" : "secondary"
+                      }
+                      className={listing.status === "approved" ? "bg-green-500" : ""}
                     >
-                      {isUpdating[listing.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Approve
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                      {listing.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {listing.status === "pending" && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleApprove(listing.id)}
+                        disabled={isUpdating[listing.id]}
+                      >
+                        {isUpdating[listing.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Approve
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+                <TableRow>
+                    <TableCell colSpan={6} className="text-center py-16 text-muted-foreground">
+                        No listings found.
+                    </TableCell>
+                </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
-       {listings.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">
-              <p>No listings found.</p>
-          </div>
-        )}
     </div>
   );
 }

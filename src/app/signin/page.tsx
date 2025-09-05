@@ -38,21 +38,19 @@ const formSchema = z.object({
 export default function SignInPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const { user, isAdmin, loading } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    // Wait until the auth state is fully loaded
-    if (!loading && user) {
-       // If the user is an admin, always send them to the admin dashboard
+    // This effect handles redirection for users who are already logged in
+    if (!authLoading && user) {
        if (isAdmin) {
         router.push("/admin/dashboard");
       } else {
-        // If they are a regular user, send them to the homepage
         router.push("/");
       }
     }
-  }, [user, isAdmin, loading, router]);
+  }, [user, isAdmin, authLoading, router]);
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -64,26 +62,26 @@ export default function SignInPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
+    setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: "Signed In!",
         description: "Welcome back!",
       });
-      // The useEffect hook will handle redirection based on the user's role
+      // The useEffect hook will handle redirection based on the user's role.
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Sign In Failed",
         description: "Please check your email and password and try again.",
       });
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   }
 
-  // Show a loading spinner while checking for an existing session or during login
-  if (loading || user) {
+  // Show a loading spinner while checking auth state or redirecting a logged in user.
+  if (authLoading || user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -113,7 +111,7 @@ export default function SignInPage() {
                       <Input
                         placeholder="m@example.com"
                         {...field}
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -130,15 +128,15 @@ export default function SignInPage() {
                       <Input
                         type="password"
                         {...field}
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && (
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Sign In

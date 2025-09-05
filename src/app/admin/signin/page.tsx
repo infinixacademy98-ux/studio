@@ -38,21 +38,17 @@ const formSchema = z.object({
 export default function AdminSignInPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const { user, isAdmin, loading } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    // If auth is not loading and a user is logged in...
-    if (!loading && user) {
-      // ...and they are an admin, redirect them to the dashboard.
-      if (isAdmin) {
+    // This effect handles redirection for users who are already logged in
+    if (!authLoading) {
+      if (user && isAdmin) {
         router.push("/admin/dashboard");
       }
-      // If they are not an admin, we don't redirect them away from this page,
-      // allowing them to sign out and sign in with an admin account if they need to.
     }
-  }, [user, isAdmin, loading, router]);
-
+  }, [user, isAdmin, authLoading, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,16 +59,14 @@ export default function AdminSignInPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
+    setIsSubmitting(true);
     try {
-      // The useAuth hook will automatically pick up the new user state,
-      // determine if they are an admin, and the useEffect will redirect.
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      // The useEffect will fire upon successful login and redirect.
-      // A toast here is good for user feedback.
+      // Let the useAuth hook and the useEffect handle the redirection.
+      // A toast here provides immediate feedback.
       toast({
-          title: "Signed In!",
-          description: "Redirecting to dashboard...",
+        title: "Signed In!",
+        description: "Redirecting to dashboard...",
       });
     } catch (error) {
       toast({
@@ -80,13 +74,12 @@ export default function AdminSignInPage() {
         title: "Sign In Failed",
         description: "Please check your credentials and try again.",
       });
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
-    // We don't set loading to false here because the redirect will happen.
   }
 
-  // Show a loader if we are still checking auth state OR if an admin is logged in and is being redirected.
-  if (loading || (user && isAdmin)) {
+  // Show a loader if auth is still loading or if a logged-in admin is being redirected.
+  if (authLoading || (user && isAdmin)) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -116,7 +109,7 @@ export default function AdminSignInPage() {
                       <Input
                         placeholder="admin@example.com"
                         {...field}
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
@@ -133,15 +126,15 @@ export default function AdminSignInPage() {
                       <Input
                         type="password"
                         {...field}
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && (
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Sign In
