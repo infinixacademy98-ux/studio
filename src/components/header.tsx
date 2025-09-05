@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ChevronDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
 
@@ -73,13 +73,12 @@ export default function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 flex items-center gap-2 px-2 group">
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0">
                    <Avatar className="h-8 w-8">
                     <AvatarFallback>
                         <UserIcon className="h-5 w-5" />
                     </AvatarFallback>
                   </Avatar>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
