@@ -163,8 +163,8 @@ export default function HomeContent() {
       
 
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1 sm:max-w-xs">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="relative flex-grow-0 sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
@@ -174,7 +174,7 @@ export default function HomeContent() {
               className="pl-10"
             />
           </div>
-          <div className="flex-1 sm:flex-initial sm:min-w-[180px]">
+          <div className="flex-grow-0 sm:min-w-[180px]">
             <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger>
                     <SelectValue placeholder="All Categories" />
@@ -191,7 +191,7 @@ export default function HomeContent() {
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="flex-1 sm:flex-initial">
+              <Button variant="outline" className="flex-grow-0">
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
                 Filter
               </Button>
