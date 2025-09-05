@@ -83,7 +83,11 @@ export default function AdminDashboardPage() {
         description: "Listing has been approved.",
       });
       // Refresh the list to show the updated status
-      fetchListings();
+      setListings(prevListings => 
+        prevListings.map(listing => 
+          listing.id === id ? { ...listing, status: 'approved' } : listing
+        )
+      );
     } catch (error) {
       console.error("Error approving listing:", error);
       toast({
