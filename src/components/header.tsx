@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -20,11 +21,23 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
   const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -44,7 +57,11 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className={cn(
+      "sticky top-0 z-50 w-full transition-all duration-300",
+      "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+      isScrolled ? "border-b" : ""
+    )}>
       <div className="container flex h-16 items-center">
         <div className="mr-6 flex items-center">
           <Link href="/" className="flex items-center space-x-2">
