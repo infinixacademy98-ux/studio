@@ -25,7 +25,7 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
 
   return (
     <Link href={`/listing/${listing.id}`} className="group block">
-      <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
+      <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1 bg-card">
         <CardHeader className="p-0">
           <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
             <Image

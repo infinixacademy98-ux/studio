@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal, TrendingUp } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -141,7 +141,10 @@ export default function HomeContent() {
       </header>
       
        <section className="mb-12">
-          <h2 className="text-2xl font-bold tracking-tight mb-4">Top Rated Businesses</h2>
+          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center gap-2">
+            <TrendingUp className="text-primary" />
+            Top Rated Businesses
+          </h2>
           {loading ? (
              <TopRatedSkeleton />
           ) : topRatedListings.length > 0 ? (
