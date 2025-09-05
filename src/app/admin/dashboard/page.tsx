@@ -28,6 +28,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Loader2, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 
 export default function AdminDashboardPage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -39,8 +40,10 @@ export default function AdminDashboardPage() {
   const [selectedListing, setSelectedListing] = useState<Business | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !isAdmin) {
+    if (!authLoading && !user) {
       router.push("/admin/signin");
+    } else if (!authLoading && user && !isAdmin) {
+      router.push("/");
     }
   }, [user, isAdmin, authLoading, router]);
 
@@ -122,7 +125,14 @@ export default function AdminDashboardPage() {
     return new Date().getTime() - createdAt.toDate().getTime() < oneDay;
   }
 
-  if (authLoading || !isAdmin) {
+  const formatDate = (timestamp: any) => {
+    if (!timestamp?.toDate) {
+      return "N/A";
+    }
+    return format(timestamp.toDate(), "PPpp"); // e.g., Jul 22, 2024, 5:08:16 PM
+  };
+
+  if (authLoading || !user || !isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -148,9 +158,9 @@ export default function AdminDashboardPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Business Name</TableHead>
-                <TableHead>Owner Email</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>City</TableHead>
+                <TableHead>Date Submitted</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -167,15 +177,17 @@ export default function AdminDashboardPage() {
               ) : listings.length > 0 ? (
                 listings.map((listing) => (
                   <TableRow key={listing.id}>
-                    <TableCell className="font-medium flex items-center gap-2">
-                      {listing.name}
-                      {isNew(listing.createdAt) && (
-                        <Badge variant="outline" className="text-blue-500 border-blue-500">New</Badge>
-                      )}
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <span>{listing.name}</span>
+                        {isNew(listing.createdAt) && (
+                          <Badge variant="outline" className="text-blue-500 border-blue-500">New</Badge>
+                        )}
+                      </div>
                     </TableCell>
-                    <TableCell>{listing.contact.email}</TableCell>
                     <TableCell>{listing.category}</TableCell>
                     <TableCell>{listing.address.city}</TableCell>
+                    <TableCell>{formatDate(listing.createdAt)}</TableCell>
                     <TableCell>
                       <Badge
                         variant={
@@ -221,10 +233,14 @@ export default function AdminDashboardPage() {
                 <DialogHeader>
                     <DialogTitle>{selectedListing.name}</DialogTitle>
                     <DialogDescription>
-                        Full listing details submitted for approval.
+                        Full listing details submitted for approval on {formatDate(selectedListing.createdAt)}.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4 text-sm">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <p className="col-span-1 font-semibold text-right">Owner Email</p>
+                        <p className="col-span-3">{selectedListing.contact.email}</p>
+                    </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <p className="col-span-1 font-semibold text-right">Description</p>
                         <p className="col-span-3">{selectedListing.description}</p>
@@ -236,10 +252,6 @@ export default function AdminDashboardPage() {
                      <div className="grid grid-cols-4 items-center gap-4">
                         <p className="col-span-1 font-semibold text-right">Phone</p>
                         <p className="col-span-3">{selectedListing.contact.phone}</p>
-                    </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <p className="col-span-1 font-semibold text-right">Email</p>
-                        <p className="col-span-3">{selectedListing.contact.email}</p>
                     </div>
                      <div className="grid grid-cols-4 items-center gap-4">
                         <p className="col-span-1 font-semibold text-right">Website</p>
