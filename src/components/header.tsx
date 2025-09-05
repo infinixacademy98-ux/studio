@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -16,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ArrowLeft, ArrowRight } from "lucide-react";
+import { PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
 
@@ -47,7 +48,13 @@ export default function Header() {
       <div className="container flex h-14 items-center">
         <div className="mr-6 flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <Building2 className="h-6 w-6 text-primary" />
+            <Image 
+              src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
+              alt="MVS Belgaum Logo" 
+              width={32} 
+              height={32}
+              className="h-8 w-8"
+            />
             <span className="font-bold">MVS Belgaum</span>
           </Link>
         </div>
@@ -61,11 +68,11 @@ export default function Header() {
           <ModeToggle />
            <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.back()}>
-                <ArrowLeft className="h-5 w-5" />
+                <ChevronLeft className="h-5 w-5" />
                 <span className="sr-only">Go back</span>
             </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.forward()}>
-                <ArrowRight className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5" />
                 <span className="sr-only">Go forward</span>
             </Button>
           </div>
