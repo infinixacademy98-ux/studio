@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { businessListings, categories, cities } from "@/lib/data";
 import type { Business } from "@/lib/types";
 import BusinessCard from "@/components/business-card";
@@ -13,7 +14,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import { Search } from "lucide-react";
+
+const featuredCities = [
+  { name: "Bengaluru", image: "https://picsum.photos/seed/bengaluru/600/400", hint: "modern city" },
+  { name: "Mysuru", image: "https://picsum.photos/seed/mysuru/600/400", hint: "historic palace" },
+  { name: "Mangaluru", image: "https://picsum.photos/seed/mangaluru/600/400", hint: "beach sunset" },
+  { name: "Hubballi", image: "https://picsum.photos/seed/hubballi/600/400", hint: "town center" },
+];
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,7 +34,7 @@ export default function Home() {
     return businessListings.filter((listing) => {
       const averageRating =
         listing.reviews.reduce((acc, review) => acc + review.rating, 0) /
-        listing.reviews.length;
+        (listing.reviews.length || 1);
 
       return (
         (listing.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,7 +109,37 @@ export default function Home() {
           </Select>
         </div>
       </div>
+      
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold tracking-tight mb-4">Featured Cities</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredCities.map((city) => (
+            <Link href="#" key={city.name} onClick={() => setCity(city.name)} className="group">
+              <Card className="overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="relative h-48 w-full">
+                    <Image
+                      src={city.image}
+                      alt={`Image of ${city.name}`}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      data-ai-hint={city.hint}
+                    />
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                     <h3 className="absolute bottom-4 left-4 text-xl font-bold text-white">
+                        {city.name}
+                     </h3>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
 
+      <h2 className="text-2xl font-bold tracking-tight mb-4">
+        {city !== "all" ? `Businesses in ${city}` : "All Businesses"}
+      </h2>
       {filteredListings.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredListings.map((listing: Business) => (
