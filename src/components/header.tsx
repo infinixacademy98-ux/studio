@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail } from "lucide-react";
+import { Building2, PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
 
@@ -79,6 +79,12 @@ export default function Header() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                 <DropdownMenuItem asChild>
+                  <Link href="/">
+                    <HomeIcon className="mr-2 h-4 w-4" />
+                    <span>Home</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/about">
                     <Info className="mr-2 h-4 w-4" />
@@ -90,10 +96,6 @@ export default function Header() {
                     <Mail className="mr-2 h-4 w-4" />
                     <span>Contact</span>
                   </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <UserIcon className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
