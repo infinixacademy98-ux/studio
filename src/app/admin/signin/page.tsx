@@ -48,6 +48,7 @@ export default function AdminSignInPage() {
        if (user.email === ADMIN_EMAIL) {
         router.push("/admin/dashboard");
       } else {
+        // A non-admin is already logged in, send them to the homepage
         router.push("/");
       }
     }
@@ -73,6 +74,7 @@ export default function AdminSignInPage() {
         });
         router.push("/admin/dashboard");
       } else {
+        // A non-admin user logged in from the admin page
         toast({
             title: "Signed In!",
             description: "Redirecting to homepage.",
