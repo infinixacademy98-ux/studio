@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { categories, cities, businessListings } from "@/lib/data";
@@ -26,6 +26,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { findRelatedCategories } from "@/ai/flows/find-related-categories";
+import { useToast } from "@/hooks/use-toast";
 
 const MarqueeContent = ({ listings, isDuplicate = false }: { listings: Business[], isDuplicate?: boolean }) => (
     <>
@@ -99,6 +101,10 @@ export default function HomeContent() {
   const [city, setCity] = useState("all");
   const [rating, setRating] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSearching, setIsSearching] = useState(false);
+  const [relatedCategories, setRelatedCategories] = useState<string[]>([]);
+  const { toast } = useToast();
+
   const listingsPerPage = 8;
 
   useEffect(() => {
@@ -111,6 +117,32 @@ export default function HomeContent() {
 
     fetchListings();
   }, []);
+
+  const handleSearch = useCallback(async () => {
+    if (searchTerm.trim().length < 3) {
+      setRelatedCategories([]);
+      return;
+    }
+    setIsSearching(true);
+    try {
+      const result = await findRelatedCategories({
+        query: searchTerm,
+        existingCategories: categories,
+      });
+      setRelatedCategories(result.categories);
+    } catch (error) {
+      console.error("Failed to fetch related categories:", error);
+      toast({
+        variant: "destructive",
+        title: "Search Error",
+        description: "Could not perform smart search. Please try again.",
+      });
+      setRelatedCategories([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [searchTerm, toast]);
+
 
   const getAverageRating = (listing: Business) => {
     if (!listing.reviews || listing.reviews.length === 0) {
@@ -133,10 +165,21 @@ export default function HomeContent() {
       const averageRating = getAverageRating(listing);
       const searchTermLower = searchTerm.toLowerCase();
 
+      // Text search condition
+      const matchesText = searchTerm.trim().length < 3 || (
+        listing.name.toLowerCase().includes(searchTermLower) ||
+        listing.description.toLowerCase().includes(searchTermLower) ||
+        listing.category.toLowerCase().includes(searchTermLower)
+      );
+
+      // Category search condition (including related categories)
+      const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
+      const matchesRelatedCategory = relatedCategories.length > 0 && relatedCategoriesLower.includes(listing.category.toLowerCase());
+      
+      const searchCondition = matchesText || matchesRelatedCategory;
+
       return (
-        (listing.name.toLowerCase().includes(searchTermLower) ||
-          listing.description.toLowerCase().includes(searchTermLower) ||
-          listing.category.toLowerCase().includes(searchTermLower)) &&
+        searchCondition &&
         (category === "all" || listing.category === category) &&
         (city === "all" || listing.address.city === city) &&
         (rating === "all" || Math.floor(averageRating) >= parseInt(rating))
@@ -149,7 +192,7 @@ export default function HomeContent() {
       if (b.id === INFINIX_ACADEMY_ID) return 1;
       return 0; // Keep original order for other items
     });
-  }, [searchTerm, category, city, rating, listings]);
+  }, [searchTerm, category, city, rating, listings, relatedCategories]);
   
   // Reset to page 1 whenever filters change
   useEffect(() => {
@@ -213,14 +256,18 @@ export default function HomeContent() {
                     <div className="relative w-full">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input
-                        type="text"
-                        placeholder="Search for businesses or services"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                          type="text"
+                          placeholder="Search for businesses or services"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                          className="pl-10 rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
-                    <Button type="button" className="rounded-l-none">Search</Button>
+                    <Button type="button" onClick={handleSearch} disabled={isSearching} className="rounded-l-none">
+                      {isSearching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Search
+                    </Button>
                 </div>
               </div>
               <div className="flex-grow-0 sm:min-w-[180px]">
