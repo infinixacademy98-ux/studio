@@ -105,6 +105,7 @@ export default function HomeContent() {
   const [relatedCategories, setRelatedCategories] = useState<string[]>([]);
   const { toast } = useToast();
   const resultsRef = useRef<HTMLDivElement>(null);
+  const isInitialMount = useRef(true);
 
   const listingsPerPage = 8;
 
@@ -145,7 +146,17 @@ export default function HomeContent() {
       setIsSearching(false);
     }
   }, [searchTerm, toast]);
-
+  
+  // Effect to run search when searchTerm changes from popular category click
+  useEffect(() => {
+    if (isInitialMount.current) {
+        isInitialMount.current = false;
+        return;
+    }
+    if (searchTerm) {
+        handleSearch();
+    }
+  }, [searchTerm, handleSearch]);
 
   const getAverageRating = (listing: Business) => {
     if (!listing.reviews || listing.reviews.length === 0) {
@@ -364,13 +375,13 @@ export default function HomeContent() {
                 {popularCategories.map((cat) => (
                   <Link
                     key={cat.name}
-                    href={`/?category=${encodeURIComponent(cat.name)}`}
+                    href="#"
                     className="group text-center w-28 flex-shrink-0"
                     onClick={(e) => {
                       e.preventDefault();
-                      setCategory(cat.name);
-                      setSearchTerm('');
+                      setCategory("all");
                       setRelatedCategories([]);
+                      setSearchTerm(cat.name);
                     }}
                   >
                     <div className="relative w-24 h-24 mx-auto mb-2">
