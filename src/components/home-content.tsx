@@ -127,7 +127,9 @@ export default function HomeContent() {
   }, [listings]);
 
   const filteredListings = useMemo(() => {
-    return listings.filter((listing) => {
+    const INFINIX_ACADEMY_ID = "10";
+    
+    const filtered = listings.filter((listing) => {
       const averageRating = getAverageRating(listing);
 
       return (
@@ -137,6 +139,13 @@ export default function HomeContent() {
         (city === "all" || listing.address.city === city) &&
         (rating === "all" || Math.floor(averageRating) >= parseInt(rating))
       );
+    });
+
+    // Custom sort to bring Infinix Academy to the top
+    return filtered.sort((a, b) => {
+      if (a.id === INFINIX_ACADEMY_ID) return -1;
+      if (b.id === INFINIX_ACADEMY_ID) return 1;
+      return 0; // Keep original order for other items
     });
   }, [searchTerm, category, city, rating, listings]);
   
