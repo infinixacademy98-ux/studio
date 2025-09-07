@@ -155,30 +155,6 @@ export default function HomeContent() {
       </header>
       
        <section className="mb-12">
-          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
-            <TrendingUp className="text-primary" />
-            Recently Added Businesses
-          </h2>
-           <div className="relative w-full overflow-hidden">
-                {loading ? (
-                    <div className="flex flex-nowrap">
-                        <MarqueeSkeleton />
-                    </div>
-                ) : featuredListings.length > 0 ? (
-                    <div className="flex flex-nowrap">
-                        <MarqueeContent listings={[...featuredListings, ...featuredListings]} />
-                    </div>
-                ) : (
-                     <div className="flex flex-nowrap">
-                        <MarqueeSkeleton />
-                    </div>
-                )}
-                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
-            </div>
-       </section>
-
-       <section className="mb-12">
         <h2 className="text-2xl font-bold tracking-tight text-center mb-8">
           Popular Categories
         </h2>
@@ -302,6 +278,30 @@ export default function HomeContent() {
             <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
         </div>
       )}
+
+      <section className="mt-16">
+          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
+            <TrendingUp className="text-primary" />
+            Recently Added Businesses
+          </h2>
+           <div className="relative w-full overflow-hidden">
+                {loading ? (
+                    <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                ) : featuredListings.length > 0 ? (
+                    <div className="flex flex-nowrap">
+                        <MarqueeContent listings={[...featuredListings, ...featuredListings]} />
+                    </div>
+                ) : (
+                     <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                )}
+                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
+            </div>
+       </section>
     </div>
   );
 }
