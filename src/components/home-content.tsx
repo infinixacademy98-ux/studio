@@ -178,7 +178,7 @@ export default function HomeContent() {
         </p>
       </header>
       
-      <section className="mb-12">
+       <section className="mb-12">
           <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
             <TrendingUp className="text-primary" />
             Top Businesses
@@ -205,16 +205,21 @@ export default function HomeContent() {
        
        <section className="mb-12">
           <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <div className="relative flex-grow">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search by keyword..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="relative flex-grow w-full sm:w-auto">
+                 <div className="flex w-full max-w-lg mx-auto">
+                    <div className="relative w-full">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input
+                        type="text"
+                        placeholder="Search for businesses or services"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
+                    </div>
+                    <Button type="button" className="rounded-l-none">Search</Button>
+                </div>
               </div>
               <div className="flex-grow-0 sm:min-w-[180px]">
                 <Select value={category} onValueChange={setCategory}>
