@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Search, SlidersHorizontal, TrendingUp } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -103,6 +103,8 @@ export default function HomeContent() {
   const [category, setCategory] = useState("all");
   const [city, setCity] = useState("all");
   const [rating, setRating] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const listingsPerPage = 8;
 
   useEffect(() => {
     const fetchListings = () => {
@@ -142,6 +144,24 @@ export default function HomeContent() {
       );
     });
   }, [searchTerm, category, city, rating, listings]);
+  
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, category, city, rating]);
+
+  const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
+  const indexOfLastListing = currentPage * listingsPerPage;
+  const indexOfFirstListing = indexOfLastListing - listingsPerPage;
+  const currentListings = filteredListings.slice(indexOfFirstListing, indexOfLastListing);
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, pageCount));
+  };
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -267,12 +287,37 @@ export default function HomeContent() {
          <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
          </div>
-      ) : filteredListings.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredListings.map((listing: Business) => (
-            <BusinessCard key={listing.id} listing={listing} />
-          ))}
-        </div>
+      ) : currentListings.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {currentListings.map((listing: Business) => (
+              <BusinessCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+          {pageCount > 1 && (
+            <div className="flex justify-center items-center mt-8 space-x-4">
+              <Button
+                variant="outline"
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Previous
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Page {currentPage} of {pageCount}
+              </span>
+              <Button
+                variant="outline"
+                onClick={handleNextPage}
+                disabled={currentPage === pageCount}
+              >
+                Next
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center py-16">
             <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
