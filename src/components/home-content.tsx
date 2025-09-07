@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { categories, cities, businessListings } from "@/lib/data";
@@ -104,6 +104,7 @@ export default function HomeContent() {
   const [isSearching, setIsSearching] = useState(false);
   const [relatedCategories, setRelatedCategories] = useState<string[]>([]);
   const { toast } = useToast();
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const listingsPerPage = 8;
 
@@ -130,6 +131,7 @@ export default function HomeContent() {
         existingCategories: categories,
       });
       setRelatedCategories(result.categories);
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
       console.error("Failed to fetch related categories:", error);
       toast({
@@ -375,49 +377,51 @@ export default function HomeContent() {
           </div>
         </section>
 
-      <h2 className="text-2xl font-bold tracking-tight mb-4">
-        All Businesses in Belgaum
-      </h2>
-      {loading ? (
-         <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-         </div>
-      ) : currentListings.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {currentListings.map((listing: Business) => (
-              <BusinessCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-          {pageCount > 1 && (
-            <div className="flex justify-center items-center mt-8 space-x-4">
-              <Button
-                variant="outline"
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Previous
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                Page {currentPage} of {pageCount}
-              </span>
-              <Button
-                variant="outline"
-                onClick={handleNextPage}
-                disabled={currentPage === pageCount}
-              >
-                Next
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
+      <div ref={resultsRef}>
+        <h2 className="text-2xl font-bold tracking-tight mb-4">
+          All Businesses in Belgaum
+        </h2>
+        {loading ? (
+           <div className="flex items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+           </div>
+        ) : currentListings.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {currentListings.map((listing: Business) => (
+                <BusinessCard key={listing.id} listing={listing} />
+              ))}
             </div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-16">
-            <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
-        </div>
-      )}
+            {pageCount > 1 && (
+              <div className="flex justify-center items-center mt-8 space-x-4">
+                <Button
+                  variant="outline"
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="mr-2 h-4 w-4" />
+                  Previous
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  Page {currentPage} of {pageCount}
+                </span>
+                <Button
+                  variant="outline"
+                  onClick={handleNextPage}
+                  disabled={currentPage === pageCount}
+                >
+                  Next
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-16">
+              <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
+          </div>
+        )}
+      </div>
 
       <section className="text-center py-8 my-8 bg-card rounded-lg shadow-md">
         <div className="container">
