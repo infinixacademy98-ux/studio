@@ -365,6 +365,18 @@ export default function HomeContent() {
             <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
         </div>
       )}
+
+      <section className="text-center py-16 my-12 bg-card rounded-lg shadow-md">
+        <div className="container">
+          <h2 className="text-3xl font-bold tracking-tight">List Your Business Today</h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Reach more customers and grow your business with our platform.
+          </p>
+          <Button asChild size="lg" className="mt-8">
+            <Link href="/add-listing">Get Started</Link>
+          </Button>
+        </div>
+      </section>
     </div>
   );
 }
