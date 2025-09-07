@@ -174,6 +174,31 @@ export default function HomeContent() {
           Find the best local services, right at your fingertips.
         </p>
       </header>
+
+      <section className="mb-12">
+          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
+            <TrendingUp className="text-primary" />
+            Recently Added Businesses
+          </h2>
+           <div className="relative w-full overflow-hidden">
+                {loading ? (
+                    <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                ) : featuredListings.length > 0 ? (
+                    <div className="flex flex-nowrap animate-marquee hover:[animation-play-state:paused] gap-8">
+                        <MarqueeContent listings={featuredListings} />
+                        <MarqueeContent listings={featuredListings} isDuplicate={true} />
+                    </div>
+                ) : (
+                     <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                )}
+                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
+            </div>
+       </section>
       
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -188,7 +213,7 @@ export default function HomeContent() {
             />
           </div>
           <div className="flex-grow-0 sm:min-w-[180px]">
-            <Select value={category} onValueChange={setCategory}>
+            <Select value={category} onValuechange={setCategory}>
                 <SelectTrigger>
                     <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
@@ -268,6 +293,11 @@ export default function HomeContent() {
                     key={cat.name}
                     href={`/?category=${encodeURIComponent(cat.name)}`}
                     className="group text-center w-28 flex-shrink-0"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCategory(cat.name);
+                      setSearchTerm('');
+                    }}
                   >
                     <div className="relative w-24 h-24 mx-auto mb-2">
                       <Image
@@ -289,31 +319,6 @@ export default function HomeContent() {
           </div>
         </section>
 
-      <section className="mb-12">
-          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
-            <TrendingUp className="text-primary" />
-            Recently Added Businesses
-          </h2>
-           <div className="relative w-full overflow-hidden">
-                {loading ? (
-                    <div className="flex flex-nowrap">
-                        <MarqueeSkeleton />
-                    </div>
-                ) : featuredListings.length > 0 ? (
-                    <div className="flex flex-nowrap animate-marquee hover:[animation-play-state:paused] gap-8">
-                        <MarqueeContent listings={featuredListings} />
-                        <MarqueeContent listings={featuredListings} isDuplicate={true} />
-                    </div>
-                ) : (
-                     <div className="flex flex-nowrap">
-                        <MarqueeSkeleton />
-                    </div>
-                )}
-                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
-            </div>
-       </section>
-      
       <h2 className="text-2xl font-bold tracking-tight mb-4">
         All Businesses in Belgaum
       </h2>
@@ -360,5 +365,3 @@ export default function HomeContent() {
     </div>
   );
 }
-
-    
