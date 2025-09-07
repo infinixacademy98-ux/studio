@@ -28,8 +28,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const MarqueeContent = ({ listings }: { listings: Business[] }) => (
     <div className="flex flex-nowrap animate-marquee [animation-play-state:running] gap-8">
-        {listings.map((listing) => (
-            <div key={`${listing.id}-marquee`} className="w-80 shrink-0">
+        {listings.map((listing, index) => (
+            <div key={`${listing.id}-marquee-${index}`} className="w-80 shrink-0">
                 <BusinessCard listing={listing} />
             </div>
         ))}
@@ -60,37 +60,37 @@ const popularCategories = [
   {
     name: 'Restaurant',
     description: 'Best dining experiences.',
-    image: 'https://picsum.photos/200/200?random=1',
+    image: 'https://picsum.photos/seed/restaurant/200/200',
     aiHint: 'restaurant interior',
   },
   {
     name: 'Hotel',
     description: 'Reliable help for your home.',
-    image: 'https://picsum.photos/200/200?random=2',
+    image: 'https://picsum.photos/seed/hotel/200/200',
     aiHint: 'modern hotel lobby',
   },
   {
     name: 'Cafe',
     description: 'Relax and rejuvenate.',
-    image: 'https://picsum.photos/200/200?random=3',
+    image: 'https://picsum.photos/seed/cafe/200/200',
     aiHint: 'cozy cafe',
   },
   {
     name: 'Electronics',
     description: 'Keep your vehicle in top shape.',
-    image: 'https://picsum.photos/200/200?random=4',
+    image: 'https://picsum.photos/seed/electronics/200/200',
     aiHint: 'auto garage',
   },
   {
     name: 'Education',
     description: 'Access quality healthcare.',
-    image: 'https://picsum.photos/200/200?random=5',
+    image: 'https://picsum.photos/seed/education/200/200',
     aiHint: 'modern classroom',
   },
   {
     name: 'Travel & Tourism',
     description: 'Legal, financial, and more.',
-    image: 'https://picsum.photos/200/200?random=6',
+    image: 'https://picsum.photos/seed/travel/200/200',
     aiHint: 'travel agency office',
   },
 ];
