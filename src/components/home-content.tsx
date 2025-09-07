@@ -365,7 +365,7 @@ export default function HomeContent() {
         </div>
       )}
 
-      <section className="text-center py-12 my-8 bg-card rounded-lg shadow-md">
+      <section className="text-center py-8 my-8 bg-card rounded-lg shadow-md">
         <div className="container">
           <h2 className="text-3xl font-bold tracking-tight">List Your Business Today</h2>
           <p className="mt-4 text-lg text-muted-foreground">
