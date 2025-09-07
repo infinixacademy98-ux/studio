@@ -2,50 +2,64 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check if a user is an admin
+  
+    // Helper function to check for admin role
     function isAdmin() {
       return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Rules for the 'listings' collection
-    match /listings/{listingId} {
-      
-      // READ: Anyone can read a listing if its status is 'approved'.
-      allow read: if resource.data.status == 'approved';
-
-      // CREATE: Any authenticated user can create a new listing.
-      // The new listing must have a 'pending' status and the ownerId must match the user's UID.
-      allow create: if request.auth != null &&
-                       request.resource.data.status == 'pending' &&
-                       request.resource.data.ownerId == request.auth.uid;
-
-      // UPDATE: Only admins can update any listing. 
-      // A business owner can only update their own listing and cannot change the status or ownerId.
-      allow update: if isAdmin() || 
-                       (request.auth.uid == resource.data.ownerId &&
-                        request.resource.data.status == resource.data.status &&
-                        request.resource.data.ownerId == resource.data.ownerId);
-
-      // DELETE: Only admins can delete listings.
-      allow delete: if isAdmin();
-    }
-
     // Rules for the 'users' collection
     match /users/{userId} {
-    
-      // READ: Users can only read their own document. Admins can read any user document.
-      allow read: if request.auth.uid == userId || isAdmin();
-      
-      // WRITE: Users can only write to their own document. Admins can write to any user document.
-      allow write: if request.auth.uid == userId || isAdmin();
+      // Admins can read any user profile.
+      // Users can only read their own profile.
+      allow read: if isAdmin() || request.auth.uid == userId;
 
-      // Rules for user notifications subcollection
-      match /notifications/{notificationId} {
-        // READ/WRITE: Users can only manage their own notifications.
-        allow read, write: if request.auth.uid == userId;
-      }
+      // Admins can write to any user profile (e.g., to assign roles).
+      // Users can only create their own profile upon signup and cannot change their role.
+      allow write: if isAdmin();
+      allow create: if request.auth.uid == userId && request.resource.data.role == 'user';
+    }
+
+    // Rules for the 'listings' collection
+    match /listings/{listingId} {
+      // Anyone can get a single approved listing.
+      // Admins can get any listing.
+      // The owner can get their own listing.
+      allow get: if resource.data.status == 'approved' 
+                   || isAdmin() 
+                   || (request.auth != null && request.auth.uid == resource.data.ownerId);
+
+      // Anyone can list approved listings.
+      // Admins can list all listings.
+      allow list: if isAdmin() || (query.filters.size() > 0 && query.filters[0].field == 'status' && query.filters[0].value == 'approved');
+
+
+      // Authenticated users can create new listings.
+      // We enforce that the ownerId is their own UID and status is 'pending'.
+      allow create: if request.auth != null
+                      && request.resource.data.ownerId == request.auth.uid
+                      && request.resource.data.status == 'pending';
+
+      // Admins can update any listing.
+      // Users can update their own listings, but cannot change the status or ownerId.
+      allow update: if isAdmin() || 
+                      (request.auth.uid == resource.data.ownerId &&
+                       request.resource.data.status == resource.data.status &&
+                       request.resource.data.ownerId == resource.data.ownerId);
+                       
+      // Admins can delete any listing.
+      allow delete: if isAdmin();
+    }
+    
+    // Rules for user notifications subcollection
+    match /users/{userId}/notifications/{notificationId} {
+        // Users can read and update their own notifications (e.g., to mark as read).
+        // Admins can also access them if needed.
+        allow read, update, delete: if request.auth.uid == userId || isAdmin();
+        
+        // Only backend processes (or admins) should create notifications.
+        allow create: if isAdmin();
     }
   }
 }
