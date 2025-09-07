@@ -88,12 +88,6 @@ const popularCategories = [
     image: 'https://picsum.photos/seed/education/200/200',
     aiHint: 'modern classroom',
   },
-  {
-    name: 'Travel & Tourism',
-    description: 'Legal, financial, and more.',
-    image: 'https://picsum.photos/seed/travel/200/200',
-    aiHint: 'travel agency office',
-  },
 ];
 
 
@@ -174,7 +168,7 @@ export default function HomeContent() {
           Find the best local services, right at your fingertips.
         </p>
       </header>
-
+      
       <section className="mb-12">
           <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
             <TrendingUp className="text-primary" />
@@ -202,7 +196,7 @@ export default function HomeContent() {
       
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <div className="relative flex-grow-0 sm:max-w-xs">
+          <div className="relative flex-grow sm:flex-grow-0 sm:w-full sm:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
@@ -213,7 +207,7 @@ export default function HomeContent() {
             />
           </div>
           <div className="flex-grow-0 sm:min-w-[180px]">
-            <Select value={category} onValuechange={setCategory}>
+            <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger>
                     <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
@@ -287,7 +281,7 @@ export default function HomeContent() {
           </h2>
           <div className="relative">
             <ScrollArea>
-              <div className="flex space-x-8 pb-4">
+              <div className="flex justify-center space-x-8 pb-4">
                 {popularCategories.map((cat) => (
                   <Link
                     key={cat.name}
