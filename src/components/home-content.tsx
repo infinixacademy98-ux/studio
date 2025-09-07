@@ -26,14 +26,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const MarqueeContent = ({ listings }: { listings: Business[] }) => (
-    <div className="flex flex-nowrap animate-marquee [animation-play-state:running] gap-8">
+const MarqueeContent = ({ listings, isDuplicate = false }: { listings: Business[], isDuplicate?: boolean }) => (
+    <>
         {listings.map((listing, index) => (
-            <div key={`${listing.id}-marquee-${index}`} className="w-80 shrink-0">
+            <div key={`${listing.id}-marquee-${index}${isDuplicate ? '-dup' : ''}`} className="w-80 shrink-0">
                 <BusinessCard listing={listing} />
             </div>
         ))}
-    </div>
+    </>
 );
 
 const MarqueeSkeleton = () => (
@@ -174,31 +174,6 @@ export default function HomeContent() {
         </p>
       </header>
       
-       <section className="mb-12">
-        <h2 className="text-2xl font-bold tracking-tight text-center mb-8">
-          Popular Categories
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-          {popularCategories.map((cat) => (
-            <Link key={cat.name} href={`/?category=${encodeURIComponent(cat.name)}`} className="group text-center">
-              <div className="relative w-32 h-32 mx-auto mb-4">
-                <Image
-                  src={cat.image}
-                  alt={cat.name}
-                  width={128}
-                  height={128}
-                  className="rounded-full object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                  data-ai-hint={cat.aiHint}
-                />
-              </div>
-              <h3 className="font-semibold text-lg mb-1">{cat.name}</h3>
-              <p className="text-sm text-muted-foreground">{cat.description}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-      
-
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <div className="relative flex-grow-0 sm:max-w-xs">
@@ -323,6 +298,30 @@ export default function HomeContent() {
             <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
         </div>
       )}
+      
+       <section className="mb-12 mt-16">
+        <h2 className="text-2xl font-bold tracking-tight text-center mb-8">
+          Popular Categories
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          {popularCategories.map((cat) => (
+            <Link key={cat.name} href={`/?category=${encodeURIComponent(cat.name)}`} className="group text-center">
+              <div className="relative w-32 h-32 mx-auto mb-4">
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  width={128}
+                  height={128}
+                  className="rounded-full object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                  data-ai-hint={cat.aiHint}
+                />
+              </div>
+              <h3 className="font-semibold text-lg mb-1">{cat.name}</h3>
+              <p className="text-sm text-muted-foreground">{cat.description}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-16">
           <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
@@ -335,8 +334,9 @@ export default function HomeContent() {
                         <MarqueeSkeleton />
                     </div>
                 ) : featuredListings.length > 0 ? (
-                    <div className="flex flex-nowrap">
-                        <MarqueeContent listings={[...featuredListings, ...featuredListings]} />
+                    <div className="flex flex-nowrap animate-marquee [animation-play-state:running] gap-8">
+                        <MarqueeContent listings={featuredListings} />
+                        <MarqueeContent listings={featuredListings} isDuplicate={true} />
                     </div>
                 ) : (
                      <div className="flex flex-nowrap">
