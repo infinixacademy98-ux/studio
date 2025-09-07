@@ -131,10 +131,12 @@ export default function HomeContent() {
     
     const filtered = listings.filter((listing) => {
       const averageRating = getAverageRating(listing);
+      const searchTermLower = searchTerm.toLowerCase();
 
       return (
-        (listing.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          listing.description.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (listing.name.toLowerCase().includes(searchTermLower) ||
+          listing.description.toLowerCase().includes(searchTermLower) ||
+          listing.category.toLowerCase().includes(searchTermLower)) &&
         (category === "all" || listing.category === category) &&
         (city === "all" || listing.address.city === city) &&
         (rating === "all" || Math.floor(averageRating) >= parseInt(rating))
