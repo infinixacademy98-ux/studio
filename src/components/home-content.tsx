@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const MarqueeContent = ({ listings, isDuplicate = false }: { listings: Business[], isDuplicate?: boolean }) => (
     <>
@@ -254,7 +255,65 @@ export default function HomeContent() {
           </Popover>
         </div>
       </div>
+      
+       <section className="mb-12">
+          <h2 className="text-2xl font-bold tracking-tight text-center mb-6">
+            Popular Categories
+          </h2>
+          <div className="relative">
+            <ScrollArea>
+              <div className="flex space-x-8 pb-4">
+                {popularCategories.map((cat) => (
+                  <Link
+                    key={cat.name}
+                    href={`/?category=${encodeURIComponent(cat.name)}`}
+                    className="group text-center w-28 flex-shrink-0"
+                  >
+                    <div className="relative w-24 h-24 mx-auto mb-2">
+                      <Image
+                        src={cat.image}
+                        alt={cat.name}
+                        width={96}
+                        height={96}
+                        className="rounded-full object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                        data-ai-hint={cat.aiHint}
+                      />
+                    </div>
+                    <h3 className="font-semibold text-base mb-1 truncate">{cat.name}</h3>
+                    <p className="text-xs text-muted-foreground truncate">{cat.description}</p>
+                  </Link>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </div>
+        </section>
 
+      <section className="mb-12">
+          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
+            <TrendingUp className="text-primary" />
+            Recently Added Businesses
+          </h2>
+           <div className="relative w-full overflow-hidden">
+                {loading ? (
+                    <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                ) : featuredListings.length > 0 ? (
+                    <div className="flex flex-nowrap animate-marquee hover:[animation-play-state:paused] gap-8">
+                        <MarqueeContent listings={featuredListings} />
+                        <MarqueeContent listings={featuredListings} isDuplicate={true} />
+                    </div>
+                ) : (
+                     <div className="flex flex-nowrap">
+                        <MarqueeSkeleton />
+                    </div>
+                )}
+                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
+            </div>
+       </section>
+      
       <h2 className="text-2xl font-bold tracking-tight mb-4">
         All Businesses in Belgaum
       </h2>
@@ -298,55 +357,8 @@ export default function HomeContent() {
             <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
         </div>
       )}
-      
-       <section className="mb-12 mt-16">
-        <h2 className="text-2xl font-bold tracking-tight text-center mb-8">
-          Popular Categories
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-          {popularCategories.map((cat) => (
-            <Link key={cat.name} href={`/?category=${encodeURIComponent(cat.name)}`} className="group text-center">
-              <div className="relative w-32 h-32 mx-auto mb-4">
-                <Image
-                  src={cat.image}
-                  alt={cat.name}
-                  width={128}
-                  height={128}
-                  className="rounded-full object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                  data-ai-hint={cat.aiHint}
-                />
-              </div>
-              <h3 className="font-semibold text-lg mb-1">{cat.name}</h3>
-              <p className="text-sm text-muted-foreground">{cat.description}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-16">
-          <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
-            <TrendingUp className="text-primary" />
-            Recently Added Businesses
-          </h2>
-           <div className="relative w-full overflow-hidden">
-                {loading ? (
-                    <div className="flex flex-nowrap">
-                        <MarqueeSkeleton />
-                    </div>
-                ) : featuredListings.length > 0 ? (
-                    <div className="flex flex-nowrap animate-marquee [animation-play-state:running] gap-8">
-                        <MarqueeContent listings={featuredListings} />
-                        <MarqueeContent listings={featuredListings} isDuplicate={true} />
-                    </div>
-                ) : (
-                     <div className="flex flex-nowrap">
-                        <MarqueeSkeleton />
-                    </div>
-                )}
-                 <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
-            </div>
-       </section>
     </div>
   );
 }
+
+    
