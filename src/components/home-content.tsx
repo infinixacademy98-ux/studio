@@ -181,7 +181,7 @@ export default function HomeContent() {
       <section className="mb-12">
           <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
             <TrendingUp className="text-primary" />
-            Recently Added Businesses
+            Top Businesses
           </h2>
            <div className="relative w-full overflow-hidden">
                 {loading ? (
@@ -202,89 +202,89 @@ export default function HomeContent() {
                 <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
             </div>
        </section>
-      
-      <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <div className="relative flex-grow sm:flex-grow-0 sm:w-full sm:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search by keyword..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="flex-grow-0 sm:min-w-[180px]">
-            <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
-                    <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                        {cat}
-                    </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-          </div>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="flex-grow-0">
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
-                Filter
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Filters</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Refine your search results.
-                  </p>
-                </div>
-                <div className="grid gap-2">
-                   <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="city">City</Label>
-                    <Select value={city} onValueChange={setCity}>
-                        <SelectTrigger id="city" className="col-span-2 h-8">
-                           <SelectValue placeholder="All Cities" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Cities</SelectItem>
-                            {cities.map((c) => (
-                            <SelectItem key={c} value={c}>
-                                {c}
-                            </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                  </div>
-                   <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="rating">Rating</Label>
-                    <Select value={rating} onValueChange={setRating}>
-                        <SelectTrigger id="rating" className="col-span-2 h-8">
-                           <SelectValue placeholder="Any Rating" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Any Rating</SelectItem>
-                            <SelectItem value="4">4 Stars &amp; Up</SelectItem>
-                            <SelectItem value="3">3 Stars &amp; Up</SelectItem>
-                            <SelectItem value="2">2 Stars &amp; Up</SelectItem>
-                            <SelectItem value="1">1 Star &amp; Up</SelectItem>
-                        </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </div>
-      
+       
        <section className="mb-12">
+          <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="relative flex-grow">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search by keyword..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex-grow-0 sm:min-w-[180px]">
+                <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                            {cat}
+                        </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="flex-grow-0">
+                    <SlidersHorizontal className="mr-2 h-4 w-4" />
+                    Filter
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">Filters</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Refine your search results.
+                      </p>
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="city">City</Label>
+                        <Select value={city} onValueChange={setCity}>
+                            <SelectTrigger id="city" className="col-span-2 h-8">
+                              <SelectValue placeholder="All Cities" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Cities</SelectItem>
+                                {cities.map((c) => (
+                                <SelectItem key={c} value={c}>
+                                    {c}
+                                </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="rating">Rating</Label>
+                        <Select value={rating} onValueChange={setRating}>
+                            <SelectTrigger id="rating" className="col-span-2 h-8">
+                              <SelectValue placeholder="Any Rating" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Any Rating</SelectItem>
+                                <SelectItem value="4">4 Stars &amp; Up</SelectItem>
+                                <SelectItem value="3">3 Stars &amp; Up</SelectItem>
+                                <SelectItem value="2">2 Stars &amp; Up</SelectItem>
+                                <SelectItem value="1">1 Star &amp; Up</SelectItem>
+                            </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
           <h2 className="text-2xl font-bold tracking-tight text-center mb-6">
             Popular Categories
           </h2>
@@ -313,7 +313,6 @@ export default function HomeContent() {
                       />
                     </div>
                     <h3 className="font-semibold text-base mb-1 truncate">{cat.name}</h3>
-                    <p className="text-xs text-muted-foreground truncate">{cat.description}</p>
                   </Link>
                 ))}
               </div>
@@ -366,13 +365,13 @@ export default function HomeContent() {
         </div>
       )}
 
-      <section className="text-center py-16 my-12 bg-card rounded-lg shadow-md">
+      <section className="text-center py-12 my-8 bg-card rounded-lg shadow-md">
         <div className="container">
           <h2 className="text-3xl font-bold tracking-tight">List Your Business Today</h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Reach more customers and grow your business with our platform.
           </p>
-          <Button asChild size="lg" className="mt-8">
+          <Button asChild size="lg" className="mt-6">
             <Link href="/add-listing">Get Started</Link>
           </Button>
         </div>
