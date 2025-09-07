@@ -56,6 +56,45 @@ const MarqueeSkeleton = () => (
     </div>
 );
 
+const popularCategories = [
+  {
+    name: 'Restaurant',
+    description: 'Best dining experiences.',
+    image: 'https://picsum.photos/200/200?random=1',
+    aiHint: 'restaurant interior',
+  },
+  {
+    name: 'Hotel',
+    description: 'Reliable help for your home.',
+    image: 'https://picsum.photos/200/200?random=2',
+    aiHint: 'modern hotel lobby',
+  },
+  {
+    name: 'Cafe',
+    description: 'Relax and rejuvenate.',
+    image: 'https://picsum.photos/200/200?random=3',
+    aiHint: 'cozy cafe',
+  },
+  {
+    name: 'Electronics',
+    description: 'Keep your vehicle in top shape.',
+    image: 'https://picsum.photos/200/200?random=4',
+    aiHint: 'auto garage',
+  },
+  {
+    name: 'Education',
+    description: 'Access quality healthcare.',
+    image: 'https://picsum.photos/200/200?random=5',
+    aiHint: 'modern classroom',
+  },
+  {
+    name: 'Travel & Tourism',
+    description: 'Legal, financial, and more.',
+    image: 'https://picsum.photos/200/200?random=6',
+    aiHint: 'travel agency office',
+  },
+];
+
 
 export default function HomeContent() {
   const [listings, setListings] = useState<Business[]>([]);
@@ -127,8 +166,7 @@ export default function HomeContent() {
                     </div>
                 ) : featuredListings.length > 0 ? (
                     <div className="flex flex-nowrap">
-                        <MarqueeContent listings={featuredListings} />
-                        <MarqueeContent listings={featuredListings} />
+                        <MarqueeContent listings={[...featuredListings, ...featuredListings]} />
                     </div>
                 ) : (
                      <div className="flex flex-nowrap">
@@ -139,6 +177,30 @@ export default function HomeContent() {
                 <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
             </div>
        </section>
+
+       <section className="mb-12">
+        <h2 className="text-2xl font-bold tracking-tight text-center mb-8">
+          Popular Categories
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          {popularCategories.map((cat) => (
+            <Link key={cat.name} href={`/?category=${encodeURIComponent(cat.name)}`} className="group text-center">
+              <div className="relative w-32 h-32 mx-auto mb-4">
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  width={128}
+                  height={128}
+                  className="rounded-full object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                  data-ai-hint={cat.aiHint}
+                />
+              </div>
+              <h3 className="font-semibold text-lg mb-1">{cat.name}</h3>
+              <p className="text-sm text-muted-foreground">{cat.description}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
       
 
       <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
