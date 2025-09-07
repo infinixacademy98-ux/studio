@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories, cities, businessListings } from "@/lib/data";
+import { categories, cities, businessListings as staticBusinessListings } from "@/lib/data";
 import type { Business } from "@/lib/types";
 import BusinessCard from "@/components/business-card";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { findRelatedCategories } from "@/ai/flows/find-related-categories";
 import { useToast } from "@/hooks/use-toast";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
 
 const MarqueeContent = ({ listings, isDuplicate = false }: { listings: Business[], isDuplicate?: boolean }) => (
     <>
@@ -110,11 +113,32 @@ export default function HomeContent() {
   const listingsPerPage = 8;
 
   useEffect(() => {
-    const fetchListings = () => {
+    const fetchListings = async () => {
       setLoading(true);
-      // Using local data instead of Firestore
-      setListings(businessListings);
-      setLoading(false);
+      try {
+        // 1. Fetch from Firestore
+        const q = query(collection(db, "listings"), where("status", "==", "approved"));
+        const querySnapshot = await getDocs(q);
+        const firestoreListings = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt.toDate(), // Convert Timestamp to Date
+        })) as Business[];
+
+        // 2. Combine with static data, avoiding duplicates
+        const firestoreIds = new Set(firestoreListings.map(l => l.id));
+        const uniqueStaticListings = staticBusinessListings.filter(l => !firestoreIds.has(l.id));
+
+        const combinedListings = [...firestoreListings, ...uniqueStaticListings];
+        setListings(combinedListings);
+
+      } catch (error) {
+        console.error("Error fetching listings from Firestore, falling back to static data.", error);
+        // Fallback to static data if Firestore fails
+        setListings(staticBusinessListings);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchListings();

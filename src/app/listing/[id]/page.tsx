@@ -33,8 +33,13 @@ import {
 } from "lucide-react";
 import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
-import type { Business } from "@/lib/types";
-import { businessListings } from "@/lib/data";
+import type { Business, Review } from "@/lib/types";
+import { businessListings as staticBusinessListings } from "@/lib/data";
+import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "@/components/auth-provider";
+import { useToast } from "@/hooks/use-toast";
+import { v4 as uuidv4 } from "uuid";
 
 type BusinessDetailsPageProps = {
   params: {
@@ -45,26 +50,95 @@ type BusinessDetailsPageProps = {
 function BusinessDetailsPageContent() {
   const [listing, setListing] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
+  const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  
   const params = useParams();
   const id = params.id as string;
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-  useEffect(() => {
+  const fetchListing = async () => {
     if (!id) return;
+    setLoading(true);
 
-    const fetchListing = () => {
-      setLoading(true);
-      const foundListing = businessListings.find((l) => l.id === id);
+    try {
+      // 1. Try fetching from Firestore first
+      const docRef = doc(db, "listings", id);
+      const docSnap = await getDoc(docRef);
 
-      if (foundListing) {
-        setListing(foundListing);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setListing({
+          id: docSnap.id,
+          ...data,
+          createdAt: data.createdAt?.toDate(), // Convert Timestamp
+        } as Business);
+      } else {
+        // 2. If not in Firestore, check static data
+        const foundInStatic = staticBusinessListings.find((l) => l.id === id);
+        if (foundInStatic) {
+          setListing(foundInStatic);
+        } else {
+          notFound();
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching listing:", error);
+      // Fallback to static data on error
+      const foundInStatic = staticBusinessListings.find((l) => l.id === id);
+      if (foundInStatic) {
+        setListing(foundInStatic);
       } else {
         notFound();
       }
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchListing();
   }, [id]);
+  
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      toast({ variant: "destructive", description: "You must be logged in to leave a review." });
+      return;
+    }
+    if (newReview.rating === 0 || newReview.comment.trim() === "") {
+        toast({ variant: "destructive", description: "Please provide a rating and a comment." });
+        return;
+    }
+    
+    setIsSubmittingReview(true);
+    try {
+      const reviewToAdd: Review = {
+        id: uuidv4(),
+        author: user.email || "Anonymous",
+        rating: newReview.rating,
+        comment: newReview.comment,
+        date: new Date().toISOString(),
+      };
+
+      const listingRef = doc(db, "listings", id);
+      await updateDoc(listingRef, {
+        reviews: arrayUnion(reviewToAdd),
+      });
+      
+      // Optimistically update UI
+      setListing(prev => prev ? { ...prev, reviews: [...prev.reviews, reviewToAdd] } : null);
+      setNewReview({ rating: 0, comment: "" });
+      toast({ title: "Success!", description: "Your review has been submitted." });
+
+    } catch (error) {
+        console.error("Error submitting review:", error);
+        toast({ variant: "destructive", title: "Error", description: "Failed to submit review. This business may not support live reviews yet." });
+    } finally {
+        setIsSubmittingReview(false);
+    }
+  };
   
   if (loading) {
     return (
@@ -159,16 +233,30 @@ function BusinessDetailsPageContent() {
               <CardTitle>Write a Review</CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-4">
-                <Input placeholder="Your Name" />
-                <div className="flex items-center gap-2">
+              <form className="space-y-4" onSubmit={handleReviewSubmit}>
+                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">Your Rating:</span>
                   <div className="flex">
-                    {[1, 2, 3, 4, 5].map(i => <button type="button" key={i}><Star className="h-6 w-6 text-muted-foreground/50 hover:text-primary hover:fill-primary transition-colors" /></button>)}
+                    {[1, 2, 3, 4, 5].map(i => (
+                        <button 
+                            type="button" 
+                            key={i} 
+                            onClick={() => setNewReview(prev => ({ ...prev, rating: i }))}
+                        >
+                            <Star className={`h-6 w-6 transition-colors ${i <= newReview.rating ? 'text-primary fill-primary' : 'text-muted-foreground/50 hover:text-primary'}`} />
+                        </button>
+                    ))}
                   </div>
                 </div>
-                <Textarea placeholder="Share your experience..." />
-                <Button>Submit Review</Button>
+                <Textarea 
+                    placeholder="Share your experience..." 
+                    value={newReview.comment}
+                    onChange={(e) => setNewReview(prev => ({ ...prev, comment: e.target.value }))}
+                />
+                <Button type="submit" disabled={isSubmittingReview}>
+                    {isSubmittingReview && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Submit Review
+                </Button>
               </form>
             </CardContent>
           </Card>
