@@ -125,6 +125,7 @@ export default function HomeContent() {
       return;
     }
     setIsSearching(true);
+    setCategory("all"); // Reset manual category filter when AI search is used
     try {
       const result = await findRelatedCategories({
         query: searchTerm,
@@ -167,25 +168,34 @@ export default function HomeContent() {
       const averageRating = getAverageRating(listing);
       const searchTermLower = searchTerm.toLowerCase();
 
-      // Text search condition
-      const matchesText = searchTerm.trim().length < 3 || (
-        listing.name.toLowerCase().includes(searchTermLower) ||
-        listing.description.toLowerCase().includes(searchTermLower) ||
-        listing.category.toLowerCase().includes(searchTermLower)
-      );
-
-      // Category search condition (including related categories)
-      const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
-      const matchesRelatedCategory = relatedCategories.length > 0 && relatedCategoriesLower.includes(listing.category.toLowerCase());
+      // Base filters
+      const matchesCategory = category === "all" || listing.category === category;
+      const matchesCity = city === "all" || listing.address.city === city;
+      const matchesRating = rating === "all" || Math.floor(averageRating) >= parseInt(rating);
       
-      const searchCondition = matchesText || matchesRelatedCategory;
+      if (!matchesCity || !matchesRating) return false;
 
-      return (
-        searchCondition &&
-        (category === "all" || listing.category === category) &&
-        (city === "all" || listing.address.city === city) &&
-        (rating === "all" || Math.floor(averageRating) >= parseInt(rating))
-      );
+      // Logic for combined search and category filtering
+      const hasSearchTerm = searchTerm.trim().length >= 3;
+      const hasRelatedCategories = relatedCategories.length > 0;
+
+      if (hasRelatedCategories) {
+        // AI Search is active
+        const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
+        return relatedCategoriesLower.includes(listing.category.toLowerCase());
+      }
+      
+      if (hasSearchTerm) {
+         // Manual text search is active
+         return (
+          listing.name.toLowerCase().includes(searchTermLower) ||
+          listing.description.toLowerCase().includes(searchTermLower) ||
+          listing.category.toLowerCase().includes(searchTermLower)
+        ) && matchesCategory;
+      }
+
+      // Only category filter is active (or no filters)
+      return matchesCategory;
     });
 
     // Custom sort to bring Infinix Academy to the top
@@ -199,7 +209,7 @@ export default function HomeContent() {
   // Reset to page 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, category, city, rating]);
+  }, [searchTerm, category, city, rating, relatedCategories]);
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -273,7 +283,11 @@ export default function HomeContent() {
                 </div>
               </div>
               <div className="flex-grow-0 sm:min-w-[180px]">
-                <Select value={category} onValueChange={setCategory}>
+                <Select value={category} onValueChange={(value) => {
+                  setCategory(value);
+                  setSearchTerm('');
+                  setRelatedCategories([]);
+                }}>
                     <SelectTrigger>
                         <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
@@ -356,6 +370,7 @@ export default function HomeContent() {
                       e.preventDefault();
                       setCategory(cat.name);
                       setSearchTerm('');
+                      setRelatedCategories([]);
                     }}
                   >
                     <div className="relative w-24 h-24 mx-auto mb-2">
