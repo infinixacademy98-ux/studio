@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, where } from "firebase/firestore";
+import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, where, writeBatch, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Trash2, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { categories as staticCategories } from "@/lib/data";
+
 
 interface Category {
   id: string;
@@ -42,30 +44,50 @@ export default function AdminCategoriesPage() {
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
 
-  const fetchCategories = async () => {
-    setLoadingData(true);
-    try {
-      const q = query(collection(db, "categories"), orderBy("name"));
-      const querySnapshot = await getDocs(q);
-      const categoriesData = querySnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Category)
-      );
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch categories.",
-      });
-    } finally {
-      setLoadingData(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchCategories = async () => {
+      setLoadingData(true);
+      try {
+        const categoriesCollection = collection(db, "categories");
+        let querySnapshot = await getDocs(query(categoriesCollection, orderBy("name")));
+
+        // If no categories, seed them from static data
+        if (querySnapshot.empty) {
+          const batch = writeBatch(db);
+          staticCategories.forEach(categoryName => {
+            // Don't add 'Other' as a permanent category
+            if (categoryName !== 'Other') {
+              const docRef = doc(categoriesCollection);
+              batch.set(docRef, { name: categoryName });
+            }
+          });
+          await batch.commit();
+          // Re-fetch after seeding
+          querySnapshot = await getDocs(query(categoriesCollection, orderBy("name")));
+          toast({
+            title: "Categories Seeded",
+            description: "Your initial category list has been set up.",
+          });
+        }
+        
+        const categoriesData = querySnapshot.docs.map(
+          (doc) => ({ id: doc.id, ...doc.data() } as Category)
+        );
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to fetch categories.",
+        });
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
     fetchCategories();
-  }, []);
+  }, [toast]);
 
   const handleAddCategory = async () => {
     if (!newCategory.trim()) {
