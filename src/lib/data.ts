@@ -222,30 +222,5 @@ export const businessListings: Business[] = [
     "images": ["https://picsum.photos/seed/catering/600/400"],
     "reviews": [],
     "timing": "10:00 am to 9:30 pm"
-  },
-  {
-    "id": "10",
-    "name": "Infinix Academy",
-    "category": "Education",
-    "description": "Leading academy for computer science and programming education. Offering courses in various technologies.",
-    "ownerId": "mock-owner",
-    "status": "approved",
-    "createdAt": new Date("2024-01-15T09:00:00Z"),
-    "contact": {
-      "phone": "9876543210",
-      "email": "contact@infinixacademy.com",
-      "website": "https://infinixacademy.com"
-    },
-    "address": {
-      "street": "123 Tech Park",
-      "city": "Belgaum",
-      "state": "Karnataka",
-      "zip": "590002"
-    },
-    "images": ["https://picsum.photos/seed/academy/600/400"],
-    "reviews": [
-      { "id": "r1", "author": "Alex", "rating": 5, "comment": "Excellent courses!", "date": "2024-02-20T10:00:00Z" }
-    ],
-    "timing": "9:00 am to 6:00 pm"
   }
 ];
