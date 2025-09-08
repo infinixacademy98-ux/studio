@@ -228,8 +228,6 @@ export default function HomeContent() {
   }, [listings]);
 
   const filteredListings = useMemo(() => {
-    const INFINIX_ACADEMY_ID = "10";
-    
     return listings.filter((listing) => {
       const averageRating = getAverageRating(listing);
       const searchTermLower = searchTerm.toLowerCase();
@@ -278,6 +276,17 @@ export default function HomeContent() {
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
+
+  const resultsTitle = useMemo(() => {
+    const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+    if (searchTerm.trim().length >= 3) {
+      return `Results for "${capitalize(searchTerm)}" in Belgaum`;
+    }
+    if (category !== 'all') {
+      return `${capitalize(category)} Businesses in Belgaum`;
+    }
+    return 'All Businesses in Belgaum';
+  }, [searchTerm, category]);
 
 
   return (
@@ -435,7 +444,7 @@ export default function HomeContent() {
 
       <div ref={resultsRef}>
         <h2 className="text-2xl font-bold tracking-tight mb-4">
-          All Businesses in Belgaum
+          {resultsTitle}
         </h2>
         {loading ? (
            <div className="flex items-center justify-center py-16">
