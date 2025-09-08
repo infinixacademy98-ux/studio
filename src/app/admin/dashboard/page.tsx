@@ -75,16 +75,17 @@ export default function AdminDashboardPage() {
           // Fetch recent pending listings
           const recentListingsQuery = query(
             collection(db, "listings"),
-            where("status", "==", "pending"),
-            orderBy("createdAt", "desc"),
-            limit(5)
+            where("status", "==", "pending")
           );
           const recentListingsSnapshot = await getDocs(recentListingsQuery);
           const recentListingsData = recentListingsSnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
             createdAt: doc.data().createdAt,
-          } as Business));
+          } as Business))
+          .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime())
+          .slice(0, 5);
+          
           setRecentListings(recentListingsData);
 
         } catch (error) {
