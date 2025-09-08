@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, doc, updateDoc, query, orderBy, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, query, orderBy, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
@@ -18,6 +18,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -26,7 +36,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, LogOut } from "lucide-react";
+import { Loader2, LogOut, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 
@@ -37,7 +47,9 @@ export default function AdminDashboardPage() {
   const [listings, setListings] = useState<Business[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
   const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
+  const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
   const [selectedListing, setSelectedListing] = useState<Business | null>(null);
+  const [listingToDelete, setListingToDelete] = useState<Business | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -115,6 +127,34 @@ export default function AdminDashboardPage() {
       });
     } finally {
        setIsUpdating(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!listingToDelete) return;
+
+    const { id } = listingToDelete;
+    setIsDeleting(prev => ({ ...prev, [id]: true }));
+    try {
+      await deleteDoc(doc(db, "listings", id));
+      
+      toast({
+        title: "Success!",
+        description: "The listing has been permanently deleted.",
+      });
+      
+      setListings(prevListings => prevListings.filter(listing => listing.id !== id));
+      setListingToDelete(null);
+
+    } catch (error) {
+      console.error("Error deleting listing:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not delete the listing. Please try again.",
+      });
+    } finally {
+      setIsDeleting(prev => ({ ...prev, [id]: false }));
     }
   };
 
@@ -228,6 +268,14 @@ export default function AdminDashboardPage() {
                           Approve
                         </Button>
                       )}
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => setListingToDelete(listing)}
+                        disabled={isDeleting[listing.id]}
+                      >
+                        {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
@@ -249,7 +297,7 @@ export default function AdminDashboardPage() {
                 <DialogHeader>
                     <DialogTitle>{selectedListing.name}</DialogTitle>
                     <DialogDescription>
-                        Full listing details submitted for approval on {formatDate(selectedListing.createdAt)}.
+                        Full listing details submitted on {formatDate(selectedListing.createdAt)}.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4 text-sm">
@@ -285,6 +333,29 @@ export default function AdminDashboardPage() {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+      )}
+       {listingToDelete && (
+        <AlertDialog open={!!listingToDelete} onOpenChange={(open) => !open && setListingToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the business listing for "{listingToDelete.name}" from the database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-destructive hover:bg-destructive/90"
+                disabled={isDeleting[listingToDelete.id]}
+              >
+                {isDeleting[listingToDelete.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Yes, delete it
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </>
   );
