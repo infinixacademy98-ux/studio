@@ -423,7 +423,7 @@ export default function HomeContent() {
                       setSearchTerm(cat.name);
                     }}
                   >
-                    <div className="relative w-24 h-24 mx-auto mb-2">
+                    <div className="relative w-24 h-24 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1">
                       <Image
                         src={cat.image}
                         alt={cat.name}
@@ -433,7 +433,7 @@ export default function HomeContent() {
                         data-ai-hint={cat.aiHint}
                       />
                     </div>
-                    <h3 className="font-semibold text-base mb-1 truncate">{cat.name}</h3>
+                    <h3 className="font-semibold text-base mb-1 truncate group-hover:text-primary">{cat.name}</h3>
                   </Link>
                 ))}
               </div>
