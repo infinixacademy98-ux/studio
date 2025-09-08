@@ -458,7 +458,7 @@ export default function AdminDashboardPage() {
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete the business listing for "{listingToDelete.name}" from the database.
-              </الertDialogDescription>
+              </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
