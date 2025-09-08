@@ -50,7 +50,7 @@ Available Categories:
 - {{{this}}}
 {{/each}}
 
-Return a list of categories from the available list that are relevant to the user's query. If the query itself is a category, include it. For example, if the query is "hotel", you should also consider categories like "Restaurant", "Cafe", and "Catering Services" if they exist in the list.`,
+Return a list of categories from the available list that are relevant to the user's query. The query might be a direct category name (e.g., "Education") or a related concept (e.g., "school"). Find all semantically related categories. For example, if the query is "hotel", you should also consider categories like "Restaurant", "Cafe", and "Catering Services" if they exist in the list. If the query itself matches a category name, be sure to include it in the output.`,
 });
 
 const findRelatedCategoriesFlow = ai.defineFlow(
