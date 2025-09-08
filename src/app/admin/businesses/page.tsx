@@ -150,7 +150,7 @@ export default function AdminBusinessesPage() {
           <div className="flex items-center justify-between space-y-2">
               <h2 className="text-3xl font-bold tracking-tight">Businesses</h2>
           </div>
-          <Card>
+          <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
             <CardHeader>
               <CardTitle>Business Listings</CardTitle>
               <CardDescription>Approve or delete business submissions.</CardDescription>

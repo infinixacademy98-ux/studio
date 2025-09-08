@@ -128,7 +128,7 @@ export default function AdminDashboardPage() {
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card, index) => (
-          <Card key={index}>
+          <Card key={index} className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
               <card.icon className="h-4 w-4 text-muted-foreground" />
@@ -146,7 +146,7 @@ export default function AdminDashboardPage() {
 
       <div>
         <h3 className="text-2xl font-bold tracking-tight mb-4">Recent Pending Listings</h3>
-        <Card>
+        <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
           <CardContent className="p-0">
             <div className="rounded-lg border">
               <Table>

@@ -241,7 +241,7 @@ function BusinessDetailsPageContent() {
           <Separator />
 
           {/* --- Add Review Form --- */}
-          <Card>
+          <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
             <CardHeader>
               <CardTitle>Write a Review</CardTitle>
             </CardHeader>
@@ -278,7 +278,7 @@ function BusinessDetailsPageContent() {
 
         <div className="lg:col-span-1 space-y-6">
           {/* --- Contact & Address Card --- */}
-          <Card>
+          <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
             <CardHeader>
               <CardTitle>Contact & Address</CardTitle>
             </CardHeader>
@@ -340,7 +340,7 @@ function BusinessDetailsPageContent() {
           
           {/* --- Map Placeholder --- */}
           {listing.address.lat && listing.address.lng &&
-            <Card>
+            <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
                 <CardHeader>
                     <CardTitle>Location on Map</CardTitle>
                 </CardHeader>

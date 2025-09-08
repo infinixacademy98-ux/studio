@@ -281,7 +281,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
   const selectedCategory = form.watch("category");
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
       <CardHeader>
         <CardTitle>Business Details</CardTitle>
       </CardHeader>

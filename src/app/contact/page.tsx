@@ -67,7 +67,7 @@ function ContactPageContent() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         <div className="space-y-6">
-          <Card>
+          <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
             <CardHeader>
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
@@ -104,7 +104,7 @@ function ContactPageContent() {
         </div>
 
         <div>
-          <Card>
+          <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
             </CardHeader>

@@ -326,7 +326,7 @@ export default function HomeContent() {
        </section>
        
        <section className="mb-12">
-          <div className="mb-8 p-4 bg-card rounded-lg shadow-md">
+          <div className="mb-8 p-4 bg-card rounded-lg shadow-md transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <div className="relative flex-grow w-full sm:w-auto">
                  <div className="flex w-full max-w-lg mx-auto">
@@ -488,7 +488,7 @@ export default function HomeContent() {
         )}
       </div>
 
-      <section className="text-center py-8 my-8 bg-card rounded-lg shadow-md">
+      <section className="text-center py-8 my-8 bg-card rounded-lg shadow-md transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
         <div className="container">
           <h2 className="text-3xl font-bold tracking-tight">List Your Business Today</h2>
           <p className="mt-4 text-lg text-muted-foreground">
