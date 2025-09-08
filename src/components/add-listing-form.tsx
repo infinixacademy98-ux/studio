@@ -20,9 +20,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Wand2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { categories } from "@/lib/data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { collection, addDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, serverTimestamp, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./auth-provider";
 import { useRouter } from "next/navigation";
@@ -69,8 +68,33 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   
   const isUpdateMode = !!existingListing;
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "categories"));
+        const fetchedCategories = querySnapshot.docs.map(doc => doc.data().name as string).sort();
+        if (!fetchedCategories.includes("Other")) {
+          fetchedCategories.push("Other");
+        }
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not load categories.",
+        });
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    fetchCategories();
+  }, [toast]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -95,7 +119,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
   });
 
   useEffect(() => {
-    if (isUpdateMode && existingListing) {
+    if (isUpdateMode && existingListing && categories.length > 0) {
        const isPredefinedCategory = categories.includes(existingListing.category);
        form.reset({
         name: existingListing.name,
@@ -116,7 +140,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         youtube: existingListing.contact.socials?.youtube || "",
       });
     }
-  }, [isUpdateMode, existingListing, form]);
+  }, [isUpdateMode, existingListing, form, categories]);
 
  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) {
@@ -211,19 +235,34 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
     setIsSuggesting(true);
     const result = await suggestCategoryAction(description);
     setIsSuggesting(false);
+    
     if ("category" in result) {
       const suggestedCategory = result.category;
-      // Check if the suggested category exists in our predefined list
-      const isPredefined = categories.some(c => c.toLowerCase() === suggestedCategory.toLowerCase() && c !== 'Other');
+      const normalizedSuggested = suggestedCategory.trim().toLowerCase();
+      
+      const existingCategory = categories.find(c => c.toLowerCase() === normalizedSuggested);
 
-      if (isPredefined) {
-        // Find the correct casing
-        const matchingCategory = categories.find(c => c.toLowerCase() === suggestedCategory.toLowerCase());
-        form.setValue("category", matchingCategory!, { shouldValidate: true });
+      if (existingCategory && existingCategory !== 'Other') {
+        form.setValue("category", existingCategory, { shouldValidate: true });
         form.setValue("otherCategory", "", { shouldValidate: true });
       } else {
         form.setValue("category", "Other", { shouldValidate: true });
-        form.setValue("otherCategory", suggestedCategory, { shouldValidate: true });
+        form.setValue("otherCategory", suggestedCategory.trim(), { shouldValidate: true });
+
+        // If it's a new category, add it to Firestore
+        if (!existingCategory) {
+           try {
+              await addDoc(collection(db, "categories"), { name: suggestedCategory.trim() });
+              toast({
+                title: "New Category Added!",
+                description: `"${suggestedCategory.trim()}" has been added to the list.`,
+              });
+              // Refresh category list
+               setCategories(prev => [...prev.filter(c => c !== 'Other'), suggestedCategory.trim(), 'Other'].sort());
+           } catch (e) {
+              console.error("Failed to add new category", e);
+           }
+        }
       }
 
        toast({
@@ -289,10 +328,10 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                   <FormLabel>Category</FormLabel>
                     <div className="flex gap-2 items-start">
                       <div className="flex-1 space-y-2">
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value} disabled={loadingCategories}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a category" />
+                              <SelectValue placeholder={loadingCategories ? "Loading categories..." : "Select a category"} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>

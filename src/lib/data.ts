@@ -1,6 +1,7 @@
 
 import type { Business } from "./types";
 
+// This is now just a fallback or for initial seeding, categories are managed in Firestore.
 export const categories: string[] = [
   "Restaurant",
   "Cafe",

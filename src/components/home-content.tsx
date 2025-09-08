@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories, cities, businessListings as staticBusinessListings } from "@/lib/data";
+import { businessListings as staticBusinessListings } from "@/lib/data";
 import type { Business } from "@/lib/types";
 import BusinessCard from "@/components/business-card";
 import { Input } from "@/components/ui/input";
@@ -99,6 +99,7 @@ const popularCategories = [
 
 export default function HomeContent() {
   const [listings, setListings] = useState<Business[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
@@ -117,10 +118,15 @@ export default function HomeContent() {
   const listingsPerPage = 8;
 
   useEffect(() => {
-    const fetchListings = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        // 1. Fetch from Firestore
+        // Fetch Categories
+        const categoriesSnapshot = await getDocs(collection(db, "categories"));
+        const fetchedCategories = categoriesSnapshot.docs.map(doc => doc.data().name as string).sort();
+        setCategories(fetchedCategories);
+
+        // Fetch Listings
         const q = query(collection(db, "listings"), where("status", "==", "approved"));
         const querySnapshot = await getDocs(q);
         const firestoreListings = querySnapshot.docs.map(doc => ({
@@ -129,7 +135,7 @@ export default function HomeContent() {
             createdAt: doc.data().createdAt.toDate(), // Convert Timestamp to Date
         })) as Business[];
 
-        // 2. Combine with static data, avoiding duplicates
+        // Combine with static data, avoiding duplicates
         const firestoreIds = new Set(firestoreListings.map(l => l.id));
         const uniqueStaticListings = staticBusinessListings.filter(l => !firestoreIds.has(l.id));
 
@@ -137,16 +143,20 @@ export default function HomeContent() {
         setListings(combinedListings);
 
       } catch (error) {
-        console.error("Error fetching listings from Firestore, falling back to static data.", error);
-        // Fallback to static data if Firestore fails
+        console.error("Error fetching data from Firestore, falling back to static data.", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not fetch data. Displaying sample listings.",
+        });
         setListings(staticBusinessListings);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchListings();
-  }, []);
+    fetchData();
+  }, [toast]);
   
    useEffect(() => {
     const checkUserListing = async () => {
@@ -190,7 +200,7 @@ export default function HomeContent() {
     } finally {
       setIsSearching(false);
     }
-  }, [searchTerm, toast]);
+  }, [searchTerm, toast, categories]);
   
   // Effect to run search when searchTerm changes from popular category click
   useEffect(() => {
@@ -226,10 +236,9 @@ export default function HomeContent() {
 
       // Base filters
       const matchesCategory = category === "all" || listing.category === category;
-      const matchesCity = city === "all" || listing.address.city === city;
       const matchesRating = rating === "all" || Math.floor(averageRating) >= parseInt(rating);
       
-      if (!matchesCity || !matchesRating) return false;
+      if (!matchesRating) return false;
 
       // Logic for combined search and category filtering
       const hasSearchTerm = searchTerm.trim().length >= 3;
@@ -260,7 +269,7 @@ export default function HomeContent() {
       if (b.id === INFINIX_ACADEMY_ID) return 1;
       return 0; // Keep original order for other items
     });
-  }, [searchTerm, category, city, rating, listings, relatedCategories]);
+  }, [searchTerm, category, rating, listings, relatedCategories]);
   
   // Reset to page 1 whenever filters change
   useEffect(() => {
@@ -373,22 +382,7 @@ export default function HomeContent() {
                       </p>
                     </div>
                     <div className="grid gap-2">
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="city">City</Label>
-                        <Select value={city} onValueChange={setCity}>
-                            <SelectTrigger id="city" className="col-span-2 h-8">
-                              <SelectValue placeholder="All Cities" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Cities</SelectItem>
-                                {cities.map((c) => (
-                                <SelectItem key={c} value={c}>
-                                    {c}
-                                </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                      </div>
+                      
                       <div className="grid grid-cols-3 items-center gap-4">
                         <Label htmlFor="rating">Rating</Label>
                         <Select value={rating} onValueChange={setRating}>
