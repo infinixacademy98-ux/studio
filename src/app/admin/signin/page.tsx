@@ -43,17 +43,8 @@ export default function AdminSignInPage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    // This effect handles redirection for already logged-in users.
-    if (!authLoading) {
-      if (user) {
-        if (isAdmin) {
-          router.push("/admin/dashboard");
-        } else {
-          // If a non-admin user is already logged in and lands here,
-          // it's best to keep them on this page and let them sign in as admin.
-          // Or we could sign them out. For now, we do nothing and let them attempt login.
-        }
-      }
+    if (!authLoading && user && isAdmin) {
+      router.push("/admin/dashboard");
     }
   }, [user, isAdmin, authLoading, router]);
 
@@ -81,11 +72,11 @@ export default function AdminSignInPage() {
       const userDocSnap = await getDoc(userDocRef);
 
       if (userDocSnap.exists() && userDocSnap.data().role === "admin") {
-        // Role is admin, allow login. The useEffect will handle redirection.
         toast({
             title: "Success!",
             description: "Admin signed in successfully."
         })
+        // The AuthProvider will update and the useEffect will redirect.
       } else {
         // NOT an admin. Sign them out immediately and show an error.
         await signOut(auth);
@@ -106,17 +97,8 @@ export default function AdminSignInPage() {
     }
   }
 
-  if (authLoading) {
+  if (authLoading || (user && isAdmin)) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  // If user is logged in AND is an admin, show loader while redirecting
-  if (user && isAdmin) {
-     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
