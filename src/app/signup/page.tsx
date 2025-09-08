@@ -98,16 +98,16 @@ export default function SignUpPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
-        <div className="flex justify-center pt-6">
-            <Image
-                src="https://i.postimg.cc/9MLgBMfX/image-Edited.png"
-                alt="MVS Belgaum Logo"
-                width={80}
-                height={80}
-                className="h-20 w-20 bg-white rounded-full p-2"
-            />
-        </div>
         <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+                <Image
+                    src="https://i.postimg.cc/9MLgBMfX/image-Edited.png"
+                    alt="MVS Belgaum Logo"
+                    width={80}
+                    height={80}
+                    className="h-20 w-20 bg-white rounded-full p-2"
+                />
+            </div>
           <CardTitle className="text-2xl">Sign Up</CardTitle>
           <CardDescription>
             Enter your email below to create your account
