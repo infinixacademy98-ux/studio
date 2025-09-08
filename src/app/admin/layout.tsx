@@ -4,7 +4,7 @@
 import AdminSidebar from "@/components/admin-sidebar";
 import { useAuth } from "@/components/auth-provider";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function AdminLayout({
@@ -14,15 +14,22 @@ export default function AdminLayout({
 }) {
   const { user, isAdmin, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  // The signin page should not be protected by this layout
+  if (pathname === "/admin/signin") {
+    return <>{children}</>;
+  }
 
   useEffect(() => {
     if (!loading && !user) {
       router.push("/admin/signin");
     } else if (!loading && user && !isAdmin) {
+      // If a non-admin user somehow gets here, redirect them
       router.push("/");
     }
   }, [user, isAdmin, loading, router]);
-  
+
   if (loading || !isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
