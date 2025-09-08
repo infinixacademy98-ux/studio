@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "./ui/button";
-import { Home, Building2, MessageSquare, LogOut, AppWindow } from "lucide-react";
+import { Home, Building2, MessageSquare, LogOut, AppWindow, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 
@@ -21,6 +21,7 @@ const navLinks = [
   { href: "/admin/businesses", icon: Building2, label: "Businesses" },
   { href: "/admin/messages", icon: MessageSquare, label: "Messages" },
   { href: "/admin/categories", icon: AppWindow, label: "Categories" },
+  { href: "/admin/users", icon: Users, label: "Users" },
 ];
 
 export default function AdminSidebar() {
