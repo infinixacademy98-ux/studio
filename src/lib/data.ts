@@ -221,35 +221,5 @@ export const businessListings: Business[] = [
     "images": ["https://picsum.photos/seed/catering/600/400"],
     "reviews": [],
     "timing": "10:00 am to 9:30 pm"
-  },
-  {
-    "id": "10",
-    "name": "Infinix Academy",
-    "category": "Education",
-    "description": "Infinix Academy is a premier institution offering a wide range of courses in software development, digital marketing, and other in-demand tech skills. We empower students to build successful careers in the tech industry.",
-    "ownerId": "mock-owner",
-    "status": "approved",
-    "createdAt": new Date(),
-    "contact": {
-      "phone": "123-456-7890",
-      "email": "contact@infinixacademy.in",
-      "website": "https://www.infinixacademy.in/"
-    },
-    "address": {
-      "street": "Kulkarni Galli",
-      "city": "Belgaum",
-      "state": "Karnataka",
-      "zip": "590001"
-    },
-    "images": ["https://i.postimg.cc/Jh8V67Ym/Untitled-design-1.png"],
-    "reviews": [
-        {
-            "id": "rev1",
-            "author": "Priya S.",
-            "rating": 5,
-            "comment": "Excellent courses and great instructors. Highly recommended!",
-            "date": "2024-07-20T10:00:00Z"
-        }
-    ]
   }
 ];
