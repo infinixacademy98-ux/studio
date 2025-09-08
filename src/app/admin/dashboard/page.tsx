@@ -7,7 +7,7 @@ import { collection, getDocs, doc, updateDoc, query, orderBy, addDoc, serverTime
 import { signOut } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
-import type { Business } from "@/lib/types";
+import type { Business, Message } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -35,8 +35,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, LogOut, Trash2 } from "lucide-react";
+import { Loader2, LogOut, Trash2, Building2, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 
@@ -45,11 +47,13 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [listings, setListings] = useState<Business[]>([]);
-  const [loadingListings, setLoadingListings] = useState(true);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
   const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
   const [selectedListing, setSelectedListing] = useState<Business | null>(null);
   const [listingToDelete, setListingToDelete] = useState<Business | null>(null);
+  const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -60,29 +64,45 @@ export default function AdminDashboardPage() {
   }, [user, isAdmin, authLoading, router]);
 
   const fetchListings = async () => {
-    setLoadingListings(true);
+    const q = query(collection(db, "listings"), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(
+      (doc) => ({ id: doc.id, ...doc.data() } as Business)
+    );
+  };
+
+  const fetchMessages = async () => {
+    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(
+      (doc) => ({ id: doc.id, ...doc.data() } as Message)
+    );
+  };
+
+  const loadAllData = async () => {
+    setLoadingData(true);
     try {
-      const q = query(collection(db, "listings"), orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      const listingsData = querySnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Business)
-      );
+      const [listingsData, messagesData] = await Promise.all([
+        fetchListings(),
+        fetchMessages(),
+      ]);
       setListings(listingsData);
+      setMessages(messagesData);
     } catch (error) {
-      console.error("Error fetching listings:", error);
+      console.error("Error fetching data:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to fetch listings.",
+        description: "Failed to fetch dashboard data.",
       });
     } finally {
-      setLoadingListings(false);
+      setLoadingData(false);
     }
   };
 
   useEffect(() => {
     if (isAdmin) {
-      fetchListings();
+      loadAllData();
     }
   }, [isAdmin]);
 
@@ -90,13 +110,11 @@ export default function AdminDashboardPage() {
     const { id, ownerId, name } = listingToApprove;
     setIsUpdating(prev => ({ ...prev, [id]: true }));
     try {
-      // 1. Update listing status
       const listingRef = doc(db, "listings", id);
       await updateDoc(listingRef, {
         status: "approved",
       });
 
-      // 2. Create a notification for the business owner
       if (ownerId) {
         const notificationsRef = collection(db, "users", ownerId, "notifications");
         await addDoc(notificationsRef, {
@@ -112,7 +130,6 @@ export default function AdminDashboardPage() {
         description: "Listing has been approved and owner notified.",
       });
 
-      // 3. Update local state
       setListings(prevListings => 
         prevListings.map(listing => 
           listing.id === id ? { ...listing, status: 'approved' } : listing
@@ -130,28 +147,48 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDeleteListing = async () => {
     if (!listingToDelete) return;
-
     const { id } = listingToDelete;
     setIsDeleting(prev => ({ ...prev, [id]: true }));
     try {
       await deleteDoc(doc(db, "listings", id));
-      
       toast({
         title: "Success!",
         description: "The listing has been permanently deleted.",
       });
-      
       setListings(prevListings => prevListings.filter(listing => listing.id !== id));
       setListingToDelete(null);
-
     } catch (error) {
       console.error("Error deleting listing:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Could not delete the listing. Please try again.",
+      });
+    } finally {
+      setIsDeleting(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
+  const handleDeleteMessage = async () => {
+    if (!messageToDelete) return;
+    const { id } = messageToDelete;
+    setIsDeleting(prev => ({ ...prev, [id]: true }));
+    try {
+      await deleteDoc(doc(db, "messages", id));
+      toast({
+        title: "Success!",
+        description: "The message has been deleted.",
+      });
+      setMessages(prevMessages => prevMessages.filter(msg => msg.id !== id));
+      setMessageToDelete(null);
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not delete the message. Please try again.",
       });
     } finally {
       setIsDeleting(prev => ({ ...prev, [id]: false }));
@@ -175,17 +212,18 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const isNew = (listing: Business) => {
-    if (listing.status !== 'pending' || !listing.createdAt?.toDate) return false;
+  const isNew = (item: Business | Message) => {
+    if ((item as Business).status === 'approved') return false;
+    if (!item.createdAt?.toDate) return false;
     const oneDay = 24 * 60 * 60 * 1000;
-    return new Date().getTime() - listing.createdAt.toDate().getTime() < oneDay;
+    return new Date().getTime() - item.createdAt.toDate().getTime() < oneDay;
   }
 
   const formatDate = (timestamp: any) => {
     if (!timestamp?.toDate) {
       return "N/A";
     }
-    return format(timestamp.toDate(), "PPpp"); // e.g., Jul 22, 2024, 5:08:16 PM
+    return format(timestamp.toDate(), "PPpp");
   };
 
   if (authLoading || !user || !isAdmin) {
@@ -202,93 +240,167 @@ export default function AdminDashboardPage() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage business listings</p>
+            <p className="text-muted-foreground">Manage business listings and user messages</p>
           </div>
           <Button variant="outline" onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
             Sign Out
           </Button>
         </div>
-        <div className="rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Business Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>Date Submitted</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loadingListings ? (
-                  <TableRow>
-                      <TableCell colSpan={6} className="text-center">
-                          <div className="flex justify-center py-16">
-                              <Loader2 className="h-8 w-8 animate-spin" />
-                          </div>
-                      </TableCell>
-                  </TableRow>
-              ) : listings.length > 0 ? (
-                listings.map((listing) => (
-                  <TableRow key={listing.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <span>{listing.name}</span>
-                        {isNew(listing) && (
-                          <Badge variant="outline" className="text-blue-500 border-blue-500">New</Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{listing.category}</TableCell>
-                    <TableCell>{listing.address.city}</TableCell>
-                    <TableCell>{formatDate(listing.createdAt)}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          listing.status === "approved" ? "default" : "secondary"
-                        }
-                        className={listing.status === "approved" ? "bg-green-500" : ""}
-                      >
-                        {listing.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right space-x-2">
-                       <Button variant="outline" size="sm" onClick={() => setSelectedListing(listing)}>
-                         View
-                       </Button>
-                      {listing.status === "pending" && (
-                        <Button
-                          size="sm"
-                          onClick={() => handleApprove(listing)}
-                          disabled={isUpdating[listing.id]}
-                        >
-                          {isUpdating[listing.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                          Approve
-                        </Button>
+        
+        <Tabs defaultValue="listings">
+          <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsTrigger value="listings">
+              <Building2 className="mr-2 h-4 w-4" />
+              Listings ({listings.length})
+            </TabsTrigger>
+            <TabsTrigger value="messages">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Messages ({messages.length})
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="listings" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Business Listings</CardTitle>
+                <CardDescription>Approve or delete business submissions.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Business Name</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Date Submitted</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {loadingData ? (
+                          <TableRow>
+                              <TableCell colSpan={5} className="text-center">
+                                  <div className="flex justify-center py-16">
+                                      <Loader2 className="h-8 w-8 animate-spin" />
+                                  </div>
+                              </TableCell>
+                          </TableRow>
+                      ) : listings.length > 0 ? (
+                        listings.map((listing) => (
+                          <TableRow key={listing.id}>
+                            <TableCell className="font-medium">
+                              <div className="flex items-center gap-2">
+                                <span>{listing.name}</span>
+                                {isNew(listing) && (
+                                  <Badge variant="outline" className="text-blue-500 border-blue-500">New</Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>{listing.category}</TableCell>
+                            <TableCell>{formatDate(listing.createdAt)}</TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={listing.status === "approved" ? "default" : "secondary"}
+                                className={listing.status === "approved" ? "bg-green-500" : ""}
+                              >
+                                {listing.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right space-x-2">
+                              <Button variant="outline" size="sm" onClick={() => setSelectedListing(listing)}>View</Button>
+                              {listing.status === "pending" && (
+                                <Button size="sm" onClick={() => handleApprove(listing)} disabled={isUpdating[listing.id]}>
+                                  {isUpdating[listing.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                  Approve
+                                </Button>
+                              )}
+                              <Button variant="destructive" size="sm" onClick={() => setListingToDelete(listing)} disabled={isDeleting[listing.id]}>
+                                {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                          <TableRow>
+                              <TableCell colSpan={5} className="text-center py-16 text-muted-foreground">
+                                  No listings found.
+                              </TableCell>
+                          </TableRow>
                       )}
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => setListingToDelete(listing)}
-                        disabled={isDeleting[listing.id]}
-                      >
-                        {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                  <TableRow>
-                      <TableCell colSpan={6} className="text-center py-16 text-muted-foreground">
-                          No listings found.
-                      </TableCell>
-                  </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="messages" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Messages</CardTitle>
+                <CardDescription>Messages sent from the contact form.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>From</TableHead>
+                        <TableHead>Subject</TableHead>
+                        <TableHead>Message</TableHead>
+                        <TableHead>Date Received</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {loadingData ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center">
+                            <div className="flex justify-center py-16">
+                              <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : messages.length > 0 ? (
+                        messages.map((message) => (
+                          <TableRow key={message.id}>
+                            <TableCell>
+                                <div className="flex flex-col">
+                                    <span className="font-medium">{message.name}</span>
+                                    <span className="text-xs text-muted-foreground">{message.email}</span>
+                                </div>
+                            </TableCell>
+                            <TableCell>{message.subject}</TableCell>
+                            <TableCell className="max-w-xs truncate">{message.message}</TableCell>
+                            <TableCell>{formatDate(message.createdAt)}</TableCell>
+                            <TableCell className="text-right">
+                               <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => setMessageToDelete(message)}
+                                disabled={isDeleting[message.id]}
+                              >
+                                {isDeleting[message.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-16 text-muted-foreground">
+                            No messages found.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
       
       {selectedListing && (
@@ -338,24 +450,49 @@ export default function AdminDashboardPage() {
             </DialogContent>
         </Dialog>
       )}
-       {listingToDelete && (
+
+      {listingToDelete && (
         <AlertDialog open={!!listingToDelete} onOpenChange={(open) => !open && setListingToDelete(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete the business listing for "{listingToDelete.name}" from the database.
-              </AlertDialogDescription>
+              </الertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                onClick={handleDelete}
+                onClick={handleDeleteListing}
                 className="bg-destructive hover:bg-destructive/90"
                 disabled={isDeleting[listingToDelete.id]}
               >
                 {isDeleting[listingToDelete.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Yes, delete it
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
+      {messageToDelete && (
+        <AlertDialog open={!!messageToDelete} onOpenChange={(open) => !open && setMessageToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Message?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this message? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteMessage}
+                className="bg-destructive hover:bg-destructive/90"
+                disabled={isDeleting[messageToDelete.id]}
+              >
+                {isDeleting[messageToDelete.id] && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

@@ -46,3 +46,12 @@ export interface Business {
   createdAt: any;
   timing?: string;
 }
+
+export interface Message {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  createdAt: any;
+}
