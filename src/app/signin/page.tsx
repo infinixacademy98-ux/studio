@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +25,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -35,10 +45,15 @@ const formSchema = z.object({
   password: z.string().min(1, { message: "Password is required." }),
 });
 
+const passwordResetSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email to send a reset link." }),
+});
+
 export default function SignInPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
@@ -47,13 +62,19 @@ export default function SignInPage() {
     }
   }, [user, authLoading, router]);
 
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
+  });
+
+  const passwordResetForm = useForm<z.infer<typeof passwordResetSchema>>({
+    resolver: zodResolver(passwordResetSchema),
+    defaultValues: {
+      email: "",
+    }
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -70,6 +91,32 @@ export default function SignInPage() {
       setIsSubmitting(false);
     }
   }
+
+  async function handlePasswordReset(values: z.infer<typeof passwordResetSchema>) {
+    setIsResetting(true);
+    try {
+      await sendPasswordResetEmail(auth, values.email);
+      toast({
+        title: "Check your email",
+        description: "A password reset link has been sent to your email address.",
+      });
+      passwordResetForm.reset();
+       // Find and click the close button programmatically
+      const closeButton = document.getElementById('forgot-password-close');
+      if (closeButton) {
+        closeButton.click();
+      }
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not send reset email. Please check if the email is correct.",
+        })
+    } finally {
+      setIsResetting(false);
+    }
+  }
+
 
   if (authLoading || user) {
     return (
@@ -113,7 +160,54 @@ export default function SignInPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <div className="flex items-center">
+                      <FormLabel>Password</FormLabel>
+                      <Dialog>
+                          <DialogTrigger asChild>
+                              <Button variant="link" className="ml-auto text-xs h-auto p-0">
+                                  Forgot password?
+                              </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                              <DialogHeader>
+                                  <DialogTitle>Reset Password</DialogTitle>
+                                  <DialogDescription>
+                                      Enter your email address and we will send you a link to reset your password.
+                                  </DialogDescription>
+                              </DialogHeader>
+                              <Form {...passwordResetForm}>
+                                <form onSubmit={passwordResetForm.handleSubmit(handlePasswordReset)} className="space-y-4">
+                                  <FormField
+                                    control={passwordResetForm.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            placeholder="your-email@example.com"
+                                            {...field}
+                                            disabled={isResetting}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                   <DialogFooter>
+                                    <DialogClose asChild>
+                                      <Button type="button" variant="secondary" id="forgot-password-close">Cancel</Button>
+                                    </DialogClose>
+                                    <Button type="submit" disabled={isResetting}>
+                                      {isResetting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                      Send Reset Link
+                                    </Button>
+                                  </DialogFooter>
+                                </form>
+                              </Form>
+                          </DialogContent>
+                      </Dialog>
+                    </div>
                     <FormControl>
                       <Input
                         type="password"
