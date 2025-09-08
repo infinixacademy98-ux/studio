@@ -29,6 +29,7 @@ import {
   MapPin,
   Star,
   Loader2,
+  Map,
 } from "lucide-react";
 import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
@@ -133,7 +134,7 @@ function BusinessDetailsPageContent() {
       }
       
       // Optimistically update UI
-      setListing(prev => prev ? { ...prev, reviews: [...prev.reviews, reviewToAdd] } : null);
+      setListing(prev => prev ? { ...prev, reviews: [...(prev.reviews || []), reviewToAdd] } : null);
       setNewReview({ rating: 0, comment: "" });
       toast({ title: "Success!", description: "Your review has been submitted." });
 
@@ -158,8 +159,8 @@ function BusinessDetailsPageContent() {
   }
   
   const averageRating =
-    listing.reviews.reduce((acc, review) => acc + review.rating, 0) /
-    (listing.reviews.length || 1);
+    (listing.reviews || []).reduce((acc, review) => acc + review.rating, 0) /
+    ((listing.reviews || []).length || 1);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -173,7 +174,7 @@ function BusinessDetailsPageContent() {
                <div className="flex items-center gap-1">
                  <StarRating rating={averageRating} />
                  <span className="font-semibold">{averageRating.toFixed(1)}</span>
-                 <span>({listing.reviews.length} reviews)</span>
+                 <span>({(listing.reviews || []).length} reviews)</span>
                </div>
                <div className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
@@ -219,9 +220,9 @@ function BusinessDetailsPageContent() {
            {/* --- Reviews --- */}
           <div>
             <h2 className="text-2xl font-bold mb-4">Reviews</h2>
-             {listing.reviews.length > 0 ? (
+             {(listing.reviews || []).length > 0 ? (
                 <div className="space-y-6">
-                    {listing.reviews.map(review => (
+                    {(listing.reviews || []).map(review => (
                         <ReviewCard key={review.id} review={review} />
                     ))}
                 </div>
@@ -290,6 +291,12 @@ function BusinessDetailsPageContent() {
                     <span className="group-hover:text-primary">Website</span>
                   </a>
                 )}
+                 {listing.contact.googleMapsUrl && (
+                  <a href={listing.contact.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
+                    <Map className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                    <span className="group-hover:text-primary">Business on Google</span>
+                  </a>
+                )}
               </div>
               <Separator />
               <div className="flex items-start gap-3">
@@ -340,5 +347,3 @@ export default function BusinessDetailsPage() {
         </WithAuthLayout>
     )
 }
-
-    

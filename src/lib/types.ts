@@ -11,6 +11,7 @@ export interface Contact {
   phone: string;
   email: string;
   website: string;
+  googleMapsUrl?: string;
 }
 
 export interface Address {

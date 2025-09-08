@@ -221,5 +221,33 @@ export const businessListings: Business[] = [
     "images": ["https://picsum.photos/seed/catering/600/400"],
     "reviews": [],
     "timing": "10:00 am to 9:30 pm"
+  },
+  {
+    "id": "10",
+    "name": "Infinix Academy",
+    "category": "Education",
+    "description": "Infinix Academy offers top-tier computer education, specializing in full-stack development, digital marketing, and various programming languages. Your gateway to a successful tech career.",
+    "ownerId": "mock-owner",
+    "status": "approved",
+    "createdAt": new Date("2024-01-01T10:00:00Z"),
+    "contact": {
+      "phone": "9876543210",
+      "email": "contact@infinixacademy.com",
+      "website": "https://www.infinixacademy.in/",
+      "googleMapsUrl": "https://share.google/aUwnLv5Hjy4pwoVKn"
+    },
+    "address": {
+      "street": "College Road",
+      "city": "Belgaum",
+      "state": "Karnataka",
+      "zip": "590001",
+      "lat": 15.855,
+      "lng": 74.51
+    },
+    "images": [
+      "https://i.postimg.cc/Jh8V67Ym/Untitled-design-1.png"
+    ],
+    "reviews": [],
+    "timing": "9:00 am to 7:00 pm"
   }
 ];
