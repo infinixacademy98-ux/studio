@@ -2,51 +2,50 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Helper function to check for admin role
     function isAdmin() {
       return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-
-    // Rules for the 'listings' collection
-    match /listings/{listingId} {
-      // Anyone can view approved listings
-      allow get: if resource.data.status == 'approved' || isAdmin();
-      
-      // Admins can see all listings (pending, approved, etc.)
-      allow list: if isAdmin();
-      
-      // Authenticated users can create new listings (for approval)
-      allow create: if request.auth != null;
-      
-      // Authenticated users can add reviews to any listing.
-      // Admins can update any field.
-      allow update: if request.auth != null || isAdmin();
-      
-      // Admins can delete listings
-      allow delete: if isAdmin();
+    
+    // Helper function to check if a user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
     }
 
-    // Rules for the 'users' collection
     match /users/{userId} {
       // Admins can read/write any user document
       allow read, write: if isAdmin();
       
-      // Users can only read/write their own document
+      // Users can read/write their own document
       allow read, write: if request.auth.uid == userId;
 
-      // Allow authenticated users to check the role of other users for specific operations
-      allow get: if request.auth != null && resource.data.keys().hasAll(['role']);
+      // Authenticated users can read the 'role' of other users
+      allow get: if isAuthenticated() && 'role' in resource.data;
     }
-    
-    // Rules for nested 'notifications' subcollection
-    match /users/{userId}/notifications/{notificationId} {
-        // Users can manage their own notifications
-        allow read, write, create, delete: if request.auth.uid == userId;
-        
-        // Admins can read any notification for management purposes
-        allow read: if isAdmin();
+
+    match /listings/{listingId} {
+      // Admins can perform any action on any listing
+      allow read, write, create, update, delete: if isAdmin();
+
+      // Anyone can view a single approved listing or a list of approved listings
+      allow get, list: if resource == null || resource.data.status == 'approved';
+
+      // Authenticated users can create new listings (status will be pending)
+      allow create: if isAuthenticated();
+      
+      // Authenticated users can update a listing ONLY to add a review
+      allow update: if isAuthenticated() && request.resource.data.keys().hasOnly(['reviews']);
+    }
+
+    // Rules for user-specific subcollections, like notifications
+    match /users/{userId}/{collection}/{docId} {
+        // Admins can manage any subcollection
+        allow read, write: if isAdmin();
+
+        // Users can only access their own subcollections
+        allow read, write: if request.auth.uid == userId;
     }
   }
 }
