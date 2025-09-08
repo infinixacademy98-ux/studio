@@ -85,8 +85,8 @@ function ContactPageContent() {
                 <Phone className="h-6 w-6 text-primary" />
                 <div>
                   <h3 className="font-semibold">Phone</h3>
-                  <a href="tel:+911234567890" className="text-muted-foreground hover:text-primary">
-                    +91 123 456 7890
+                  <a href="tel:+919008358456" className="text-muted-foreground hover:text-primary">
+                    +91 90083 58456
                   </a>
                 </div>
               </div>
