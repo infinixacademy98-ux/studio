@@ -29,6 +29,8 @@ import { useRouter } from "next/navigation";
 import type { Business } from "@/lib/types";
 import { categorizeBusinessListing } from "@/ai/flows/categorize-business-listing";
 
+const urlSchema = z.string().url("Please enter a valid URL.").optional().or(z.literal(''));
+
 const formSchema = z.object({
   name: z.string().min(2, "Business name must be at least 2 characters."),
   category: z.string().min(1, "Please select a category."),
@@ -36,12 +38,16 @@ const formSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters."),
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
-  website: z.string().optional(),
-  otherLink: z.string().optional(),
+  website: urlSchema,
+  otherLink: urlSchema,
   street: z.string().min(5, "Please enter a street address."),
   city: z.string().min(2, "Please enter a city."),
   state: z.string().min(2, "Please enter a state."),
   zip: z.string().min(5, "Please enter a zip code."),
+  facebook: urlSchema,
+  whatsapp: urlSchema,
+  instagram: urlSchema,
+  youtube: urlSchema,
 }).refine(data => {
     if (data.category === 'Other') {
         return !!data.otherCategory && data.otherCategory.length > 0;
@@ -81,6 +87,10 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       city: "Belgaum",
       state: "Karnataka",
       zip: "",
+      facebook: "",
+      whatsapp: "",
+      instagram: "",
+      youtube: "",
     },
   });
 
@@ -100,6 +110,10 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         city: existingListing.address.city,
         state: existingListing.address.state,
         zip: existingListing.address.zip,
+        facebook: existingListing.contact.socials?.facebook || "",
+        whatsapp: existingListing.contact.socials?.whatsapp || "",
+        instagram: existingListing.contact.socials?.instagram || "",
+        youtube: existingListing.contact.socials?.youtube || "",
       });
     }
   }, [isUpdateMode, existingListing, form]);
@@ -118,7 +132,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
       
       const formatUrl = (url?: string) => {
-        if (url && !/^https?:\/\//i.test(url)) {
+        if (url && url.trim() !== '' && !/^https?:\/\//i.test(url)) {
             return 'https://' + url;
         }
         return url;
@@ -134,6 +148,12 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
           email: values.email,
           website: formatUrl(values.website),
           otherLink: formatUrl(values.otherLink),
+          socials: {
+            facebook: formatUrl(values.facebook),
+            whatsapp: formatUrl(values.whatsapp),
+            instagram: formatUrl(values.instagram),
+            youtube: formatUrl(values.youtube),
+          },
         },
         address: {
           street: values.street,
@@ -373,6 +393,62 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                 </FormItem>
               )}
             />
+            
+            <h3 className="text-lg font-medium pt-4 border-t">Social Media (Optional)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <FormField
+                    control={form.control}
+                    name="facebook"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Facebook</FormLabel>
+                        <FormControl>
+                            <Input placeholder="https://facebook.com/your-page" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="whatsapp"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>WhatsApp</FormLabel>
+                        <FormControl>
+                            <Input placeholder="https://wa.me/your-number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="instagram"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Instagram</FormLabel>
+                        <FormControl>
+                            <Input placeholder="https://instagram.com/your-profile" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="youtube"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>YouTube</FormLabel>
+                        <FormControl>
+                            <Input placeholder="https://youtube.com/your-channel" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            </div>
             
             <h3 className="text-lg font-medium pt-4 border-t">Address</h3>
 

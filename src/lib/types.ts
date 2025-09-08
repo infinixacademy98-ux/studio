@@ -7,12 +7,20 @@ export interface Review {
   date: string;
 }
 
+export interface Socials {
+  facebook?: string;
+  whatsapp?: string;
+  instagram?: string;
+  youtube?: string;
+}
+
 export interface Contact {
   phone: string;
   email: string;
   website: string;
   googleMapsUrl?: string;
   otherLink?: string;
+  socials?: Socials;
 }
 
 export interface Address {

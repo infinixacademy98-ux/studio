@@ -31,6 +31,10 @@ import {
   Loader2,
   Map,
   Link as LinkIcon,
+  Facebook,
+  Instagram,
+  Youtube,
+  MessageSquare,
 } from "lucide-react";
 import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
@@ -162,6 +166,8 @@ function BusinessDetailsPageContent() {
   const averageRating =
     (listing.reviews || []).reduce((acc, review) => acc + review.rating, 0) /
     ((listing.reviews || []).length || 1);
+
+  const socials = listing.contact.socials;
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -313,6 +319,21 @@ function BusinessDetailsPageContent() {
                     {listing.address.city}, {listing.address.state}<br/>
                     {listing.address.zip}
                  </p>
+              </div>
+              <Separator />
+              <div className="flex justify-start items-center gap-4 pt-2">
+                  <a href={socials?.facebook || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.facebook ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
+                      <Facebook className="h-6 w-6" />
+                  </a>
+                  <a href={socials?.instagram || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.instagram ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
+                      <Instagram className="h-6 w-6" />
+                  </a>
+                  <a href={socials?.youtube || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.youtube ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
+                      <Youtube className="h-6 w-6" />
+                  </a>
+                   <a href={socials?.whatsapp || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.whatsapp ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
+                      <MessageSquare className="h-6 w-6" />
+                  </a>
               </div>
             </CardContent>
           </Card>
