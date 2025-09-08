@@ -230,44 +230,35 @@ export default function HomeContent() {
   const filteredListings = useMemo(() => {
     const INFINIX_ACADEMY_ID = "10";
     
-    const filtered = listings.filter((listing) => {
+    return listings.filter((listing) => {
       const averageRating = getAverageRating(listing);
       const searchTermLower = searchTerm.toLowerCase();
 
-      // Base filters
-      const matchesCategory = category === "all" || listing.category === category;
+      // Filter by rating first
       const matchesRating = rating === "all" || Math.floor(averageRating) >= parseInt(rating);
-      
       if (!matchesRating) return false;
 
-      // Logic for combined search and category filtering
       const hasSearchTerm = searchTerm.trim().length >= 3;
       const hasRelatedCategories = relatedCategories.length > 0;
-
+      
+      // AI-powered category search
       if (hasRelatedCategories) {
-        // AI Search is active
         const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
         return relatedCategoriesLower.includes(listing.category.toLowerCase());
       }
       
+      // Manual text search
       if (hasSearchTerm) {
-         // Manual text search is active
-         return (
+        return (
           listing.name.toLowerCase().includes(searchTermLower) ||
           listing.description.toLowerCase().includes(searchTermLower) ||
           listing.category.toLowerCase().includes(searchTermLower)
-        ) && matchesCategory;
+        );
       }
-
-      // Only category filter is active (or no filters)
+      
+      // Manual category filter (only if no search term)
+      const matchesCategory = category === "all" || listing.category === category;
       return matchesCategory;
-    });
-
-    // Custom sort to bring Infinix Academy to the top
-    return filtered.sort((a, b) => {
-      if (a.id === INFINIX_ACADEMY_ID) return -1;
-      if (b.id === INFINIX_ACADEMY_ID) return 1;
-      return 0; // Keep original order for other items
     });
   }, [searchTerm, category, rating, listings, relatedCategories]);
   
