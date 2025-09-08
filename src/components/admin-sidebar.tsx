@@ -12,9 +12,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "./ui/button";
-import { Home, Building2, MessageSquare, LogOut, AppWindow, Users } from "lucide-react";
+import { Home, Building2, MessageSquare, LogOut, AppWindow, Users, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/admin/dashboard", icon: Home, label: "Dashboard" },
@@ -47,60 +48,45 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        <Link
-          href="/"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        >
-           <Image 
-              src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
-              alt="MVS Belgaum Logo" 
-              width={40} 
-              height={40}
-              className="h-9 w-9 bg-white rounded-full p-1"
-            />
-          <span className="sr-only">MVS Belgaum</span>
-        </Link>
-        <TooltipProvider>
-          {navLinks.map((link) => (
-            <Tooltip key={link.label}>
-              <TooltipTrigger asChild>
-                <Link
-                  href={link.href}
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8 ${
-                    pathname.startsWith(link.href)
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <link.icon className="h-5 w-5" />
-                  <span className="sr-only">{link.label}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">{link.label}</TooltipContent>
-            </Tooltip>
-          ))}
-        </TooltipProvider>
-      </nav>
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 md:h-8 md:w-8 text-muted-foreground hover:text-foreground"
-                onClick={handleSignOut}
-              >
-                <LogOut className="h-5 w-5" />
-                <span className="sr-only">Sign Out</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Sign Out</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </nav>
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
+       <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className="flex h-16 items-center border-b px-6">
+           <Link href="/" className="flex items-center gap-2 font-semibold">
+             <Image 
+                src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
+                alt="MVS Belgaum Logo" 
+                width={40} 
+                height={40}
+                className="h-8 w-8 bg-white rounded-full p-1"
+              />
+            <span className="">MVS Belgaum Admin</span>
+          </Link>
+        </div>
+        <nav className="flex-1 overflow-auto py-4 px-4 text-sm font-medium">
+            <ul className="space-y-1">
+                {navLinks.map((link) => (
+                    <li key={link.label}>
+                        <Link
+                        href={link.href}
+                        className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                            pathname.startsWith(link.href) && "bg-muted text-primary"
+                        )}
+                        >
+                        <link.icon className="h-4 w-4" />
+                        {link.label}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+        <div className="mt-auto p-4">
+             <Button size="sm" className="w-full" onClick={handleSignOut}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+            </Button>
+        </div>
+      </div>
     </aside>
   );
 }

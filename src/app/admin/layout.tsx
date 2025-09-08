@@ -12,23 +12,20 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isAdmin, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const { user, isAdmin, loading } = useAuth();
 
   useEffect(() => {
-    // This effect should only run for protected admin pages, not the sign-in page itself.
     if (pathname !== "/admin/signin") {
       if (!loading && !user) {
         router.push("/admin/signin");
       } else if (!loading && user && !isAdmin) {
-        // If a non-admin user somehow gets here, redirect them
         router.push("/");
       }
     }
   }, [user, isAdmin, loading, router, pathname]);
 
-  // The signin page should not have the admin layout applied.
   if (pathname === "/admin/signin") {
     return <>{children}</>;
   }
@@ -44,7 +41,7 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <AdminSidebar />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
         <main className="flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           {children}
         </main>
