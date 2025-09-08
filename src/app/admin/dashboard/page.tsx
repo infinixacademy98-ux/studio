@@ -321,6 +321,10 @@ export default function AdminDashboardPage() {
                         <p className="col-span-1 font-semibold text-right">Website</p>
                         <p className="col-span-3">{selectedListing.contact.website || 'N/A'}</p>
                     </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <p className="col-span-1 font-semibold text-right">Other Link</p>
+                        <p className="col-span-3">{selectedListing.contact.otherLink || 'N/A'}</p>
+                    </div>
                      <div className="grid grid-cols-4 items-center gap-4">
                         <p className="col-span-1 font-semibold text-right">Address</p>
                         <p className="col-span-3">

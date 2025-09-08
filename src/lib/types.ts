@@ -12,6 +12,7 @@ export interface Contact {
   email: string;
   website: string;
   googleMapsUrl?: string;
+  otherLink?: string;
 }
 
 export interface Address {

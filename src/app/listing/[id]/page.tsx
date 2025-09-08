@@ -30,6 +30,7 @@ import {
   Star,
   Loader2,
   Map,
+  Link as LinkIcon,
 } from "lucide-react";
 import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
@@ -295,6 +296,12 @@ function BusinessDetailsPageContent() {
                   <a href={listing.contact.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
                     <Map className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
                     <span className="group-hover:text-primary">Business on Google</span>
+                  </a>
+                )}
+                 {listing.contact.otherLink && (
+                  <a href={listing.contact.otherLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
+                    <LinkIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                    <span className="group-hover:text-primary">More Info</span>
                   </a>
                 )}
               </div>

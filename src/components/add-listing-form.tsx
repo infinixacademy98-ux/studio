@@ -37,6 +37,7 @@ const formSchema = z.object({
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
   website: z.string().optional(),
+  otherLink: z.string().optional(),
   street: z.string().min(5, "Please enter a street address."),
   city: z.string().min(2, "Please enter a city."),
   state: z.string().min(2, "Please enter a state."),
@@ -75,6 +76,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       phone: "",
       email: "",
       website: "",
+      otherLink: "",
       street: "",
       city: "Belgaum",
       state: "Karnataka",
@@ -93,6 +95,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         phone: existingListing.contact.phone,
         email: existingListing.contact.email,
         website: existingListing.contact.website,
+        otherLink: existingListing.contact.otherLink,
         street: existingListing.address.street,
         city: existingListing.address.city,
         state: existingListing.address.state,
@@ -114,9 +117,11 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
     try {
       const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
       
-      let websiteUrl = values.website;
-      if (websiteUrl && !/^https?:\/\//i.test(websiteUrl)) {
-        websiteUrl = 'https://' + websiteUrl;
+      const formatUrl = (url?: string) => {
+        if (url && !/^https?:\/\//i.test(url)) {
+            return 'https://' + url;
+        }
+        return url;
       }
 
       const listingData = {
@@ -127,7 +132,8 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         contact: {
           phone: values.phone,
           email: values.email,
-          website: websiteUrl,
+          website: formatUrl(values.website),
+          otherLink: formatUrl(values.otherLink),
         },
         address: {
           street: values.street,
@@ -346,6 +352,23 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                   <FormControl>
                     <Input placeholder="https://example.com" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="otherLink"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Other Link (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., https://facebook.com/your-page" {...field} />
+                  </FormControl>
+                   <FormDescription>
+                        A link to your social media, menu, or another relevant page.
+                    </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
