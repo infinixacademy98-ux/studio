@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
   Phone,
@@ -35,17 +34,11 @@ import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
 import type { Business, Review } from "@/lib/types";
 import { businessListings as staticBusinessListings } from "@/lib/data";
-import { doc, getDoc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
-
-type BusinessDetailsPageProps = {
-  params: {
-    id: string;
-  };
-};
 
 function BusinessDetailsPageContent() {
   const [listing, setListing] = useState<Business | null>(null);
@@ -63,7 +56,6 @@ function BusinessDetailsPageContent() {
     setLoading(true);
 
     try {
-      // 1. Try fetching from Firestore first
       const docRef = doc(db, "listings", id);
       const docSnap = await getDoc(docRef);
 
@@ -72,10 +64,9 @@ function BusinessDetailsPageContent() {
         setListing({
           id: docSnap.id,
           ...data,
-          createdAt: data.createdAt?.toDate(), // Convert Timestamp
+          createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(),
         } as Business);
       } else {
-        // 2. If not in Firestore, check static data
         const foundInStatic = staticBusinessListings.find((l) => l.id === id);
         if (foundInStatic) {
           setListing(foundInStatic);
@@ -85,7 +76,6 @@ function BusinessDetailsPageContent() {
       }
     } catch (error) {
       console.error("Error fetching listing:", error);
-      // Fallback to static data on error
       const foundInStatic = staticBusinessListings.find((l) => l.id === id);
       if (foundInStatic) {
         setListing(foundInStatic);
@@ -129,10 +119,11 @@ function BusinessDetailsPageContent() {
         // This is a static listing, so we need to create it in Firestore first.
         const listingToCreate = {
             ...listing,
-            // Make sure createdAt is a JS Date object for Firestore
-            createdAt: listing.createdAt instanceof Date ? listing.createdAt : new Date(),
-            reviews: [reviewToAdd], // Start with the new review
+            createdAt: serverTimestamp(),
+            reviews: [reviewToAdd], 
         };
+        // Remove id from the object to avoid saving it in the document body
+        delete (listingToCreate as Partial<Business>).id; 
         await setDoc(listingRef, listingToCreate);
       } else {
         // Document exists, just update it with the new review
@@ -342,7 +333,7 @@ function BusinessDetailsPageContent() {
   );
 }
 
-export default function BusinessDetailsPage({ params }: BusinessDetailsPageProps) {
+export default function BusinessDetailsPage() {
     return (
         <WithAuthLayout>
             <BusinessDetailsPageContent />

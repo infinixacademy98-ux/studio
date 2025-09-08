@@ -1,44 +1,65 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Admins can do anything
+
+    // Helper functions
     function isAdmin() {
-      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isApproved(listingId) {
+        return get(/databases/$(database)/documents/listings/$(listingId)).data.status == 'approved';
+    }
+    
+    function isListingOwner(listingId) {
+        return isOwner(get(/databases/$(database)/documents/listings/$(listingId)).data.ownerId);
+    }
+    
+    function isReviewUpdate(requestData) {
+        // Allow only the 'reviews' field to be changed.
+        return requestData.keys().hasOnly(['reviews']);
     }
 
-    // User can manage their own data
+    // Rules for the 'users' collection
     match /users/{userId} {
-      allow read, write: if request.auth.uid == userId || isAdmin();
-    }
-    
-    // Listings rules
-    match /listings/{listingId} {
-      // Admins can read/write any listing
+      // Admins can read/write any user document
       allow read, write: if isAdmin();
       
-      // Anyone can see approved listings
-      allow list: if !isAdmin();
-      
-      // Authenticated users can read single listings before writing reviews
-      allow get: if request.auth != null;
-      
-      // Authenticated users can create listings, which start as 'pending'
-      allow create: if request.auth != null && request.resource.data.status == 'pending';
-      
-      // Logged-in users can update the 'reviews' field of any listing
-      allow update: if request.auth != null && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviews']);
+      // Users can only read/write their own document
+      allow read, write: if isOwner(userId);
     }
     
-    // Notifications rules
+    // Rules for user 'notifications' subcollection
     match /users/{userId}/notifications/{notificationId} {
-        // User can read/write their own notifications
-        allow read, write: if request.auth.uid == userId;
-        // Admins can read notifications for moderation/support
+        // Users can read/write their own notifications
+        allow read, write: if isOwner(userId);
+        
+        // Admins can read any notification (for potential future management)
         allow read: if isAdmin();
+    }
+
+    // Rules for the 'listings' collection
+    match /listings/{listingId} {
+      // Admins can perform any action on any listing
+      allow read, write: if isAdmin();
+      
+      // ANYONE can read a single approved listing (for details page)
+      allow get: if isApproved(listingId);
+      
+      // ANYONE can list approved listings (for the homepage)
+      allow list: if request.query.get("status") == "approved";
+
+      // AUTHENTICATED USERS can:
+      // 1. Create a new listing (for themselves)
+      allow create: if request.auth != null && isOwner(request.resource.data.ownerId);
+
+      // 2. Update a listing ONLY to add a review, and only if they have read access to it first.
+      allow update: if request.auth != null && isApproved(listingId) && isReviewUpdate(request.resource.data);
     }
   }
 }
