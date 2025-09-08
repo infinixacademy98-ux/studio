@@ -130,20 +130,23 @@ export default function SignInPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
-        <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+        <CardHeader>
+           <div className="flex justify-center items-center gap-2 mb-4">
                 <Image
                     src="https://i.postimg.cc/9MLgBMfX/image-Edited.png"
                     alt="MVS Belgaum Logo"
-                    width={80}
-                    height={80}
-                    className="h-20 w-20 bg-white rounded-full p-2"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 bg-white rounded-full p-1"
                 />
+                <h1 className="text-xl font-bold">MVS Belgaum</h1>
             </div>
-          <CardTitle className="text-2xl">Welcome Back!</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account.
-          </CardDescription>
+            <div className="text-center">
+                <CardTitle className="text-2xl">Welcome Back!</CardTitle>
+                <CardDescription>
+                    Enter your credentials to access your account.
+                </CardDescription>
+            </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>
