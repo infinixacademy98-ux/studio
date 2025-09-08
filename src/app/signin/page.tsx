@@ -140,9 +140,9 @@ export default function SignInPage() {
                     className="h-20 w-20 bg-white rounded-full p-2"
                 />
             </div>
-          <CardTitle className="text-2xl">Sign In</CardTitle>
+          <CardTitle className="text-2xl">Welcome Back!</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your credentials to access your account.
           </CardDescription>
         </CardHeader>
         <CardContent>

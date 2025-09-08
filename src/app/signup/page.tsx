@@ -108,9 +108,9 @@ export default function SignUpPage() {
                     className="h-20 w-20 bg-white rounded-full p-2"
                 />
             </div>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
+          <CardTitle className="text-2xl">Create an Account</CardTitle>
           <CardDescription>
-            Enter your email below to create your account
+            Enter your email below to get started.
           </CardDescription>
         </CardHeader>
         <CardContent>
