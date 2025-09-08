@@ -2,7 +2,7 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Helper function to check for admin role
     function isAdmin() {
       return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
@@ -11,44 +11,33 @@ service cloud.firestore {
 
     // Rules for the 'users' collection
     match /users/{userId} {
-      // Admins can read/write any user document
-      allow read, write: if isAdmin();
-      
-      // Authenticated users can read their own document
-      allow get: if request.auth.uid == userId;
+      // Admins can read any user document
+      allow get: if isAdmin();
+      // Users can read and write to their own document
+      allow read, write: if request.auth.uid == userId;
 
-      // Allow any authenticated user to read the 'role' of any other user for client-side checks
-      allow get: if request.auth != null && 'role' in resource.data;
+      // Rules for user notifications subcollection
+      match /notifications/{notificationId} {
+        // Users can read and write their own notifications
+        allow read, write: if request.auth.uid == userId;
+      }
     }
 
     // Rules for the 'listings' collection
     match /listings/{listingId} {
-      
-      // Admins can read/write any listing
-      allow read, write: if isAdmin();
-      
-      // Any user (even unauthenticated) can read approved listings
-      allow list: if resource.data.status == 'approved';
-      allow get: if resource.data.status == 'approved' || request.auth != null;
+      // Admins have full access to all listings
+      allow read, create, update, delete: if isAdmin();
 
-      // Authenticated users can create new listings (status will be 'pending')
-      allow create: if request.auth != null;
+      // Logged-in users can create new listings
+      allow create: if request.auth.uid != null;
 
-      // Authenticated users can update a listing ONLY to add a review
-      // This rule checks that no other field is being changed during the update.
-      allow update: if request.auth != null &&
-                      request.resource.data.name == resource.data.name &&
-                      request.resource.data.category == resource.data.category &&
-                      request.resource.data.description == resource.data.description &&
-                      request.resource.data.contact == resource.data.contact &&
-                      request.resource.data.address == resource.data.address &&
-                      request.resource.data.status == resource.data.status &&
-                      request.resource.data.ownerId == resource.data.ownerId;
-    }
+      // Anyone can view listings (both individual and lists)
+      allow list, get: if true;
 
-    // Rules for user-specific subcollections like 'notifications'
-    match /users/{userId}/{collection}/{docId} {
-        allow read, write: if request.auth.uid == userId || isAdmin();
+      // Logged-in users can update a listing, but only to add a review
+      allow update: if request.auth.uid != null &&
+                      request.resource.data.keys().hasAll(resource.data.keys()) &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviews']);
     }
   }
 }
