@@ -35,7 +35,7 @@ import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
 import type { Business, Review } from "@/lib/types";
 import { businessListings as staticBusinessListings } from "@/lib/data";
-import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
@@ -123,9 +123,23 @@ function BusinessDetailsPageContent() {
       };
 
       const listingRef = doc(db, "listings", id);
-      await updateDoc(listingRef, {
-        reviews: arrayUnion(reviewToAdd),
-      });
+      const docSnap = await getDoc(listingRef);
+
+      if (!docSnap.exists() && listing) {
+        // This is a static listing, so we need to create it in Firestore first.
+        const listingToCreate = {
+            ...listing,
+            // Make sure createdAt is a JS Date object for Firestore
+            createdAt: listing.createdAt instanceof Date ? listing.createdAt : new Date(),
+            reviews: [reviewToAdd], // Start with the new review
+        };
+        await setDoc(listingRef, listingToCreate);
+      } else {
+        // Document exists, just update it with the new review
+        await updateDoc(listingRef, {
+          reviews: arrayUnion(reviewToAdd),
+        });
+      }
       
       // Optimistically update UI
       setListing(prev => prev ? { ...prev, reviews: [...prev.reviews, reviewToAdd] } : null);
@@ -134,7 +148,7 @@ function BusinessDetailsPageContent() {
 
     } catch (error) {
         console.error("Error submitting review:", error);
-        toast({ variant: "destructive", title: "Error", description: "Failed to submit review. This business may not support live reviews yet." });
+        toast({ variant: "destructive", title: "Error", description: "Failed to submit review. Please try again." });
     } finally {
         setIsSubmittingReview(false);
     }
