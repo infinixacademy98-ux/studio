@@ -5,8 +5,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Mail, Phone, MapPin, Loader2 } from "lucide-react";
 import WithAuthLayout from "@/components/with-auth-layout";
+import { submitContactForm } from "./actions";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -22,20 +21,6 @@ const formSchema = z.object({
   subject: z.string().min(5, "Subject must be at least 5 characters."),
   message: z.string().min(10, "Message must be at least 10 characters."),
 });
-
-async function submitContactForm(data: z.infer<typeof formSchema>) {
-  "use server";
-  try {
-    await addDoc(collection(db, "messages"), {
-      ...data,
-      createdAt: serverTimestamp(),
-    });
-    return { success: true };
-  } catch (error) {
-    console.error("Error submitting contact form:", error);
-    return { success: false, error: "Failed to send message. Please try again later." };
-  }
-}
 
 function ContactPageContent() {
   const { toast } = useToast();
