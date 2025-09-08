@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Search, SlidersHorizontal, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal, TrendingUp, ChevronLeft, ChevronRight, Edit } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -28,8 +28,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { findRelatedCategories } from "@/ai/flows/find-related-categories";
 import { useToast } from "@/hooks/use-toast";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useAuth } from "./auth-provider";
 
 
 const MarqueeContent = ({ listings, isDuplicate = false }: { listings: Business[], isDuplicate?: boolean }) => (
@@ -106,7 +107,10 @@ export default function HomeContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isSearching, setIsSearching] = useState(false);
   const [relatedCategories, setRelatedCategories] = useState<string[]>([]);
+  const [userHasListing, setUserHasListing] = useState(false);
+  
   const { toast } = useToast();
+  const { user } = useAuth();
   const resultsRef = useRef<HTMLDivElement>(null);
   const isInitialMount = useRef(true);
 
@@ -143,6 +147,23 @@ export default function HomeContent() {
 
     fetchListings();
   }, []);
+  
+   useEffect(() => {
+    const checkUserListing = async () => {
+      if (user) {
+        const q = query(
+          collection(db, "listings"),
+          where("ownerId", "==", user.uid),
+          limit(1)
+        );
+        const querySnapshot = await getDocs(q);
+        setUserHasListing(!querySnapshot.empty);
+      } else {
+        setUserHasListing(false);
+      }
+    };
+    checkUserListing();
+  }, [user]);
 
   const handleSearch = useCallback(async () => {
     if (searchTerm.trim().length < 3) {
@@ -479,9 +500,19 @@ export default function HomeContent() {
           <p className="mt-4 text-lg text-muted-foreground">
             Reach more customers and grow your business with our platform.
           </p>
-          <Button asChild size="lg" className="mt-6">
-            <Link href="/add-listing">Get Started</Link>
-          </Button>
+          <div className="mt-6 flex flex-col items-center gap-4">
+            <Button asChild size="lg">
+              <Link href="/add-listing">Get Started</Link>
+            </Button>
+            {user && userHasListing && (
+              <Button asChild variant="outline">
+                <Link href="/update-listing">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Update Your Listing
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       </section>
     </div>

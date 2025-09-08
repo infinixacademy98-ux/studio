@@ -19,14 +19,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Wand2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { categories } from "@/lib/data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./auth-provider";
 import { useRouter } from "next/navigation";
-
+import type { Business } from "@/lib/types";
+import { categorizeBusinessListing } from "@/ai/flows/categorize-business-listing";
 
 const formSchema = z.object({
   name: z.string().min(2, "Business name must be at least 2 characters."),
@@ -51,15 +52,18 @@ const formSchema = z.object({
 });
 
 type AddListingFormProps = {
-  suggestCategoryAction: (description: string) => Promise<{ category: string } | { error: string }>;
+  suggestCategoryAction?: (description: string) => Promise<{ category: string } | { error: string }>;
+  existingListing?: Business | null;
 };
 
-export default function AddListingForm({ suggestCategoryAction }: AddListingFormProps) {
+export default function AddListingForm({ suggestCategoryAction, existingListing = null }: AddListingFormProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
+  
+  const isUpdateMode = !!existingListing;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,12 +82,31 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
     },
   });
 
+  useEffect(() => {
+    if (isUpdateMode && existingListing) {
+       const isPredefinedCategory = categories.includes(existingListing.category);
+       form.reset({
+        name: existingListing.name,
+        category: isPredefinedCategory ? existingListing.category : "Other",
+        otherCategory: isPredefinedCategory ? "" : existingListing.category,
+        description: existingListing.description,
+        phone: existingListing.contact.phone,
+        email: existingListing.contact.email,
+        website: existingListing.contact.website,
+        street: existingListing.address.street,
+        city: existingListing.address.city,
+        state: existingListing.address.state,
+        zip: existingListing.address.zip,
+      });
+    }
+  }, [isUpdateMode, existingListing, form]);
+
  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) {
       toast({
         variant: "destructive",
         title: "Not Authenticated",
-        description: "You must be logged in to create a listing.",
+        description: "You must be logged in to manage a listing.",
       });
       return;
     }
@@ -96,7 +119,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
         websiteUrl = 'https://' + websiteUrl;
       }
 
-      await addDoc(collection(db, "listings"), {
+      const listingData = {
         ownerId: user.uid,
         name: values.name,
         category: categoryToSave,
@@ -112,23 +135,42 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
           state: values.state,
           zip: values.zip,
         },
-        images: [`https://picsum.photos/seed/${Math.random()}/600/400`], // Placeholder image
-        reviews: [],
-        createdAt: new Date(),
-        status: "pending", // Add status for admin approval
-      });
-      toast({
-        title: "Listing Submitted!",
-        description: "Your business listing has been submitted for approval.",
-      });
-      form.reset();
-      router.push(`/`);
+      };
+
+      if (isUpdateMode && existingListing) {
+        const listingRef = doc(db, "listings", existingListing.id);
+        await updateDoc(listingRef, {
+            ...listingData,
+            status: "pending", // Re-submit for approval on update
+        });
+        toast({
+          title: "Listing Updated!",
+          description: "Your business listing has been submitted for re-approval.",
+        });
+        router.push(`/listing/${existingListing.id}`);
+
+      } else {
+         await addDoc(collection(db, "listings"), {
+            ...listingData,
+            images: [`https://picsum.photos/seed/${Math.random()}/600/400`],
+            reviews: [],
+            createdAt: serverTimestamp(),
+            status: "pending",
+        });
+        toast({
+            title: "Listing Submitted!",
+            description: "Your business listing has been submitted for approval.",
+        });
+        form.reset();
+        router.push(`/`);
+      }
+      
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error saving document: ", error);
       toast({
         variant: "destructive",
         title: "Submission Failed",
-        description: "There was an error submitting your listing. Please try again.",
+        description: "There was an error saving your listing. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -137,6 +179,8 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
 
 
   const handleSuggestCategory = async () => {
+    if (!suggestCategoryAction) return;
+
     const description = form.getValues("description");
     setIsSuggesting(true);
     const result = await suggestCategoryAction(description);
@@ -246,15 +290,19 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
                             />
                         )}
                       </div>
-
-                      <Button type="button" variant="outline" onClick={handleSuggestCategory} disabled={isSuggesting}>
-                        {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
-                        Suggest
-                      </Button>
+                      
+                      {!isUpdateMode && suggestCategoryAction && (
+                        <Button type="button" variant="outline" onClick={handleSuggestCategory} disabled={isSuggesting}>
+                          {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
+                          Suggest
+                        </Button>
+                      )}
                     </div>
-                  <FormDescription>
-                    Can't decide? Type a description and let AI suggest a category.
-                  </FormDescription>
+                  {!isUpdateMode && (
+                    <FormDescription>
+                        Can't decide? Type a description and let AI suggest a category.
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -364,7 +412,7 @@ export default function AddListingForm({ suggestCategoryAction }: AddListingForm
 
             <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Submit for Approval
+              {isUpdateMode ? "Update & Resubmit" : "Submit for Approval"}
             </Button>
           </form>
         </Form>
