@@ -49,7 +49,8 @@ export default function AdminCategoriesPage() {
       setLoadingData(true);
       try {
         const categoriesCollection = collection(db, "categories");
-        let querySnapshot = await getDocs(query(categoriesCollection, orderBy("name")));
+        const initialQuery = query(categoriesCollection, orderBy("name"));
+        let querySnapshot = await getDocs(initialQuery);
 
         // If no categories, seed them from static data
         if (querySnapshot.empty) {
@@ -62,8 +63,10 @@ export default function AdminCategoriesPage() {
             }
           });
           await batch.commit();
+          
           // Re-fetch after seeding
-          querySnapshot = await getDocs(query(categoriesCollection, orderBy("name")));
+          querySnapshot = await getDocs(initialQuery);
+          
           toast({
             title: "Categories Seeded",
             description: "Your initial category list has been set up.",
