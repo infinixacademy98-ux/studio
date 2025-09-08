@@ -16,19 +16,22 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
 
-  // The signin page should not be protected by this layout
+  useEffect(() => {
+    // This effect should only run for protected admin pages, not the sign-in page itself.
+    if (pathname !== "/admin/signin") {
+      if (!loading && !user) {
+        router.push("/admin/signin");
+      } else if (!loading && user && !isAdmin) {
+        // If a non-admin user somehow gets here, redirect them
+        router.push("/");
+      }
+    }
+  }, [user, isAdmin, loading, router, pathname]);
+
+  // The signin page should not have the admin layout applied.
   if (pathname === "/admin/signin") {
     return <>{children}</>;
   }
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/admin/signin");
-    } else if (!loading && user && !isAdmin) {
-      // If a non-admin user somehow gets here, redirect them
-      router.push("/");
-    }
-  }, [user, isAdmin, loading, router]);
 
   if (loading || !isAdmin) {
     return (
