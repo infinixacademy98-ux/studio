@@ -2,55 +2,51 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check if a user is an admin
+    
+    // Helper function to check for admin role
     function isAdmin() {
       return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-    
+
+    // Rules for the 'listings' collection
+    match /listings/{listingId} {
+      // Anyone can view approved listings
+      allow get: if resource.data.status == 'approved' || isAdmin();
+      
+      // Admins can see all listings (pending, approved, etc.)
+      allow list: if isAdmin();
+      
+      // Authenticated users can create new listings (for approval)
+      allow create: if request.auth != null;
+      
+      // Authenticated users can add reviews to any listing.
+      // Admins can update any field.
+      allow update: if request.auth != null || isAdmin();
+      
+      // Admins can delete listings
+      allow delete: if isAdmin();
+    }
+
     // Rules for the 'users' collection
     match /users/{userId} {
       // Admins can read/write any user document
       allow read, write: if isAdmin();
       
-      // Allow any authenticated user to read the role of any other user.
-      // This is needed for server-side checks.
-      allow get: if request.auth != null;
-      
-      // A user can update their own document.
-      allow update: if request.auth.uid == userId;
-    }
+      // Users can only read/write their own document
+      allow read, write: if request.auth.uid == userId;
 
-    // Rules for the 'listings' collection
-    match /listings/{listingId} {
-      // Anyone can read (get) a single approved listing
-      allow get: if resource.data.status == 'approved';
-      
-      // Anyone can query (list) approved listings
-      allow list: if request.query.offset == null || request.query.offset == 0; // A simple check to allow listing
-      
-      // Admins can read any listing (pending or approved)
-      allow read: if isAdmin();
-
-      // Authenticated users can create new listings
-      allow create: if request.auth != null;
-      
-      // Authenticated users can update a listing to add a review
-      allow update: if request.auth != null &&
-                      request.resource.data.reviews.size() == resource.data.reviews.size() + 1;
-
-      // Admins can update any field (e.g., to approve a listing)
-      allow update: if isAdmin();
+      // Allow authenticated users to check the role of other users for specific operations
+      allow get: if request.auth != null && resource.data.keys().hasAll(['role']);
     }
     
-    // Rules for user notifications subcollection
+    // Rules for nested 'notifications' subcollection
     match /users/{userId}/notifications/{notificationId} {
-        // Admins can do anything
-        allow read, write, create, delete: if isAdmin();
+        // Users can manage their own notifications
+        allow read, write, create, delete: if request.auth.uid == userId;
         
-        // Users can only access their own notifications
-        allow read, write: if request.auth.uid == userId;
+        // Admins can read any notification for management purposes
+        allow read: if isAdmin();
     }
   }
 }
