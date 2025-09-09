@@ -19,9 +19,10 @@ interface BusinessCardProps {
 }
 
 export default function BusinessCard({ listing }: BusinessCardProps) {
+  const reviews = listing.reviews || [];
   const averageRating =
-    listing.reviews.reduce((acc, review) => acc + review.rating, 0) /
-    (listing.reviews.length || 1);
+    reviews.reduce((acc, review) => acc + review.rating, 0) /
+    (reviews.length || 1);
 
   return (
     <Link href={`/listing/${listing.id}`} className="group block h-full">
@@ -63,7 +64,7 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
           <div className="flex items-center justify-between w-full">
             <StarRating rating={averageRating} />
             <span className="text-xs text-muted-foreground">
-              {listing.reviews.length} review{listing.reviews.length !== 1 && 's'}
+              {reviews.length} review{reviews.length !== 1 && 's'}
             </span>
           </div>
         </CardFooter>
