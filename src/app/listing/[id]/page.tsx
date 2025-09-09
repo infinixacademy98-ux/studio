@@ -339,7 +339,7 @@ function BusinessDetailsPageContent() {
           </Card>
           
           {/* --- Map Placeholder --- */}
-          {listing.address.lat && listing.address.lng &&
+          {listing.contact.googleMapsUrl &&
             <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
                 <CardHeader>
                     <CardTitle>Location on Map</CardTitle>
@@ -355,7 +355,7 @@ function BusinessDetailsPageContent() {
                        />
                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                            <Button asChild>
-                               <a href={`https://www.google.com/maps/search/?api=1&query=${listing.address.lat},${listing.address.lng}`} target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+                               <a href={listing.contact.googleMapsUrl} target="_blank" rel="noopener noreferrer">View on Google Maps</a>
                            </Button>
                        </div>
                     </div>

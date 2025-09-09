@@ -35,7 +35,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "9591180103",
       "email": "",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Shri+Datta+Digambar+Yatra,Pangul+Galli,Belgaum"
     },
     "address": {
       "street": "Pangul Galli",
@@ -57,7 +58,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "9677865151",
       "email": "",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=AROH+FOODS,Gokul+Nagar,Belgaum"
     },
     "address": {
       "street": "6th x Road, Gokul Nagar Near: Deccan hospital, Over Railway bridge",
@@ -79,7 +81,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "9945897773",
       "email": "",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=D.K.+Arts+%26+Enterprise,Pangul+Galli,Belgaum"
     },
     "address": {
       "street": "H. No. 2176, Kawale Complex, Pangul Galli",
@@ -101,7 +104,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "8050347452",
       "email": "",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=NOBEL+Digital+English+Medium+School,Shinoli(BK)"
     },
     "address": {
       "street": "Belgaum Vengurla Road, Opp. Aqua Alloys Foundry",
@@ -123,7 +127,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "7019630422",
       "email": "",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=GRACEFUL+PRE+PRIMARY+ENGLISH+MEDIUM+SCHOOL,Vadgaon"
     },
     "address": {
       "street": "Karbar Galli, Yellur Road",
@@ -145,7 +150,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "8792714671",
       "email": "innovative@gmail.com",
-      "website": "http://www.innovative.com"
+      "website": "http://www.innovative.com",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=INNOVATIVE+BUSINESS+SOLUTIONS,Sadashiv+Nagar,Belgaum"
     },
     "address": {
       "street": "Sadashiv Nagar Uras colony",
@@ -167,7 +173,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "7892989336",
       "email": "",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=SHRI+BALAJI+DISTRIBUTOR,APMC+Road,Belgaum"
     },
     "address": {
       "street": "Jyoti Nagar, APMC Road",
@@ -189,7 +196,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "7795240752",
       "email": "info.ybfortune@gmail.com",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=INDIA+TREAT+nourishing+excellence,Tilakwadi,Belgaum"
     },
     "address": {
       "street": "CCB 292, Bhatkhande Building, Hindunagar, Tilakwadi",
@@ -211,7 +219,8 @@ export const businessListings: Business[] = [
     "contact": {
       "phone": "9945835537",
       "email": "",
-      "website": ""
+      "website": "",
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=VAISHNAV+CATERERS,Hindwadi,Belgaum"
     },
     "address": {
       "street": "R.P.D. Road, Gomtesh Circle, Near Vijay Bakery, Hindwadi",
