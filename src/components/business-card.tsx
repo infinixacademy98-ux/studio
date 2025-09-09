@@ -21,8 +21,9 @@ interface BusinessCardProps {
 export default function BusinessCard({ listing }: BusinessCardProps) {
   const reviews = listing.reviews || [];
   const averageRating =
-    reviews.reduce((acc, review) => acc + review.rating, 0) /
-    (reviews.length || 1);
+    reviews.length > 0
+      ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+      : 0;
 
   return (
     <Link href={`/listing/${listing.id}`} className="group block h-full">

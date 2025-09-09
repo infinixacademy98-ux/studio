@@ -214,10 +214,11 @@ export default function HomeContent() {
   }, [searchTerm, handleSearch]);
 
   const getAverageRating = (listing: Business) => {
-    if (!listing.reviews || listing.reviews.length === 0) {
+    const reviews = listing.reviews || [];
+    if (reviews.length === 0) {
       return 0;
     }
-    return listing.reviews.reduce((acc, review) => acc + review.rating, 0) / listing.reviews.length;
+    return reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
   };
 
   const featuredListings = useMemo(() => {
@@ -239,14 +240,16 @@ export default function HomeContent() {
       const hasSearchTerm = searchTerm.trim().length >= 3;
       const hasRelatedCategories = relatedCategories.length > 0;
       
-      // AI-powered category search
-      if (hasRelatedCategories) {
-        const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
-        return relatedCategoriesLower.includes(listing.category.toLowerCase());
-      }
-      
-      // Manual text search
+      // If there's a search term, prioritize search logic
       if (hasSearchTerm) {
+        // Step 1: Try AI-powered category search
+        if (hasRelatedCategories) {
+          const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
+          if (relatedCategoriesLower.includes(listing.category.toLowerCase())) {
+            return true;
+          }
+        }
+        // Step 2: Fallback to manual text search if AI gives no results or for broader matching
         return (
           listing.name.toLowerCase().includes(searchTermLower) ||
           listing.description.toLowerCase().includes(searchTermLower) ||
@@ -254,7 +257,7 @@ export default function HomeContent() {
         );
       }
       
-      // Manual category filter (only if no search term)
+      // If no search term, use manual category filter
       const matchesCategory = category === "all" || listing.category === category;
       return matchesCategory;
     });
