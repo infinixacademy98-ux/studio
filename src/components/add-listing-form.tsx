@@ -38,6 +38,7 @@ const formSchema = z.object({
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
   website: urlSchema,
+  googleMapsUrl: urlSchema,
   otherLink: urlSchema,
   street: z.string().min(5, "Please enter a street address."),
   city: z.string().min(2, "Please enter a city."),
@@ -106,6 +107,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       phone: "",
       email: "",
       website: "",
+      googleMapsUrl: "",
       otherLink: "",
       street: "",
       city: "Belgaum",
@@ -129,6 +131,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         phone: existingListing.contact.phone,
         email: existingListing.contact.email,
         website: existingListing.contact.website,
+        googleMapsUrl: existingListing.contact.googleMapsUrl,
         otherLink: existingListing.contact.otherLink,
         street: existingListing.address.street,
         city: existingListing.address.city,
@@ -171,6 +174,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
           phone: values.phone,
           email: values.email,
           website: formatUrl(values.website),
+          googleMapsUrl: formatUrl(values.googleMapsUrl),
           otherLink: formatUrl(values.otherLink),
           socials: {
             facebook: formatUrl(values.facebook),
@@ -411,6 +415,23 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                   <FormControl>
                     <Input placeholder="https://example.com" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="googleMapsUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Google Maps URL (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://maps.app.goo.gl/..." {...field} />
+                  </FormControl>
+                   <FormDescription>
+                        Link to your business on Google Maps.
+                    </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
