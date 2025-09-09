@@ -337,31 +337,6 @@ function BusinessDetailsPageContent() {
               </div>
             </CardContent>
           </Card>
-          
-          {/* --- Map Placeholder --- */}
-          {listing.contact.googleMapsUrl &&
-            <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
-                <CardHeader>
-                    <CardTitle>Location on Map</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="relative h-64 w-full bg-muted rounded-md overflow-hidden">
-                       <Image
-                        src={`https://picsum.photos/seed/${listing.id}/600/400`}
-                        alt="Map showing business location"
-                        fill
-                        className="object-cover"
-                        data-ai-hint="street map"
-                       />
-                       <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                           <Button asChild>
-                               <a href={listing.contact.googleMapsUrl} target="_blank" rel="noopener noreferrer">View on Google Maps</a>
-                           </Button>
-                       </div>
-                    </div>
-                </CardContent>
-            </Card>
-          }
         </div>
       </div>
     </div>
