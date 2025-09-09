@@ -113,8 +113,7 @@ export default function HomeContent() {
   const { toast } = useToast();
   const { user } = useAuth();
   const resultsRef = useRef<HTMLDivElement>(null);
-  const isInitialMount = useRef(true);
-
+  
   const listingsPerPage = 8;
 
   useEffect(() => {
@@ -175,20 +174,21 @@ export default function HomeContent() {
     checkUserListing();
   }, [user]);
 
-  const handleSearch = useCallback(async () => {
-    if (searchTerm.trim().length < 3) {
+  const handleAISearch = useCallback(async (currentSearchTerm: string) => {
+    if (currentSearchTerm.trim().length < 3) {
       setRelatedCategories([]);
+      setIsSearching(false);
       return;
     }
     setIsSearching(true);
     setCategory("all"); // Reset manual category filter when AI search is used
     try {
       const result = await findRelatedCategories({
-        query: searchTerm,
+        query: currentSearchTerm,
         existingCategories: categories,
       });
       setRelatedCategories(result.categories);
-      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (error) {
       console.error("Failed to fetch related categories:", error);
       toast({
@@ -200,18 +200,19 @@ export default function HomeContent() {
     } finally {
       setIsSearching(false);
     }
-  }, [searchTerm, toast, categories]);
+  }, [toast, categories]);
   
-  // Effect to run search when searchTerm changes from popular category click
+  // Debounce effect for AI search
   useEffect(() => {
-    if (isInitialMount.current) {
-        isInitialMount.current = false;
-        return;
-    }
-    if (searchTerm) {
-        handleSearch();
-    }
-  }, [searchTerm, handleSearch]);
+    const handler = setTimeout(() => {
+      handleAISearch(searchTerm);
+    }, 500); // 500ms delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm, handleAISearch]);
+
 
   const getAverageRating = (listing: Business) => {
     const reviews = listing.reviews || [];
@@ -270,7 +271,7 @@ export default function HomeContent() {
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
   const indexOfLastListing = currentPage * listingsPerPage;
-  const indexOfFirstListing = indexOfLastListing - listingsPerPage;
+  const indexOfFirstListing = indexOfLastListing - indexOfLastListing;
   const currentListings = filteredListings.slice(indexOfFirstListing, indexOfLastListing);
 
   const handleNextPage = () => {
@@ -340,14 +341,10 @@ export default function HomeContent() {
                           placeholder="Search for businesses or services"
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                          className="pl-10 rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                          className="pl-10"
                         />
+                         {isSearching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
                     </div>
-                    <Button type="button" onClick={handleSearch} disabled={isSearching} className="rounded-l-none">
-                      {isSearching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Search
-                    </Button>
                 </div>
               </div>
               <div className="flex-grow-0 sm:min-w-[180px]">
