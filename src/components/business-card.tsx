@@ -50,9 +50,9 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
           <CardTitle className="text-lg font-semibold leading-tight mb-1 group-hover:text-primary">
             {listing.name}
           </CardTitle>
-          <CardDescription className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0" />
-            {listing.address.city}
+          <CardDescription className="flex items-start text-sm text-muted-foreground">
+            <MapPin className="mr-1.5 h-4 w-4 flex-shrink-0 mt-0.5" />
+            <span className="truncate">{listing.address.street}, {listing.address.city}</span>
           </CardDescription>
           {listing.timing && (
              <CardDescription className="flex items-center text-sm text-muted-foreground">
