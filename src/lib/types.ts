@@ -59,6 +59,7 @@ export interface Message {
 
 export interface UserDoc {
     id: string;
+    name: string;
     email: string;
     role: 'user' | 'admin';
     createdAt: any;

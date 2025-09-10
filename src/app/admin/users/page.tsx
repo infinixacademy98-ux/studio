@@ -111,6 +111,7 @@ export default function AdminUsersPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Date Registered</TableHead>
@@ -120,7 +121,7 @@ export default function AdminUsersPage() {
                 <TableBody>
                   {loadingData ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center">
+                      <TableCell colSpan={5} className="text-center">
                         <div className="flex justify-center py-16">
                           <Loader2 className="h-8 w-8 animate-spin" />
                         </div>
@@ -129,7 +130,8 @@ export default function AdminUsersPage() {
                   ) : users.length > 0 ? (
                     users.map((user) => (
                       <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.email}</TableCell>
+                        <TableCell className="font-medium">{user.name || 'N/A'}</TableCell>
+                        <TableCell>{user.email}</TableCell>
                         <TableCell>
                            <Badge variant={user.role === "admin" ? "default" : "secondary"}>
                               {user.role}
@@ -150,7 +152,7 @@ export default function AdminUsersPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-16 text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center py-16 text-muted-foreground">
                         No users found.
                       </TableCell>
                     </TableRow>
