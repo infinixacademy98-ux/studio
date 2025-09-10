@@ -22,7 +22,7 @@ export default function WithAuthLayout({
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/signin");
+      router.push("/signup");
     }
   }, [user, loading, router]);
 

@@ -144,7 +144,7 @@ export default function SignInPage() {
             <div className="text-center">
                 <CardTitle className="text-2xl">Welcome Back!</CardTitle>
                 <CardDescription>
-                    Enter your credentials to access your account.
+                    Sign in to access your account.
                 </CardDescription>
             </div>
         </CardHeader>
@@ -241,9 +241,9 @@ export default function SignInPage() {
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            New here?{" "}
             <Link href="/signup" className="underline">
-              Sign up
+              Create an Account
             </Link>
           </div>
           <div className="mt-2 text-center text-xs">

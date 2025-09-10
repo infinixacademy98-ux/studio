@@ -74,13 +74,14 @@ export default function SignUpPage() {
 
       // Let the useEffect handle redirection.
     } catch (error: any) {
+      let description = "There was a problem with your request.";
+      if (error.code === "auth/email-already-in-use") {
+        description = "This email is already in use. Please sign in instead.";
+      }
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description:
-          error.code === "auth/email-already-in-use"
-            ? "This email is already in use."
-            : "There was a problem with your request.",
+        description: description
       });
     } finally {
       setIsLoading(false);
@@ -110,9 +111,9 @@ export default function SignUpPage() {
                 <h1 className="text-xl font-bold">MVS Belgaum</h1>
             </div>
             <div className="text-center">
-                <CardTitle className="text-2xl">Create an Account</CardTitle>
+                <CardTitle className="text-2xl">Create Your Account</CardTitle>
                 <CardDescription>
-                    Enter your email below to get started.
+                    Enter your details below to get started.
                 </CardDescription>
             </div>
         </CardHeader>
@@ -157,14 +158,14 @@ export default function SignUpPage() {
                 {isLoading && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Create an account
+                Create Account
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
             <Link href="/signin" className="underline">
-              Sign in
+              Sign In
             </Link>
           </div>
         </CardContent>
