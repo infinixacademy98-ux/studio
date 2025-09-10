@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { PlusCircle, LogOut, User as UserIcon, Info, Mail, Home as HomeIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { PlusCircle, LogOut, User as UserIcon, Info, Mail, HomeIcon, ChevronLeft, ChevronRight, MessageSquareHeart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
 import { cn } from "@/lib/utils";
@@ -130,6 +130,12 @@ export default function Header() {
                   <Link href="/contact">
                     <Mail className="mr-2 h-4 w-4" />
                     <span>Contact</span>
+                  </Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                  <Link href="/feedback">
+                    <MessageSquareHeart className="mr-2 h-4 w-4" />
+                    <span>Feedback</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
