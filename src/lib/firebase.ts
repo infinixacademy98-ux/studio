@@ -7,13 +7,12 @@ import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  projectId: "mvs-karnataka",
-  appId: "1:368897560025:web:e1b82d25198544f1df5dc8",
-  storageBucket: "mvs-karnataka.firebasestorage.app",
   apiKey: "AIzaSyCREXCS8WwbCPMnA7Z9Cg13mHIvYbB6wpk",
   authDomain: "mvs-karnataka.firebaseapp.com",
-  measurementId: "",
+  projectId: "mvs-karnataka",
+  storageBucket: "mvs-karnataka.firebasestorage.app",
   messagingSenderId: "368897560025",
+  appId: "1:368897560025:web:d8b6b1829b50e6c0df5dc8"
 };
 
 // Initialize Firebase
