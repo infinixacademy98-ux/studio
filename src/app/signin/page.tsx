@@ -128,9 +128,9 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="mx-auto max-w-sm transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
-        <CardHeader>
+    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+      <Card className="mx-auto max-w-sm w-full transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
+        <CardHeader className="py-8">
            <div className="flex justify-center items-center gap-2 mb-4">
                 <Image
                     src="https://i.postimg.cc/9MLgBMfX/image-Edited.png"
@@ -150,7 +150,7 @@ export default function SignInPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="email"
@@ -240,7 +240,7 @@ export default function SignInPage() {
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
+          <div className="mt-6 text-center text-sm">
             New here?{" "}
             <Link href="/signup" className="underline">
               Create an Account
