@@ -405,7 +405,7 @@ export default function HomeContent() {
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold tracking-tight text-center mb-6">
+          <h2 className="text-2xl font-bold tracking-tight text-center mb-6 text-primary">
             Popular Categories
           </h2>
           <div className="relative">
