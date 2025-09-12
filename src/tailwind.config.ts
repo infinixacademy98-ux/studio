@@ -19,7 +19,7 @@ export default {
     },
     extend: {
       backgroundImage: {
-        'hero-pattern': "url('https://i.postimg.cc/25DmWZ1n/pexels-vlada-karpovich-4451430-1.jpg')",
+        'hero-pattern': "url('https://i.postimg.cc/CKs0sx8X/pexels-quintingellar-313782.jpg')",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
