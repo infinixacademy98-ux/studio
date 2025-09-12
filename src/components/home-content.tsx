@@ -174,6 +174,10 @@ export default function HomeContent() {
     checkUserListing();
   }, [user]);
 
+  const scrollToResults = () => {
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const handleAISearch = useCallback(async (currentSearchTerm: string) => {
     if (currentSearchTerm.trim().length < 3) {
       setRelatedCategories([]);
@@ -187,7 +191,7 @@ export default function HomeContent() {
         existingCategories: categories,
       });
       setRelatedCategories(result.categories);
-      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToResults();
     } catch (error) {
       console.error("Failed to fetch related categories:", error);
       toast({
@@ -205,7 +209,6 @@ export default function HomeContent() {
   useEffect(() => {
     const handler = setTimeout(() => {
         if (searchTerm.trim().length > 0) {
-            setCategory("all");
             handleAISearch(searchTerm);
         } else {
             setRelatedCategories([]);
@@ -341,7 +344,10 @@ export default function HomeContent() {
                           type="text"
                           placeholder="Search for businesses or services"
                           value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
+                          onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setCategory("all");
+                          }}
                           className="pl-10"
                         />
                          {isSearching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
@@ -353,6 +359,7 @@ export default function HomeContent() {
                   setCategory(value);
                   setSearchTerm('');
                   setRelatedCategories([]);
+                  if (value !== "all") scrollToResults();
                 }}>
                     <SelectTrigger>
                         <SelectValue placeholder="All Categories" />
@@ -386,7 +393,10 @@ export default function HomeContent() {
                       
                       <div className="grid grid-cols-3 items-center gap-4">
                         <Label htmlFor="rating">Rating</Label>
-                        <Select value={rating} onValueChange={setRating}>
+                        <Select value={rating} onValueChange={(value) => {
+                          setRating(value);
+                          scrollToResults();
+                        }}>
                             <SelectTrigger id="rating" className="col-span-2 h-8">
                               <SelectValue placeholder="Any Rating" />
                             </SelectTrigger>
@@ -419,7 +429,6 @@ export default function HomeContent() {
                     onClick={(e) => {
                       e.preventDefault();
                       setCategory("all");
-                      setRelatedCategories([]);
                       setSearchTerm(cat.name);
                     }}
                   >
