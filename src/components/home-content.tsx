@@ -68,32 +68,32 @@ const popularCategories = [
   {
     name: 'Restaurants',
     icon: Utensils,
-    color: 'bg-yellow-100 text-yellow-600',
+    color: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400',
   },
   {
     name: 'Home Services',
     icon: Home,
-    color: 'bg-blue-100 text-blue-600',
+    color: 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400',
   },
   {
     name: 'Auto Services',
     icon: Car,
-    color: 'bg-red-100 text-red-600',
+    color: 'bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400',
   },
   {
     name: 'Shopping',
     icon: ShoppingBag,
-    color: 'bg-green-100 text-green-600',
+    color: 'bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400',
   },
   {
     name: 'Health Care',
     icon: Stethoscope,
-    color: 'bg-indigo-100 text-indigo-600',
+    color: 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400',
   },
    {
     name: 'Education',
     icon: School,
-    color: 'bg-purple-100 text-purple-600',
+    color: 'bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400',
   },
 ];
 
@@ -342,29 +342,27 @@ export default function HomeContent() {
       </section>
 
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        <section className="mb-12">
-           <Card className="p-6 sm:p-8 shadow-lg border-none -mt-20 sm:-mt-28 relative z-10 bg-card">
-              <h2 className="text-2xl font-bold tracking-tight text-center mb-6 text-primary">
-                Browse by Category
-              </h2>
-              <div className="flex justify-center items-center gap-4 sm:gap-8 flex-wrap">
-                 {popularCategories.map((cat) => (
-                  <button
-                    key={cat.name}
-                    className="group text-center w-28 flex-shrink-0"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleSearchAction(cat.name);
-                    }}
-                  >
-                    <div className={cn("relative w-16 h-16 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1 flex items-center justify-center", cat.color)}>
-                      <cat.icon className="h-8 w-8 transition-transform duration-300 group-hover:scale-110" />
-                    </div>
-                    <h3 className="font-semibold text-base mb-1 truncate group-hover:text-primary">{cat.name}</h3>
-                  </button>
-                ))}
-              </div>
-           </Card>
+        <section className="mb-12 -mt-20 sm:-mt-28 relative z-10 p-6 sm:p-8">
+            <h2 className="text-2xl font-bold tracking-tight text-center mb-6 text-primary">
+              Browse by Category
+            </h2>
+            <div className="flex justify-center items-center gap-4 sm:gap-8 flex-wrap">
+                {popularCategories.map((cat) => (
+                <button
+                  key={cat.name}
+                  className="group text-center w-28 flex-shrink-0"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSearchAction(cat.name);
+                  }}
+                >
+                  <div className={cn("relative w-14 h-14 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1 flex items-center justify-center", cat.color)}>
+                    <cat.icon className="h-7 w-7 transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <h3 className="font-semibold text-sm mb-1 truncate group-hover:text-primary">{cat.name}</h3>
+                </button>
+              ))}
+            </div>
         </section>
 
        <section className="mb-12">
