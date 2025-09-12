@@ -465,7 +465,7 @@ export default function HomeContent() {
         <h2 className="text-2xl font-bold tracking-tight mb-4">
           {resultsTitle}
         </h2>
-        {loading ? (
+        {loading || isSearching ? (
            <div className="flex items-center justify-center py-16">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
            </div>
