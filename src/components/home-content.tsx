@@ -319,11 +319,11 @@ export default function HomeContent() {
       <section className="relative h-screen flex items-end justify-center text-center overflow-hidden bg-hero-pattern bg-cover bg-center">
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container relative z-10 mx-auto px-4 text-white pb-20">
-          <h1 className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl lg:text-6xl">
-            Find the best local businesses
+          <h1 className="text-3xl font-extrabold tracking-tight font-headline sm:text-4xl lg:text-5xl">
+            Find best businesses in belgaum
           </h1>
           <p className="mt-4 text-lg sm:text-xl max-w-2xl mx-auto">
-            Discover top-rated restaurants, shops, and services in your area.
+            Discover top-rated restaurants, shops, and services in Belgaum.
           </p>
           <div className="mt-8 mx-auto max-w-xl">
              <div className="relative">
