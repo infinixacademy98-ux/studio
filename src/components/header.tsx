@@ -72,7 +72,7 @@ export default function Header() {
               height={40}
               className="h-10 w-10 bg-white rounded-full p-1"
             />
-            <span className="font-bold hidden sm:inline">MVS Belgaum</span>
+            <span className="font-bold">MVS Belgaum</span>
           </Link>
         </div>
         
