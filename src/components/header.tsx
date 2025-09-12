@@ -132,12 +132,6 @@ export default function Header() {
                     <span>Contact</span>
                   </Link>
                 </DropdownMenuItem>
-                 <DropdownMenuItem asChild>
-                  <Link href="/feedback">
-                    <MessageSquareHeart className="mr-2 h-4 w-4" />
-                    <span>Feedback</span>
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
