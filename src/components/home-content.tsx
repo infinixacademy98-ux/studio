@@ -316,9 +316,9 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative h-[60vh] sm:h-[80vh] flex items-center justify-center text-center overflow-hidden bg-hero-pattern bg-cover bg-center">
+      <section className="relative h-[85vh] flex items-end justify-center text-center overflow-hidden bg-hero-pattern bg-cover bg-center">
         <div className="absolute inset-0 bg-black/50"></div>
-        <div className="container relative z-10 mx-auto px-4 text-white">
+        <div className="container relative z-10 mx-auto px-4 text-white pb-20">
           <h1 className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl lg:text-6xl">
             Find the best local businesses
           </h1>
@@ -461,7 +461,3 @@ export default function HomeContent() {
     </>
   );
 }
-
-    
-
-    
