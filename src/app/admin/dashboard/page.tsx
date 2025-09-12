@@ -114,10 +114,10 @@ export default function AdminDashboardPage() {
   }
 
   const statCards = [
-    { title: "Total Businesses", value: stats.totalBusinesses, icon: Building2 },
-    { title: "Pending Approvals", value: stats.pendingApprovals, icon: Clock },
-    { title: "New Sign-ups (7d)", value: stats.newSignups, icon: Users },
-    { title: "Total Messages", value: stats.totalMessages, icon: MailCheck },
+    { title: "Total Businesses", value: stats.totalBusinesses, icon: Building2, href: "/admin/businesses" },
+    { title: "Pending Approvals", value: stats.pendingApprovals, icon: Clock, href: "/admin/businesses" },
+    { title: "New Sign-ups (7d)", value: stats.newSignups, icon: Users, href: "/admin/users" },
+    { title: "Total Messages", value: stats.totalMessages, icon: MailCheck, href: "/admin/messages" },
   ];
 
   return (
@@ -128,19 +128,21 @@ export default function AdminDashboardPage() {
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card, index) => (
-          <Card key={index} className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
-              <card.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {loadingStats ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
-              ) : (
-                <div className="text-2xl font-bold">{card.value}</div>
-              )}
-            </CardContent>
-          </Card>
+          <Link href={card.href} key={index}>
+            <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
+                <card.icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                {loadingStats ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <div className="text-2xl font-bold">{card.value}</div>
+                )}
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
 
