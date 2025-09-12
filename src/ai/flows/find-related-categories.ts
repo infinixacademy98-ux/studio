@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { gemini20Flash } from '@genkit-ai/googleai';
+import { gemini25Flash } from '@genkit-ai/googleai';
 
 const FindRelatedCategoriesInputSchema = z.object({
   query: z.string().describe('The user search query.'),
@@ -42,7 +42,7 @@ const prompt = ai.definePrompt({
   name: 'findRelatedCategoriesPrompt',
   input: { schema: FindRelatedCategoriesInputSchema },
   output: { schema: FindRelatedCategoriesOutputSchema },
-  model: gemini20Flash,
+  model: 'googleai/gemini-2.5-flash',
   prompt: `You are an expert in semantic search and business categorization. Based on the user's search query, identify all relevant categories from the provided list.
 
 User Query: {{{query}}}
