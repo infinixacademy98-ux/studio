@@ -181,7 +181,6 @@ export default function HomeContent() {
       return;
     }
     setIsSearching(true);
-    setCategory("all"); // Reset manual category filter when AI search is used
     try {
       const result = await findRelatedCategories({
         query: currentSearchTerm,
@@ -205,7 +204,12 @@ export default function HomeContent() {
   // Debounce effect for AI search
   useEffect(() => {
     const handler = setTimeout(() => {
-      handleAISearch(searchTerm);
+        if (searchTerm.trim().length > 0) {
+            setCategory("all");
+            handleAISearch(searchTerm);
+        } else {
+            setRelatedCategories([]);
+        }
     }, 500); // 500ms delay
 
     return () => {
@@ -239,18 +243,15 @@ export default function HomeContent() {
       if (!matchesRating) return false;
 
       const hasSearchTerm = searchTerm.trim().length >= 3;
-      const hasRelatedCategories = relatedCategories.length > 0;
       
       // If there's a search term, prioritize search logic
       if (hasSearchTerm) {
-        // Step 1: Try AI-powered category search
-        if (hasRelatedCategories) {
+        // If AI search provides related categories, use them
+        if (relatedCategories.length > 0) {
           const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
-          if (relatedCategoriesLower.includes(listing.category.toLowerCase())) {
-            return true;
-          }
+          return relatedCategoriesLower.includes(listing.category.toLowerCase());
         }
-        // Step 2: Fallback to manual text search if AI gives no results or for broader matching
+        // Fallback to manual text search
         return (
           listing.name.toLowerCase().includes(searchTermLower) ||
           listing.description.toLowerCase().includes(searchTermLower) ||
@@ -271,7 +272,7 @@ export default function HomeContent() {
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
   const indexOfLastListing = currentPage * listingsPerPage;
-  const indexOfFirstListing = indexOfLastListing - indexOfLastListing;
+  const indexOfFirstListing = indexOfLastListing - listingsPerPage;
   const currentListings = filteredListings.slice(indexOfFirstListing, indexOfLastListing);
 
   const handleNextPage = () => {
@@ -412,9 +413,8 @@ export default function HomeContent() {
             <ScrollArea>
               <div className="flex justify-center space-x-8 pb-4">
                 {popularCategories.map((cat) => (
-                  <Link
+                  <button
                     key={cat.name}
-                    href="#"
                     className="group text-center w-28 flex-shrink-0"
                     onClick={(e) => {
                       e.preventDefault();
@@ -434,7 +434,7 @@ export default function HomeContent() {
                       />
                     </div>
                     <h3 className="font-semibold text-base mb-1 truncate group-hover:text-primary">{cat.name}</h3>
-                  </Link>
+                  </button>
                 ))}
               </div>
               <ScrollBar orientation="horizontal" />
