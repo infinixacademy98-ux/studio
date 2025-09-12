@@ -19,7 +19,7 @@ export default {
     },
     extend: {
       backgroundImage: {
-        'hero-pattern': "url('https://i.postimg.cc/CKs0sx8X/pexels-quintingellar-313782.jpg')",
+        'hero-pattern': "url('https://i.postimg.cc/JnY9pDz6/pexels-willianjusten-32715525-1.jpg')",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
