@@ -316,17 +316,7 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative h-[60vh] sm:h-[80vh] flex items-center justify-center text-center overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover"
-        >
-          <source src="/hero-video.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+      <section className="relative h-[60vh] sm:h-[80vh] flex items-center justify-center text-center overflow-hidden bg-hero-pattern bg-cover bg-center">
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container relative z-10 mx-auto px-4 text-white">
           <h1 className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl lg:text-6xl">
@@ -471,5 +461,7 @@ export default function HomeContent() {
     </>
   );
 }
+
+    
 
     
