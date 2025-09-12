@@ -114,7 +114,7 @@ export default function HomeContent() {
   const { user } = useAuth();
   const resultsRef = useRef<HTMLDivElement>(null);
   
-  const listingsPerPage = 8;
+  const listingsPerPage = 20;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -191,9 +191,7 @@ export default function HomeContent() {
         existingCategories: categories,
       });
       setRelatedCategories(result.categories);
-      if (resultsRef.current) {
-        scrollToResults();
-      }
+      scrollToResults();
     } catch (error) {
       console.error("Failed to fetch related categories:", error);
       toast({
@@ -239,34 +237,47 @@ export default function HomeContent() {
   }, [listings]);
 
   const filteredListings = useMemo(() => {
-    return listings.filter((listing) => {
-      const averageRating = getAverageRating(listing);
-      const searchTermLower = searchTerm.toLowerCase();
+    let newFilteredListings = listings;
 
-      const matchesRating = rating === "all" || Math.floor(averageRating) >= parseInt(rating);
-      if (!matchesRating) return false;
+    // Filter by Rating
+    if (rating !== 'all') {
+      newFilteredListings = newFilteredListings.filter(listing => {
+        const averageRating = getAverageRating(listing);
+        return Math.floor(averageRating) >= parseInt(rating, 10);
+      });
+    }
 
-      const hasSearchTerm = searchTerm.trim().length >= 3;
-      
-      if (hasSearchTerm) {
-        if (relatedCategories.length > 0) {
-          const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
-          return relatedCategoriesLower.includes(listing.category.toLowerCase());
-        }
-        return (
+    // Filter by Search Term (which can be text or AI-driven categories)
+    if (searchTerm.trim()) {
+      if (relatedCategories.length > 0) {
+        const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
+        newFilteredListings = newFilteredListings.filter(listing =>
+          relatedCategoriesLower.includes(listing.category.toLowerCase())
+        );
+      } else {
+        const searchTermLower = searchTerm.toLowerCase();
+        newFilteredListings = newFilteredListings.filter(listing =>
           listing.name.toLowerCase().includes(searchTermLower) ||
           listing.description.toLowerCase().includes(searchTermLower) ||
           listing.category.toLowerCase().includes(searchTermLower)
         );
       }
-      
-      const matchesCategory = category === "all" || listing.category === category;
-      return matchesCategory;
-    });
+    } 
+    // Filter by Category Dropdown (only if no search term)
+    else if (category !== 'all') {
+      newFilteredListings = newFilteredListings.filter(listing => listing.category === category);
+    }
+    
+    return newFilteredListings;
+
   }, [searchTerm, category, rating, listings, relatedCategories]);
+
   
   useEffect(() => {
     setCurrentPage(1);
+    if(searchTerm || category !== 'all' || rating !== 'all') {
+      scrollToResults();
+    }
   }, [searchTerm, category, rating, relatedCategories]);
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
@@ -276,14 +287,16 @@ export default function HomeContent() {
 
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, pageCount));
+    scrollToResults();
   };
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
+     scrollToResults();
   };
 
   const resultsTitle = useMemo(() => {
     const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-    if (searchTerm.trim().length >= 3) {
+    if (searchTerm.trim()) {
       return `Results for "${capitalize(searchTerm)}" in Belgaum`;
     }
     if (category !== 'all') {
@@ -291,6 +304,13 @@ export default function HomeContent() {
     }
     return 'All Businesses in Belgaum';
   }, [searchTerm, category]);
+
+  // Handler for any search action
+  const handleSearchAction = (newSearchTerm = "", newCategory = "all") => {
+    setSearchTerm(newSearchTerm);
+    setCategory(newCategory);
+    setRelatedCategories([]); // Clear AI categories on new action
+  };
 
 
   return (
@@ -340,10 +360,7 @@ export default function HomeContent() {
                           type="text"
                           placeholder="Search for businesses or services"
                           value={searchTerm}
-                          onChange={(e) => {
-                            setSearchTerm(e.target.value);
-                            setCategory("all");
-                          }}
+                          onChange={(e) => handleSearchAction(e.target.value)}
                           className="pl-10"
                         />
                          {isSearching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
@@ -351,12 +368,7 @@ export default function HomeContent() {
                 </div>
               </div>
               <div className="flex-grow-0 sm:min-w-[180px]">
-                <Select value={category} onValueChange={(value) => {
-                  setCategory(value);
-                  setSearchTerm('');
-                  setRelatedCategories([]);
-                  if (value !== "all") scrollToResults();
-                }}>
+                <Select value={category} onValueChange={(value) => handleSearchAction("", value)}>
                     <SelectTrigger>
                         <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
@@ -389,10 +401,7 @@ export default function HomeContent() {
                       
                       <div className="grid grid-cols-3 items-center gap-4">
                         <Label htmlFor="rating">Rating</Label>
-                        <Select value={rating} onValueChange={(value) => {
-                          setRating(value);
-                          scrollToResults();
-                        }}>
+                        <Select value={rating} onValueChange={setRating}>
                             <SelectTrigger id="rating" className="col-span-2 h-8">
                               <SelectValue placeholder="Any Rating" />
                             </SelectTrigger>
@@ -424,8 +433,7 @@ export default function HomeContent() {
                     className="group text-center w-28 flex-shrink-0"
                     onClick={(e) => {
                       e.preventDefault();
-                      setCategory("all");
-                      setSearchTerm(cat.name);
+                      handleSearchAction(cat.name);
                     }}
                   >
                     <div className="relative w-24 h-24 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1">
