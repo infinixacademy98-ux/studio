@@ -357,8 +357,8 @@ export default function HomeContent() {
                       handleSearchAction(cat.name);
                     }}
                   >
-                    <div className={cn("relative w-20 h-20 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1 flex items-center justify-center", cat.color)}>
-                      <cat.icon className="h-10 w-10 transition-transform duration-300 group-hover:scale-110" />
+                    <div className={cn("relative w-16 h-16 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1 flex items-center justify-center", cat.color)}>
+                      <cat.icon className="h-8 w-8 transition-transform duration-300 group-hover:scale-110" />
                     </div>
                     <h3 className="font-semibold text-base mb-1 truncate group-hover:text-primary">{cat.name}</h3>
                   </button>
