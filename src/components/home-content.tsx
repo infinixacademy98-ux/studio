@@ -191,7 +191,9 @@ export default function HomeContent() {
         existingCategories: categories,
       });
       setRelatedCategories(result.categories);
-      scrollToResults();
+      if (resultsRef.current) {
+        scrollToResults();
+      }
     } catch (error) {
       console.error("Failed to fetch related categories:", error);
       toast({
@@ -241,20 +243,16 @@ export default function HomeContent() {
       const averageRating = getAverageRating(listing);
       const searchTermLower = searchTerm.toLowerCase();
 
-      // Filter by rating first
       const matchesRating = rating === "all" || Math.floor(averageRating) >= parseInt(rating);
       if (!matchesRating) return false;
 
       const hasSearchTerm = searchTerm.trim().length >= 3;
       
-      // If there's a search term, prioritize search logic
       if (hasSearchTerm) {
-        // If AI search provides related categories, use them
         if (relatedCategories.length > 0) {
           const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
           return relatedCategoriesLower.includes(listing.category.toLowerCase());
         }
-        // Fallback to manual text search
         return (
           listing.name.toLowerCase().includes(searchTermLower) ||
           listing.description.toLowerCase().includes(searchTermLower) ||
@@ -262,16 +260,14 @@ export default function HomeContent() {
         );
       }
       
-      // If no search term, use manual category filter
       const matchesCategory = category === "all" || listing.category === category;
       return matchesCategory;
     });
   }, [searchTerm, category, rating, listings, relatedCategories]);
   
-  // Reset to page 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, category, city, rating, relatedCategories]);
+  }, [searchTerm, category, rating, relatedCategories]);
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -364,7 +360,7 @@ export default function HomeContent() {
                     <SelectTrigger>
                         <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper">
                         <SelectItem value="all">All Categories</SelectItem>
                         {categories.map((cat) => (
                         <SelectItem key={cat} value={cat}>
