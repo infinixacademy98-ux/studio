@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -45,7 +45,7 @@ function ContactPageContent() {
   });
   
   // Update form defaults when user loads
-  useState(() => {
+  useEffect(() => {
     if (user) {
       form.reset({
         name: user.displayName || "",
@@ -55,7 +55,7 @@ function ContactPageContent() {
         message: "",
       });
     }
-  });
+  }, [user, form]);
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
