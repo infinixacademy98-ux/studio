@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { PlusCircle, LogOut, User as UserIcon, Info, Mail, HomeIcon, ChevronLeft, ChevronRight, MessageSquareHeart } from "lucide-react";
+import { PlusCircle, LogOut, User as UserIcon, Info, Mail, HomeIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "./mode-toggle";
 import { cn } from "@/lib/utils";
@@ -63,7 +63,7 @@ export default function Header() {
       isScrolled ? "border-b" : ""
     )}>
       <div className="container flex h-16 items-center">
-        <div className="mr-6 flex items-center">
+        <div className="mr-auto flex items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Image 
               src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
@@ -72,18 +72,19 @@ export default function Header() {
               height={40}
               className="h-10 w-10 bg-white rounded-full p-1"
             />
-            <span className="font-bold">MVS Belgaum</span>
+            <span className="font-bold hidden sm:inline">MVS Belgaum</span>
           </Link>
         </div>
         
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <Button asChild>
+        <div className="flex items-center justify-end space-x-1 sm:space-x-2">
+          <Button asChild size="sm" className="px-2 sm:px-4">
             <Link href="/add-listing">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Listing
+              <PlusCircle className="h-5 w-5 sm:mr-2" /> 
+              <span className="hidden sm:inline">Add Listing</span>
             </Link>
           </Button>
           <ModeToggle />
-           <div className="flex items-center gap-1">
+           <div className="hidden sm:flex items-center gap-1">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.back()}>
                 <ChevronLeft className="h-5 w-5" />
                 <span className="sr-only">Go back</span>
