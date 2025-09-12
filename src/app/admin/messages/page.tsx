@@ -28,6 +28,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function AdminMessagesPage() {
   const { toast } = useToast();
@@ -35,6 +43,7 @@ export default function AdminMessagesPage() {
   const [loadingData, setLoadingData] = useState(true);
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
   const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
 
   const fetchMessages = async () => {
     setLoadingData(true);
@@ -110,7 +119,6 @@ export default function AdminMessagesPage() {
                     <TableRow>
                         <TableHead>From</TableHead>
                         <TableHead>Subject</TableHead>
-                        <TableHead>Message</TableHead>
                         <TableHead>Date Received</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -118,7 +126,7 @@ export default function AdminMessagesPage() {
                     <TableBody>
                     {loadingData ? (
                         <TableRow>
-                        <TableCell colSpan={5} className="text-center">
+                        <TableCell colSpan={4} className="text-center">
                             <div className="flex justify-center py-16">
                             <Loader2 className="h-8 w-8 animate-spin" />
                             </div>
@@ -129,12 +137,11 @@ export default function AdminMessagesPage() {
                         <TableRow key={message.id}>
                             <TableCell>
                                 <div className="flex flex-col">
-                                    <span className="font-medium">{message.name}</span>
+                                    <span className="font-medium cursor-pointer hover:underline" onClick={() => setSelectedMessage(message)}>{message.name}</span>
                                     <span className="text-xs text-muted-foreground">{message.email}</span>
                                 </div>
                             </TableCell>
                             <TableCell>{message.subject}</TableCell>
-                            <TableCell className="max-w-xs truncate">{message.message}</TableCell>
                             <TableCell>{formatDate(message.createdAt)}</TableCell>
                             <TableCell className="text-right">
                                <Button
@@ -150,7 +157,7 @@ export default function AdminMessagesPage() {
                         ))
                     ) : (
                         <TableRow>
-                        <TableCell colSpan={5} className="text-center py-16 text-muted-foreground">
+                        <TableCell colSpan={4} className="text-center py-16 text-muted-foreground">
                             No messages found.
                         </TableCell>
                         </TableRow>
@@ -161,6 +168,41 @@ export default function AdminMessagesPage() {
             </CardContent>
             </Card>
       </div>
+
+       {selectedMessage && (
+        <Dialog open={!!selectedMessage} onOpenChange={(open) => !open && setSelectedMessage(null)}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Message from {selectedMessage.name}</DialogTitle>
+                    <DialogDescription>
+                        Received on {formatDate(selectedMessage.createdAt)}.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4 text-sm max-h-[60vh] overflow-y-auto pr-6">
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <p className="col-span-1 font-semibold text-right">Email</p>
+                        <p className="col-span-3">{selectedMessage.email}</p>
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <p className="col-span-1 font-semibold text-right">Phone</p>
+                        <p className="col-span-3">{selectedMessage.phone || 'N/A'}</p>
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <p className="col-span-1 font-semibold text-right">Subject</p>
+                        <p className="col-span-3">{selectedMessage.subject}</p>
+                    </div>
+                    <div className="grid grid-cols-4 items-start gap-4">
+                        <p className="col-span-1 font-semibold text-right">Message</p>
+                        <p className="col-span-3 whitespace-pre-wrap">{selectedMessage.message}</p>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="secondary" onClick={() => setSelectedMessage(null)}>Close</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+      )}
+
       {messageToDelete && (
         <AlertDialog open={!!messageToDelete} onOpenChange={(open) => !open && setMessageToDelete(null)}>
           <AlertDialogContent>

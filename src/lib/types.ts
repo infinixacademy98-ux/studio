@@ -52,6 +52,7 @@ export interface Message {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   subject: string;
   message: string;
   createdAt: any;
