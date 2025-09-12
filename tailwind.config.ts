@@ -17,6 +17,9 @@ export default {
       },
     },
     extend: {
+      backgroundImage: {
+        'hero-pattern': "url('https://i.postimg.cc/3RkGDV4y/pexels-arthurbrognoli-2260835.jpg')",
+      },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         body: ['Inter', 'sans-serif'],
