@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Search, SlidersHorizontal, TrendingUp, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal, TrendingUp, ChevronLeft, ChevronRight, Edit, Utensils, Home, Car, ShoppingBag, Sparkles, Paintbrush, HeartHandshake, School, Stethoscope } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -31,6 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import { collection, getDocs, query, where, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./auth-provider";
+import { cn } from "@/lib/utils";
 
 
 const MarqueeContent = ({ listings, isDuplicate = false }: { listings: Business[], isDuplicate?: boolean }) => (
@@ -65,40 +66,34 @@ const MarqueeSkeleton = () => (
 
 const popularCategories = [
   {
-    name: 'Restaurant',
-    description: 'Best dining experiences.',
-    image: 'https://picsum.photos/seed/restaurant/200/200',
-    aiHint: 'restaurant interior',
+    name: 'Restaurants',
+    icon: Utensils,
+    color: 'bg-yellow-100 text-yellow-600',
   },
   {
-    name: 'Hotel',
-    description: 'Reliable help for your home.',
-    image: 'https://picsum.photos/seed/hotel/200/200',
-    aiHint: 'modern hotel lobby',
+    name: 'Home Services',
+    icon: Home,
+    color: 'bg-blue-100 text-blue-600',
   },
   {
-    name: 'Cafe',
-    description: 'Relax and rejuvenate.',
-    image: 'https://picsum.photos/seed/cafe/200/200',
-    aiHint: 'cozy cafe',
+    name: 'Auto Services',
+    icon: Car,
+    color: 'bg-red-100 text-red-600',
   },
   {
-    name: 'Electronics',
-    description: 'Keep your vehicle in top shape.',
-    image: 'https://picsum.photos/seed/electronics/200/200',
-    aiHint: 'auto garage',
-  },
-  {
-    name: 'Education',
-    description: 'Access quality education.',
-    image: 'https://picsum.photos/seed/education/200/200',
-    aiHint: 'modern classroom',
+    name: 'Shopping',
+    icon: ShoppingBag,
+    color: 'bg-green-100 text-green-600',
   },
   {
     name: 'Health Care',
-    description: 'Find doctors and clinics.',
-    image: 'https://picsum.photos/seed/healthcare/200/200',
-    aiHint: 'doctor office',
+    icon: Stethoscope,
+    color: 'bg-indigo-100 text-indigo-600',
+  },
+   {
+    name: 'Education',
+    icon: School,
+    color: 'bg-purple-100 text-purple-600',
   },
 ];
 
@@ -239,7 +234,7 @@ export default function HomeContent() {
     // Sort by creation date descending to get the newest first, and take the top 6
     return [...listings]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 6);
+      .slice(0, 10);
   }, [listings]);
 
   const filteredListings = useMemo(() => {
@@ -320,20 +315,62 @@ export default function HomeContent() {
 
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-primary font-headline">
-          Discover Businesses in Belgaum
-        </h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Find the best local services, right at your fingertips.
-        </p>
-      </header>
-      
+    <>
+      <section className="relative bg-hero-pattern bg-cover bg-center py-20 sm:py-32">
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="container relative mx-auto px-4 text-center text-white">
+          <h1 className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl lg:text-6xl">
+            Find the best local businesses
+          </h1>
+          <p className="mt-4 text-lg sm:text-xl max-w-2xl mx-auto">
+            Discover top-rated restaurants, shops, and services in your area.
+          </p>
+          <div className="mt-8 mx-auto max-w-xl">
+             <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                    type="text"
+                    placeholder="Search for businesses, services, or locations"
+                    value={searchTerm}
+                    onChange={(e) => handleSearchAction(e.target.value)}
+                    className="pl-12 h-14 rounded-full text-base text-foreground"
+                />
+                {isSearching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-8 sm:py-12">
+        <section className="mb-12">
+           <Card className="p-6 sm:p-8 shadow-lg border-none -mt-20 sm:-mt-28 relative z-10 bg-card">
+              <h2 className="text-2xl font-bold tracking-tight text-center mb-6 text-primary">
+                Browse by Category
+              </h2>
+              <div className="flex justify-center items-center gap-4 sm:gap-8 flex-wrap">
+                 {popularCategories.map((cat) => (
+                  <button
+                    key={cat.name}
+                    className="group text-center w-28 flex-shrink-0"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleSearchAction(cat.name);
+                    }}
+                  >
+                    <div className={cn("relative w-20 h-20 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1 flex items-center justify-center", cat.color)}>
+                      <cat.icon className="h-10 w-10 transition-transform duration-300 group-hover:scale-110" />
+                    </div>
+                    <h3 className="font-semibold text-base mb-1 truncate group-hover:text-primary">{cat.name}</h3>
+                  </button>
+                ))}
+              </div>
+           </Card>
+        </section>
+
        <section className="mb-12">
           <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
             <TrendingUp className="text-primary" />
-            Top Businesses
+            Popular Businesses
           </h2>
            <div className="relative w-full overflow-hidden">
                 {loading ? (
@@ -355,112 +392,6 @@ export default function HomeContent() {
             </div>
        </section>
        
-       <section className="mb-12">
-          <div className="mb-8 p-4 bg-card rounded-lg shadow-md transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <div className="relative flex-grow w-full sm:w-auto">
-                 <div className="flex w-full max-w-lg mx-auto">
-                    <div className="relative w-full">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                          type="text"
-                          placeholder="Search for businesses or services"
-                          value={searchTerm}
-                          onChange={(e) => handleSearchAction(e.target.value)}
-                          className="pl-10"
-                        />
-                         {isSearching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
-                    </div>
-                </div>
-              </div>
-              <div className="flex-grow-0 sm:min-w-[180px]">
-                <Select value={category} onValueChange={(value) => handleSearchAction("", value)}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent position="popper">
-                        <SelectItem value="all">All Categories</SelectItem>
-                        {categories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>
-                            {cat}
-                        </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-              </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex-grow-0">
-                    <SlidersHorizontal className="mr-2 h-4 w-4" />
-                    Filter
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="grid gap-4">
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">Filters</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Refine your search results.
-                      </p>
-                    </div>
-                    <div className="grid gap-2">
-                      
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="rating">Rating</Label>
-                        <Select value={rating} onValueChange={setRating}>
-                            <SelectTrigger id="rating" className="col-span-2 h-8">
-                              <SelectValue placeholder="Any Rating" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Any Rating</SelectItem>
-                                <SelectItem value="4">4 Stars &amp; Up</SelectItem>
-                                <SelectItem value="3">3 Stars &amp; Up</SelectItem>
-                                <SelectItem value="2">2 Stars &amp; Up</SelectItem>
-                                <SelectItem value="1">1 Star &amp; Up</SelectItem>
-                            </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-
-          <h2 className="text-2xl font-bold tracking-tight text-center mb-6 text-primary">
-            Popular Categories
-          </h2>
-          <div className="relative">
-            <ScrollArea>
-              <div className="flex justify-center space-x-8 pb-4">
-                {popularCategories.map((cat) => (
-                  <button
-                    key={cat.name}
-                    className="group text-center w-28 flex-shrink-0"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleSearchAction(cat.name);
-                    }}
-                  >
-                    <div className="relative w-24 h-24 mx-auto mb-2 transition-all duration-300 rounded-full group-hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] group-hover:-translate-y-1">
-                      <Image
-                        src={cat.image}
-                        alt={cat.name}
-                        width={96}
-                        height={96}
-                        className="rounded-full object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={cat.aiHint}
-                      />
-                    </div>
-                    <h3 className="font-semibold text-base mb-1 truncate group-hover:text-primary">{cat.name}</h3>
-                  </button>
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </div>
-        </section>
-
       <div ref={resultsRef}>
         <h2 className="text-2xl font-bold tracking-tight mb-4">
           {resultsTitle}
@@ -502,7 +433,7 @@ export default function HomeContent() {
           </>
         ) : (
           <div className="text-center py-16">
-              <p className="text-muted-foreground">No businesses found. Try adjusting your search filters or add the first listing for this area!</p>
+              <p className="text-muted-foreground">No businesses found. Try adjusting your search or add the first listing for this area!</p>
           </div>
         )}
       </div>
@@ -529,5 +460,6 @@ export default function HomeContent() {
         </div>
       </section>
     </div>
+    </>
   );
 }
