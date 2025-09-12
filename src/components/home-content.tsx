@@ -316,9 +316,19 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative bg-hero-pattern bg-cover bg-center py-20 sm:py-32">
+      <section className="relative h-[60vh] sm:h-[80vh] flex items-center justify-center text-center overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover"
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
         <div className="absolute inset-0 bg-black/50"></div>
-        <div className="container relative mx-auto px-4 text-center text-white">
+        <div className="container relative z-10 mx-auto px-4 text-white">
           <h1 className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl lg:text-6xl">
             Find the best local businesses
           </h1>
@@ -342,7 +352,7 @@ export default function HomeContent() {
       </section>
 
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        <section className="mb-12 -mt-20 sm:-mt-28 relative z-10 p-6 sm:p-8">
+        <section className="mb-12 p-6 sm:p-8">
             <h2 className="text-2xl font-bold tracking-tight text-center mb-6 text-primary">
               Browse by Category
             </h2>
@@ -461,3 +471,5 @@ export default function HomeContent() {
     </>
   );
 }
+
+    
