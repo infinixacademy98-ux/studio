@@ -34,9 +34,10 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import Link from "next/link";
 
 export default function AdminBusinessesPage() {
   const { toast } = useToast();
@@ -199,6 +200,11 @@ export default function AdminBusinessesPage() {
                                 Approve
                               </Button>
                             )}
+                             <Button asChild variant="outline" size="sm">
+                                <Link href={`/admin/businesses/edit/${listing.id}`}>
+                                    <Edit className="h-4 w-4" />
+                                </Link>
+                            </Button>
                             <Button variant="destructive" size="sm" onClick={() => setListingToDelete(listing)} disabled={isDeleting[listing.id]}>
                               {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                             </Button>
@@ -309,3 +315,5 @@ export default function AdminBusinessesPage() {
     </>
   );
 }
+
+    
