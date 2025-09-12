@@ -231,5 +231,46 @@ export const businessListings: Business[] = [
     "images": ["https://picsum.photos/seed/catering/600/400"],
     "reviews": [],
     "timing": "10:00 am to 9:30 pm"
+  },
+  {
+    "id": "10",
+    "name": "Infinix Academy",
+    "category": "Education",
+    "description": "Infinix Academy offers top-notch coaching for competitive exams. Our experienced faculty and personalized approach ensure students achieve their academic goals. We provide a supportive learning environment with modern facilities.",
+    "ownerId": "mock-owner",
+    "status": "approved",
+    "createdAt": new Date("2024-01-15T09:00:00Z"),
+    "contact": {
+      "phone": "9876543210",
+      "email": "contact@infinixacademy.com",
+      "website": "https://infinixacademy.com",
+      "googleMapsUrl": "https://goo.gl/maps/infinix"
+    },
+    "address": {
+      "street": "123 Academy Road",
+      "city": "Belgaum",
+      "state": "Karnataka",
+      "zip": "590002"
+    },
+    "images": [
+      "https://i.postimg.cc/Jh8V67Ym/Untitled-design-1.png"
+    ],
+    "reviews": [
+      {
+        "id": "rev1",
+        "author": "Priya Sharma",
+        "rating": 5,
+        "comment": "Best coaching center in Belgaum! The teachers are very knowledgeable.",
+        "date": "2024-02-20T14:30:00Z"
+      },
+      {
+        "id": "rev2",
+        "author": "Rahul Desai",
+        "rating": 4,
+        "comment": "Good infrastructure and study materials. Helped me score well.",
+        "date": "2024-03-10T11:00:00Z"
+      }
+    ],
+    "timing": "9:00 am to 8:00 pm"
   }
 ];
