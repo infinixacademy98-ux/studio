@@ -90,9 +90,15 @@ const popularCategories = [
   },
   {
     name: 'Education',
-    description: 'Access quality healthcare.',
+    description: 'Access quality education.',
     image: 'https://picsum.photos/seed/education/200/200',
     aiHint: 'modern classroom',
+  },
+  {
+    name: 'Health Care',
+    description: 'Find doctors and clinics.',
+    image: 'https://picsum.photos/seed/healthcare/200/200',
+    aiHint: 'doctor office',
   },
 ];
 
