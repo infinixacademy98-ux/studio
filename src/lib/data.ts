@@ -44,7 +44,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/yatra/600/400"],
+    "images": ["https://i.postimg.cc/JzWfMfYT/image-for-tours-and-travels-agency-with-cars-plane-bus-in-background.jpg"],
     "reviews": []
   },
   {
