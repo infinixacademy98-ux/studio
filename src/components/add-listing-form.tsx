@@ -165,7 +165,8 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
       
       const formatUrl = (url?: string) => {
-        if (url && url.trim() !== '' && !/^https?:\/\//i.test(url)) {
+        if (!url || url.trim() === '') return "";
+        if (!/^https?:\/\//i.test(url)) {
             return 'https://' + url;
         }
         return url;
@@ -638,3 +639,5 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
     </Card>
   );
 }
+
+    
