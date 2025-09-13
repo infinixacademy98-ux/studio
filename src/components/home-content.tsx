@@ -346,7 +346,10 @@ export default function HomeContent() {
                            <h4 className="font-medium text-sm px-2 py-1.5">Categories</h4>
                             <ScrollArea className="h-72">
                                 <button
-                                    onClick={() => { setCategory('all'); setSearchTerm(''); }}
+                                    onClick={() => { 
+                                        setSearchTerm(''); 
+                                        setCategory('all'); 
+                                    }}
                                     className={cn(
                                         "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
                                         category === 'all' && 'bg-accent font-semibold'
@@ -357,7 +360,10 @@ export default function HomeContent() {
                                 {categories.map((cat) => (
                                     <button
                                         key={cat}
-                                        onClick={() => { setCategory(cat); setSearchTerm(''); }}
+                                        onClick={() => { 
+                                            setSearchTerm(cat);
+                                            setCategory(cat);
+                                        }}
                                         className={cn(
                                             "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
                                             category === cat && 'bg-accent font-semibold'
