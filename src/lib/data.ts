@@ -159,7 +159,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590010"
     },
-    "images": ["https://picsum.photos/seed/marketing/600/400"],
+    "images": ["https://i.postimg.cc/LsSgk8Cz/pexels-knownasovan-57690.jpg"],
     "reviews": []
   },
   {
