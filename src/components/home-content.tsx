@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
@@ -252,14 +253,16 @@ export default function HomeContent() {
       if (relatedCategories.length > 0) {
         const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
         newFilteredListings = newFilteredListings.filter(listing =>
-          relatedCategoriesLower.includes(listing.category.toLowerCase())
+          relatedCategoriesLower.includes(listing.category.toLowerCase()) || 
+          (listing.searchCategories || []).some(sc => relatedCategoriesLower.includes(sc.toLowerCase()))
         );
       } else {
         const searchTermLower = searchTerm.toLowerCase();
         newFilteredListings = newFilteredListings.filter(listing =>
           listing.name.toLowerCase().includes(searchTermLower) ||
           listing.description.toLowerCase().includes(searchTermLower) ||
-          listing.category.toLowerCase().includes(searchTermLower)
+          listing.category.toLowerCase().includes(searchTermLower) ||
+          (listing.searchCategories || []).some(sc => sc.toLowerCase().includes(searchTermLower))
         );
       }
     } 

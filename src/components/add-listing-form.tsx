@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Wand2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { collection, addDoc, doc, updateDoc, serverTimestamp, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./auth-provider";
@@ -48,6 +50,7 @@ const formSchema = z.object({
   whatsapp: urlSchema,
   instagram: urlSchema,
   youtube: urlSchema,
+  searchCategories: z.array(z.string()).optional(),
 }).refine(data => {
     if (data.category === 'Other') {
         return !!data.otherCategory && data.otherCategory.length > 0;
@@ -79,11 +82,10 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       try {
         const querySnapshot = await getDocs(collection(db, "categories"));
         const fetchedCategories = querySnapshot.docs.map(doc => doc.data().name as string).sort();
-        if (!fetchedCategories.includes("Other")) {
-          fetchedCategories.push("Other");
-        }
+        // Don't add "Other" to the selectable search categories
         setCategories(fetchedCategories);
-      } catch (error) {
+      } catch (error)
+ {
         console.error("Error fetching categories:", error);
         toast({
           variant: "destructive",
@@ -117,8 +119,11 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       whatsapp: "",
       instagram: "",
       youtube: "",
+      searchCategories: [],
     },
   });
+
+  const allCategoriesForSelect = [...categories, "Other"];
 
   useEffect(() => {
     if (isUpdateMode && existingListing && categories.length > 0) {
@@ -141,6 +146,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         whatsapp: existingListing.contact.socials?.whatsapp || "",
         instagram: existingListing.contact.socials?.instagram || "",
         youtube: existingListing.contact.socials?.youtube || "",
+        searchCategories: existingListing.searchCategories || [],
       });
     }
   }, [isUpdateMode, existingListing, form, categories]);
@@ -169,6 +175,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         ownerId: user.uid,
         name: values.name,
         category: categoryToSave,
+        searchCategories: values.searchCategories || [],
         description: values.description,
         contact: {
           phone: values.phone,
@@ -244,7 +251,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       const suggestedCategory = result.category;
       const normalizedSuggested = suggestedCategory.trim().toLowerCase();
       
-      const existingCategory = categories.find(c => c.toLowerCase() === normalizedSuggested);
+      const existingCategory = allCategoriesForSelect.find(c => c.toLowerCase() === normalizedSuggested);
 
       if (existingCategory && existingCategory !== 'Other') {
         form.setValue("category", existingCategory, { shouldValidate: true });
@@ -262,7 +269,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                 description: `"${suggestedCategory.trim()}" has been added to the list.`,
               });
               // Refresh category list
-               setCategories(prev => [...prev.filter(c => c !== 'Other'), suggestedCategory.trim(), 'Other'].sort());
+               setCategories(prev => [...prev, suggestedCategory.trim()].sort());
            } catch (e) {
               console.error("Failed to add new category", e);
            }
@@ -329,7 +336,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>Primary Category</FormLabel>
                     <div className="flex gap-2 items-start">
                       <div className="flex-1 space-y-2">
                         <Select onValueChange={field.onChange} value={field.value} disabled={loadingCategories}>
@@ -339,7 +346,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {categories.map((cat) => (
+                            {allCategoriesForSelect.map((cat) => (
                               <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                             ))}
                           </SelectContent>
@@ -376,6 +383,58 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                 </FormItem>
               )}
             />
+            
+            <FormField
+              control={form.control}
+              name="searchCategories"
+              render={() => (
+                <FormItem>
+                  <div className="mb-4">
+                    <FormLabel className="text-base">Search Categories</FormLabel>
+                    <FormDescription>
+                      Select additional categories where you want your business to appear in search results.
+                    </FormDescription>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {categories.map((item) => (
+                    <FormField
+                      key={item}
+                      control={form.control}
+                      name="searchCategories"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...(field.value || []), item])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item
+                                        )
+                                      )
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {item}
+                            </FormLabel>
+                          </FormItem>
+                        )
+                      }}
+                    />
+                  ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FormField

@@ -37,6 +37,7 @@ export interface Business {
   id: string;
   name: string;
   category: string;
+  searchCategories?: string[];
   description: string;
   contact: Contact;
   address: Address;
