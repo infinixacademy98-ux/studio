@@ -182,7 +182,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://i.postimg.cc/9Q5YSVgf/20250913-1142-Refreshing-Purity-simple-compose-01k50v67nbeh7snkz81m4v1gvq.png"],
+    "images": ["https://i.postimg.cc/SsL1KRXj/Untitled-design-9.png"],
     "reviews": []
   },
   {
