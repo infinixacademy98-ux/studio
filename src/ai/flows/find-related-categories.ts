@@ -42,7 +42,7 @@ const prompt = ai.definePrompt({
   name: 'findRelatedCategoriesPrompt',
   input: { schema: FindRelatedCategoriesInputSchema },
   output: { schema: FindRelatedCategoriesOutputSchema },
-  model: 'googleai/gemini-2.5-flash',
+  model: 'googleai/gemini-2.5-pro',
   prompt: `You are an expert in semantic search and business categorization. Based on the user's search query, identify all relevant categories from the provided list.
 
 User Query: {{{query}}}
