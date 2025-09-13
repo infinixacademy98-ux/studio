@@ -45,6 +45,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
+import { cn } from "@/lib/utils";
 
 function BusinessDetailsPageContent() {
   const [listing, setListing] = useState<Business | null>(null);
@@ -321,18 +322,18 @@ function BusinessDetailsPageContent() {
                  </p>
               </div>
               <Separator />
-              <div className="flex justify-start items-center gap-4 pt-2">
-                  <a href={socials?.facebook || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.facebook ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
-                      <Facebook className="h-6 w-6" />
+               <div className="flex justify-start items-center gap-4 pt-2">
+                  <a href={socials?.facebook || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.facebook ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
+                      <Facebook className="h-6 w-6 text-[#1877F2]" />
                   </a>
-                  <a href={socials?.instagram || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.instagram ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
-                      <Instagram className="h-6 w-6" />
+                  <a href={socials?.instagram || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.instagram ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
+                      <Instagram className="h-6 w-6 text-[#E4405F]" />
                   </a>
-                  <a href={socials?.youtube || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.youtube ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
-                      <Youtube className="h-6 w-6" />
+                  <a href={socials?.youtube || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.youtube ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
+                      <Youtube className="h-6 w-6 text-[#FF0000]" />
                   </a>
-                   <a href={socials?.whatsapp || "#"} target="_blank" rel="noopener noreferrer" className={!socials?.whatsapp ? "opacity-50 pointer-events-none" : "hover:text-primary"}>
-                      <MessageSquare className="h-6 w-6" />
+                   <a href={socials?.whatsapp || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.whatsapp ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
+                      <MessageSquare className="h-6 w-6 text-[#25D366]" />
                   </a>
               </div>
             </CardContent>
