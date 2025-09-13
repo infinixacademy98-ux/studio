@@ -11,7 +11,7 @@ import { db } from "@/lib/firebase";
 import type { Business } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +19,7 @@ import { Loader2, Trash2, PlusCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const urlSchema = z.string().url("Please enter a valid URL.").optional().or(z.literal(''));
 
@@ -42,6 +43,7 @@ const formSchema = z.object({
   instagram: urlSchema,
   youtube: urlSchema,
   status: z.enum(["pending", "approved", "rejected"]),
+  searchCategories: z.array(z.string()).optional(),
 }).refine(data => {
     if (data.category === 'Other') {
         return !!data.otherCategory && data.otherCategory.length > 0;
@@ -86,6 +88,7 @@ export default function EditBusinessPage() {
       instagram: "",
       youtube: "",
       status: "pending",
+      searchCategories: [],
     },
   });
 
@@ -95,6 +98,8 @@ export default function EditBusinessPage() {
   });
 
   const selectedCategory = form.watch("category");
+  const allCategoriesForSelect = [...categories, "Other"];
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -102,9 +107,6 @@ export default function EditBusinessPage() {
       try {
         const querySnapshot = await getDocs(collection(db, "categories"));
         const fetchedCategories = querySnapshot.docs.map(doc => doc.data().name as string).sort();
-        if (!fetchedCategories.includes("Other")) {
-            fetchedCategories.push("Other");
-        }
         setCategories(fetchedCategories);
       } catch (error) {
         toast({ variant: "destructive", title: "Error", description: "Could not load categories." });
@@ -149,6 +151,7 @@ export default function EditBusinessPage() {
             instagram: data.contact.socials?.instagram || "",
             youtube: data.contact.socials?.youtube || "",
             status: data.status,
+            searchCategories: data.searchCategories || [],
           });
         } else {
           toast({ variant: "destructive", title: "Error", description: "Listing not found." });
@@ -182,6 +185,7 @@ export default function EditBusinessPage() {
         description: values.description,
         images: values.images.map(img => img.url),
         category: categoryToSave,
+        searchCategories: values.searchCategories || [],
         status: values.status,
         contact: {
           phone: values.phone,
@@ -266,7 +270,7 @@ export default function EditBusinessPage() {
                                     <Select onValueChange={field.onChange} value={field.value} disabled={loadingCategories}>
                                         <FormControl><SelectTrigger><SelectValue placeholder={loadingCategories ? "Loading..." : "Select a category"} /></SelectTrigger></FormControl>
                                         <SelectContent>
-                                            {categories.map((cat) => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                                            {allCategoriesForSelect.map((cat) => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
                                     {selectedCategory === 'Other' && (
@@ -296,6 +300,59 @@ export default function EditBusinessPage() {
                             </FormItem>
                         )} />
                     </div>
+                </CardContent>
+            </Card>
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>Search Categories</CardTitle>
+                    <CardDescription>Select additional categories where this business should appear.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <FormField
+                    control={form.control}
+                    name="searchCategories"
+                    render={() => (
+                        <FormItem>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {categories.map((item) => (
+                            <FormField
+                            key={item}
+                            control={form.control}
+                            name="searchCategories"
+                            render={({ field }) => {
+                                return (
+                                <FormItem
+                                    key={item}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                    <FormControl>
+                                    <Checkbox
+                                        checked={field.value?.includes(item)}
+                                        onCheckedChange={(checked) => {
+                                        return checked
+                                            ? field.onChange([...(field.value || []), item])
+                                            : field.onChange(
+                                                field.value?.filter(
+                                                (value) => value !== item
+                                                )
+                                            )
+                                        }}
+                                    />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                    {item}
+                                    </FormLabel>
+                                </FormItem>
+                                )
+                            }}
+                            />
+                        ))}
+                        </div>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
                 </CardContent>
             </Card>
             
@@ -367,5 +424,3 @@ export default function EditBusinessPage() {
     </div>
   );
 }
-
-    
