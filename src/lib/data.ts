@@ -90,7 +90,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/crafts/600/400"],
+    "images": ["https://i.postimg.cc/BnVwtRm9/make-an-image-for-business-which-sells-All-Types-Of-Thermocol-Items-Diwali-Kandil-Rangoli-Holi-Co.jpg"],
     "reviews": []
   },
   {
