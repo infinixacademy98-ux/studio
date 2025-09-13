@@ -181,6 +181,7 @@ export default function EditBusinessPage() {
       }
 
       await updateDoc(listingRef, {
+        ownerId: listing!.ownerId,
         name: values.name,
         description: values.description,
         images: values.images.map(img => img.url),
