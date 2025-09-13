@@ -205,7 +205,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590006"
     },
-    "images": ["https://picsum.photos/seed/rice/600/400"],
+    "images": ["https://i.postimg.cc/9fStj7cy/distributor-of-rice-supply-and-export.jpg"],
     "reviews": []
   },
   {
