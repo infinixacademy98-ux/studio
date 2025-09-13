@@ -29,17 +29,17 @@ export default function BusinessCard({ listing }: BusinessCardProps) {
     <Link href={`/listing/${listing.id}`} className="group block h-full">
       <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1 bg-card">
         <CardHeader className="p-0">
-          <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-muted">
             {listing.images && listing.images.length > 0 ? (
               <Image
                 src={listing.images[0]}
                 alt={listing.name}
                 fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                className="object-contain transition-transform duration-300 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             ) : (
-                <div className="flex h-full w-full items-center justify-center bg-muted">
+                <div className="flex h-full w-full items-center justify-center">
                     <Building2 className="h-16 w-16 text-muted-foreground/50" />
                 </div>
             )}
