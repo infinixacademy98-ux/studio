@@ -228,7 +228,7 @@ export const businessListings: Business[] = [
       "state": "Karnataka",
       "zip": "590001"
     },
-    "images": ["https://picsum.photos/seed/catering/600/400"],
+    "images": ["https://i.postimg.cc/nL10bzCk/pexels-yankrukov-8818723.jpg"],
     "reviews": [],
     "timing": "10:00 am to 9:30 pm"
   }
