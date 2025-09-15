@@ -315,7 +315,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Business Description</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Describe your business and what makes it special..."
