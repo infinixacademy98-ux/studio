@@ -67,12 +67,12 @@ export default function AdminLayout({
                   >
                      <Image 
                         src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
-                        alt="MVS Belgaum Logo" 
+                        alt="MVS Karnataka Logo" 
                         width={40} 
                         height={40}
                         className="h-6 w-6 bg-white rounded-full p-1 transition-all group-hover:scale-110"
                       />
-                    <span className="sr-only">MVS Belgaum</span>
+                    <span className="sr-only">MVS Karnataka</span>
                   </Link>
                   <Link href="/admin/dashboard" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">Dashboard</Link>
                   <Link href="/admin/businesses" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">Businesses</Link>
