@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { gemini25Flash } from '@genkit-ai/googleai';
+import { gemini15Flash } from '@genkit-ai/googleai';
 
 const FindRelatedCategoriesInputSchema = z.object({
   query: z.string().describe('The user search query.'),
@@ -42,7 +42,7 @@ const prompt = ai.definePrompt({
   name: 'findRelatedCategoriesPrompt',
   input: { schema: FindRelatedCategoriesInputSchema },
   output: { schema: FindRelatedCategoriesOutputSchema },
-  model: 'googleai/gemini-2.5-flash',
+  model: gemini15Flash,
   prompt: `You are an expert in semantic search and business categorization. Based on the user's search query, identify all relevant categories from the provided list.
 
 User Query: {{{query}}}
@@ -52,7 +52,7 @@ Available Categories:
 - {{{this}}}
 {{/each}}
 
-Return a list of categories from the available list that are relevant to the user's query. The query might be a direct category name (e.g., "Education") or a related concept (e.g., "school"). Find all semantically related categories. For example, if the query is "hotel", you should also consider categories like "Restaurant", "Cafe", and "Catering Services" if they exist in the list. If the query itself matches a category name, be sure to include it in the output.`,
+Return a list of categories from the available list that are relevant to the user's query. The query might be a direct category name (e.g., "Education") or a related concept (e.g., "school"). Find all semantically related categories. For example, if the query is "places to eat", you should also consider categories like "Restaurant", "Cafe", and "Catering Services" if they exist in the list. If the query itself matches a category name, be sure to include it in the output.`,
 });
 
 const findRelatedCategoriesFlow = ai.defineFlow(
