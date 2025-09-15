@@ -37,11 +37,16 @@ const linkSchema = z.object({
   url: z.string().url("Please enter a valid URL."),
 });
 
+const imageSchema = z.object({
+  url: z.string().url("Please enter a valid image URL."),
+});
+
 const formSchema = z.object({
   name: z.string().min(2, "Business name must be at least 2 characters."),
   category: z.string().min(1, "Please select a category."),
   otherCategory: z.string().optional(),
   description: z.string().min(10, "Description must be at least 10 characters."),
+  images: z.array(imageSchema).min(1, "At least one image URL is required."),
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
   street: z.string().min(5, "Please enter a street address."),
@@ -85,6 +90,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       category: "",
       otherCategory: "",
       description: "",
+      images: [{ url: "" }],
       phone: "",
       email: "",
       street: "",
@@ -98,9 +104,14 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({
     control: form.control,
     name: "links",
+  });
+  
+  const { fields: imageFields, append: appendImage, remove: removeImage } = useFieldArray({
+    control: form.control,
+    name: "images",
   });
 
   useEffect(() => {
@@ -135,6 +146,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         category: isPredefinedCategory ? existingListing.category : "Other",
         otherCategory: isPredefinedCategory ? "" : existingListing.category,
         description: existingListing.description,
+        images: existingListing.images.map(url => ({ url })),
         phone: existingListing.contact.phone,
         email: existingListing.contact.email,
         street: existingListing.address.street,
@@ -172,6 +184,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
             category: categoryToSave,
             searchCategories: values.searchCategories || [],
             description: values.description,
+            images: values.images.map(img => img.url),
             referenceBy: values.referenceBy,
             casteAndCategory: values.casteAndCategory,
             contact: {
@@ -198,7 +211,6 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         } else {
             const docRef = await addDoc(collection(db, "listings"), {
                 ...listingData,
-                images: [`https://picsum.photos/seed/${Math.random()}/600/400`],
                 reviews: [],
                 createdAt: serverTimestamp(),
                 status: "pending",
@@ -412,6 +424,46 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                 )}
             />
 
+            <div>
+              <FormLabel>Images</FormLabel>
+              <FormDescription className="mb-2">Add one or more public URLs to your business images.</FormDescription>
+              <div className="space-y-4">
+                {imageFields.map((field, index) => (
+                  <FormField
+                    key={field.id}
+                    control={form.control}
+                    name={`images.${index}.url`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Input placeholder="https://example.com/image.png" {...field} />
+                          </FormControl>
+                          <Button type="button" variant="destructive" size="icon" onClick={() => removeImage(index)} disabled={imageFields.length <= 1}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+                <Button type="button" variant="outline" size="sm" onClick={() => appendImage({ url: "" })}>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Image
+                </Button>
+              </div>
+               <FormField
+                  control={form.control}
+                  name="images"
+                  render={() => (
+                     <FormItem>
+                       <FormMessage className="mt-2" />
+                     </FormItem>
+                  )}
+               />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FormField
                 control={form.control}
@@ -445,7 +497,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               <FormLabel>Links (Optional)</FormLabel>
               <FormDescription className="mb-2">Add links to your website, social media, or other pages.</FormDescription>
               <div className="space-y-4">
-                  {fields.map((field, index) => (
+                  {linkFields.map((field, index) => (
                       <div key={field.id} className="flex items-start gap-2">
                           <FormField
                               control={form.control}
@@ -480,14 +532,14 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                                   </FormItem>
                               )}
                           />
-                          <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4" /></Button>
+                          <Button type="button" variant="destructive" size="icon" onClick={() => removeLink(index)}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                   ))}
                   <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => append({ type: "website", url: "" })}
+                      onClick={() => appendLink({ type: "website", url: "" })}
                   >
                       <PlusCircle className="mr-2 h-4 w-4" />
                       Add Link
