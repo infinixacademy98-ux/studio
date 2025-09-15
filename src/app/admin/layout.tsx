@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export default function AdminLayout({
   children,
@@ -20,6 +21,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const { user, isAdmin, loading } = useAuth();
   const [open, setOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (pathname !== "/admin/signin") {
@@ -49,8 +51,11 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <AdminSidebar />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
+      <AdminSidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      <div className={cn(
+          "flex flex-col sm:gap-4 sm:py-4 transition-[padding-left] duration-300",
+           isSidebarCollapsed ? "sm:pl-14" : "sm:pl-64"
+        )}>
          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
@@ -70,7 +75,7 @@ export default function AdminLayout({
                         alt="MVS Karnataka Logo" 
                         width={40} 
                         height={40}
-                        className="h-8 w-8 transition-all group-hover:scale-110 object-cover rounded-full dark:bg-white"
+                        className="h-8 w-8 transition-all group-hover:scale-110 object-cover rounded-full dark:bg-white dark:-translate-x-1"
                       />
                     <span className="sr-only">MVS Karnataka</span>
                   </Link>
