@@ -22,16 +22,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Wand2, PlusCircle, Trash2, X, MessageSquare } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./auth-provider";
 import { useRouter } from "next/navigation";
 import type { Business } from "@/lib/types";
-import { categorizeBusinessListing } from "@/ai/flows/categorize-business-listing";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
-import { submitListingAction } from "@/app/add-listing/actions";
-
 
 const urlSchema = z.string().url("Please enter a valid URL.").optional().or(z.literal(''));
 
@@ -111,7 +108,6 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       try {
         const querySnapshot = await getDocs(collection(db, "categories"));
         const fetchedCategories = querySnapshot.docs.map(doc => doc.data().name as string).sort();
-        // Don't add "Other" to the selectable search categories
         setCategories(fetchedCategories);
       } catch (error)
  {
@@ -154,29 +150,84 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
   }, [isUpdateMode, existingListing, form, categories]);
 
  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user) {
+        toast({ variant: "destructive", description: "You must be logged in to manage a listing." });
+        return;
+    }
     setIsSubmitting(true);
-    const result = await submitListingAction(values, isUpdateMode ? existingListing.id : null);
-    setIsSubmitting(false);
+    try {
+        const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
+        
+        const formatUrl = (url?: string) => {
+            if (!url || url.trim() === '') return undefined;
+            if (!/^https?:\/\//i.test(url)) {
+                return 'https://' + url;
+            }
+            return url;
+        }
 
-    if (result.success) {
-      toast({
-        title: isUpdateMode ? "Listing Updated!" : "Listing Submitted!",
-        description: isUpdateMode 
-          ? "Your business listing has been submitted for re-approval."
-          : "Your business listing has been submitted for approval.",
-      });
-      if (isUpdateMode) {
-        router.push(`/listing/${result.listingId}`);
-      } else {
-        router.push('/');
-        form.reset();
-      }
-    } else {
-       toast({
-        variant: "destructive",
-        title: "Submission Failed",
-        description: result.error,
-      });
+        const listingData = {
+            ownerId: user.uid,
+            name: values.name,
+            category: categoryToSave,
+            searchCategories: values.searchCategories || [],
+            description: values.description,
+            referenceBy: values.referenceBy,
+            casteAndCategory: values.casteAndCategory,
+            contact: {
+                phone: values.phone,
+                email: values.email,
+                links: (values.links || []).map(link => ({...link, url: formatUrl(link.url) as string})),
+            },
+            address: {
+                street: values.street,
+                city: values.city,
+                state: values.state,
+                zip: values.zip,
+            },
+        };
+
+        let docId = isUpdateMode ? existingListing.id : null;
+
+        if (isUpdateMode && docId) {
+            const listingRef = doc(db, "listings", docId);
+            await updateDoc(listingRef, {
+                ...listingData,
+                status: "pending", // Re-submit for approval on update
+            });
+        } else {
+            const docRef = await addDoc(collection(db, "listings"), {
+                ...listingData,
+                images: [`https://picsum.photos/seed/${Math.random()}/600/400`],
+                reviews: [],
+                createdAt: serverTimestamp(),
+                status: "pending",
+            });
+            docId = docRef.id;
+        }
+
+        toast({
+            title: isUpdateMode ? "Listing Updated!" : "Listing Submitted!",
+            description: isUpdateMode 
+            ? "Your business listing has been submitted for re-approval."
+            : "Your business listing has been submitted for approval.",
+        });
+
+        if (isUpdateMode && docId) {
+            router.push(`/listing/${docId}`);
+        } else {
+            router.push('/');
+            form.reset();
+        }
+    } catch (error) {
+        console.error("Error saving document: ", error);
+        toast({
+            variant: "destructive",
+            title: "Submission Failed",
+            description: "There was an error saving your listing. Please check your permissions and try again.",
+        });
+    } finally {
+        setIsSubmitting(false);
     }
   }
 
