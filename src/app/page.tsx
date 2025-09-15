@@ -2,17 +2,21 @@
 "use client";
 
 import HomeContent from "@/components/home-content";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+import WithAuthLayout from "@/components/with-auth-layout";
+
+
+function HomePageContent() {
+  return (
+    <main className="flex-1 -mt-16">
+      <HomeContent />
+    </main>
+  )
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 -mt-16">
-        <HomeContent />
-      </main>
-      <Footer />
-    </div>
+    <WithAuthLayout>
+      <HomePageContent />
+    </WithAuthLayout>
   );
 }
