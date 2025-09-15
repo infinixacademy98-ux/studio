@@ -57,7 +57,7 @@ export default function AdminSidebar() {
                 alt="MVS Karnataka Logo" 
                 width={40} 
                 height={40}
-                className="h-8 w-8 object-cover rounded-full"
+                className="h-8 w-8 object-cover rounded-full dark:bg-white"
               />
             <span className="">MVS Karnataka Admin</span>
           </Link>
