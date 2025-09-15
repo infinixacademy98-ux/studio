@@ -317,7 +317,7 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative bg-background pt-8 pb-4 overflow-hidden">
+      <section className="relative bg-background pt-24 pb-8 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 to-transparent opacity-30"></div>
         <div className="container relative mx-auto px-4 text-center">
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
