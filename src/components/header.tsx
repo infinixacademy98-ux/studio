@@ -65,11 +65,11 @@ export default function Header() {
         <div className="mr-auto flex items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Image 
-              src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
+              src="https://i.postimg.cc/bNhS1wsq/413-531-px-1.png" 
               alt="MVS Karnataka Logo" 
               width={40} 
               height={40}
-              className="h-10 w-10 bg-white rounded-full p-1"
+              className="h-10 w-10"
             />
             <span className="font-bold">MVS Karnataka</span>
           </Link>

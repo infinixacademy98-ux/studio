@@ -66,11 +66,11 @@ export default function AdminLayout({
                     className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
                   >
                      <Image 
-                        src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
+                        src="https://i.postimg.cc/bNhS1wsq/413-531-px-1.png" 
                         alt="MVS Karnataka Logo" 
                         width={40} 
                         height={40}
-                        className="h-6 w-6 bg-white rounded-full p-1 transition-all group-hover:scale-110"
+                        className="h-8 w-8 transition-all group-hover:scale-110"
                       />
                     <span className="sr-only">MVS Karnataka</span>
                   </Link>

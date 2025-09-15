@@ -105,11 +105,11 @@ export default function SignUpPage() {
         <CardHeader className="py-8">
             <div className="flex justify-center items-center gap-2 mb-4">
                 <Image
-                    src="https://i.postimg.cc/9MLgBMfX/image-Edited.png"
+                    src="https://i.postimg.cc/bNhS1wsq/413-531-px-1.png"
                     alt="MVS Karnataka Logo"
                     width={40}
                     height={40}
-                    className="h-10 w-10 bg-white rounded-full p-1"
+                    className="h-10 w-10"
                 />
                 <h1 className="text-xl font-bold">MVS Karnataka</h1>
             </div>

@@ -53,11 +53,11 @@ export default function AdminSidebar() {
         <div className="flex h-16 items-center border-b px-6">
            <Link href="/" className="flex items-center gap-2 font-semibold">
              <Image 
-                src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
+                src="https://i.postimg.cc/bNhS1wsq/413-531-px-1.png" 
                 alt="MVS Karnataka Logo" 
                 width={40} 
                 height={40}
-                className="h-8 w-8 bg-white rounded-full p-1"
+                className="h-8 w-8"
               />
             <span className="">MVS Karnataka Admin</span>
           </Link>
