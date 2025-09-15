@@ -53,7 +53,7 @@ export default function AdminSidebar() {
         <div className="flex h-16 items-center border-b px-6">
            <Link href="/" className="flex items-center gap-2 font-semibold">
              <Image 
-                src="https://i.postimg.cc/bNhS1wsq/413-531-px-1.png" 
+                src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png" 
                 alt="MVS Karnataka Logo" 
                 width={40} 
                 height={40}

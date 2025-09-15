@@ -66,7 +66,7 @@ export default function AdminLayout({
                     className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
                   >
                      <Image 
-                        src="https://i.postimg.cc/bNhS1wsq/413-531-px-1.png" 
+                        src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png" 
                         alt="MVS Karnataka Logo" 
                         width={40} 
                         height={40}
