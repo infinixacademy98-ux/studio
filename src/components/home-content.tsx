@@ -332,12 +332,12 @@ export default function HomeContent() {
                         priority
                     />
                 </div>
-                <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4 max-w-2xl mt-8">
+                <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4 max-w-2xl mt-8 md:mt-0">
                     <div>
                         <h1 className="text-4xl md:text-5xl font-extrabold" style={{ color: '#E42828' }}>
                             MVS <span className="text-foreground">KARNATAKA</span>
                         </h1>
-                        <h2 className="text-5xl md:text-7xl font-extrabold mt-1 tracking-tight" style={{ color: '#2720E3' }}>
+                        <h2 className="text-4xl md:text-6xl font-extrabold mt-1 tracking-tight" style={{ color: '#2720E3' }}>
                             VOCAL FOR LOCAL
                         </h2>
                         <p className="text-2xl md:text-3xl font-bold mt-2 tracking-wide" style={{ color: '#E42828' }}>
