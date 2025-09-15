@@ -355,7 +355,7 @@ export default function HomeContent() {
       </section>
 
        <section className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-xl mx-auto">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
@@ -363,11 +363,11 @@ export default function HomeContent() {
               placeholder="Search for businesses or services"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-14 rounded-full text-base text-foreground pr-16"
+              className="pl-12 h-12 rounded-full text-base text-foreground pr-14"
             />
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 text-muted-foreground hover:bg-muted rounded-full">
+                <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 text-muted-foreground hover:bg-muted rounded-full">
                   <ListFilter className="h-5 w-5" />
                   <span className="sr-only">Filter by category</span>
                 </Button>
@@ -405,7 +405,7 @@ export default function HomeContent() {
                 </div>
               </PopoverContent>
             </Popover>
-            {isSearching && <Loader2 className="absolute right-16 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
+            {isSearching && <Loader2 className="absolute right-14 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
           </div>
         </div>
       </section>
