@@ -318,16 +318,16 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative bg-background pt-24 pb-16 overflow-hidden">
+      <section className="relative bg-background pt-16 pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 to-transparent opacity-30"></div>
         <div className="container relative mx-auto px-4 text-center">
             <div className="flex flex-col items-center">
                 <Image
                     src="https://i.postimg.cc/x10P9RQD/mvs-logo.png"
                     alt="MVS Karnataka Logo"
-                    width={200}
-                    height={200}
-                    className="rounded-full mb-6"
+                    width={240}
+                    height={240}
+                    className="rounded-full mb-4"
                     priority
                 />
                 <div className="max-w-4xl">
