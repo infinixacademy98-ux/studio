@@ -20,8 +20,9 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
   const { user, isAdmin, loading } = useAuth();
-  const [open, setOpen] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Default to open on desktop
+  const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
+
 
   useEffect(() => {
     if (pathname !== "/admin/signin") {
@@ -34,7 +35,7 @@ export default function AdminLayout({
   }, [user, isAdmin, loading, router, pathname]);
   
   useEffect(() => {
-    setOpen(false);
+    setIsMobileSheetOpen(false);
   }, [pathname]);
 
   if (pathname === "/admin/signin") {
@@ -49,15 +50,17 @@ export default function AdminLayout({
     );
   }
 
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <AdminSidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      <AdminSidebar isOpen={isSidebarOpen} />
       <div className={cn(
           "flex flex-col sm:gap-4 sm:py-4 transition-[padding-left] duration-300",
-           isSidebarCollapsed ? "sm:pl-14" : "sm:pl-64"
+           isSidebarOpen ? "sm:pl-64" : "sm:pl-14"
         )}>
          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-            <Sheet open={open} onOpenChange={setOpen}>
+            <Sheet open={isMobileSheetOpen} onOpenChange={setIsMobileSheetOpen}>
               <SheetTrigger asChild>
                 <Button size="icon" variant="outline" className="sm:hidden">
                   <Menu className="h-5 w-5" />
@@ -87,6 +90,10 @@ export default function AdminLayout({
                 </nav>
               </SheetContent>
             </Sheet>
+            <Button size="sm" variant="outline" onClick={toggleSidebar} className="hidden sm:flex">
+                <Menu className="h-5 w-5 mr-2" />
+                Menu
+            </Button>
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           {children}
