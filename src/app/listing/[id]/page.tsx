@@ -49,11 +49,11 @@ import { v4 as uuidv4 } from "uuid";
 const LinkTypeIcon: React.FC<{ type: string }> = ({ type }) => {
   switch (type) {
     case "website": return <Globe className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
-    case "googleMaps": return <Map className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
-    case "facebook": return <Facebook className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
-    case "instagram": return <Instagram className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
-    case "youtube": return <Youtube className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
-    case "whatsapp": return <MessageSquare className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+    case "googleMaps": return <Map className="h-5 w-5 text-green-600 group-hover:opacity-80" />;
+    case "facebook": return <Facebook className="h-5 w-5 text-blue-600 group-hover:opacity-80" />;
+    case "instagram": return <Instagram className="h-5 w-5 text-pink-600 group-hover:opacity-80" />;
+    case "youtube": return <Youtube className="h-5 w-5 text-red-600 group-hover:opacity-80" />;
+    case "whatsapp": return <MessageSquare className="h-5 w-5 text-green-500 group-hover:opacity-80" />;
     default: return <LinkIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
   }
 };
@@ -201,12 +201,12 @@ function BusinessDetailsPageContent() {
           {/* --- Image Carousel --- */}
           <Carousel className="w-full">
             <CarouselContent>
-              {listing.images.map((img, index) => (
+              {listing.images.map((img) => (
                 <CarouselItem key={img}>
                   <div className="relative h-96 w-full overflow-hidden rounded-lg">
                     <Image
                       src={img}
-                      alt={`${listing.name} image ${index + 1}`}
+                      alt={`${listing.name} image`}
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 66vw"
