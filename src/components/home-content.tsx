@@ -317,11 +317,11 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative bg-background pt-24 pb-12 overflow-hidden">
+      <section className="relative bg-background overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 to-transparent opacity-30"></div>
-         <div className="container relative mx-auto px-4 pt-16">
+         <div className="container relative mx-auto px-4 pt-24 pb-12">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-            <div className="flex justify-center md:justify-end">
+            <div className="flex justify-center md:justify-start">
                 <Image
                     src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png"
                     alt="MVS Karnataka Logo"
@@ -335,10 +335,10 @@ export default function HomeContent() {
                 <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
                     <span className="text-red-600">MVS</span> <span className="text-black dark:text-white">KARNATAKA</span>
                 </h1>
-                <h2 className="text-4xl md:text-5xl font-extrabold mt-1 tracking-tight text-blue-600">
+                <h2 className="text-2xl md:text-3xl font-extrabold mt-1 tracking-tight text-blue-600 whitespace-nowrap">
                     VOCAL FOR LOCAL
                 </h2>
-                <p className="text-2xl md:text-3xl font-bold mt-2 tracking-wide text-red-600">
+                <p className="text-xl md:text-2xl font-bold mt-2 tracking-wide text-red-600">
                     DIGITAL BUSINESS DIRECTORY
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
