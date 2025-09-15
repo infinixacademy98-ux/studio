@@ -319,7 +319,7 @@ export default function HomeContent() {
     <>
       <section className="relative bg-background pt-24 pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 to-transparent opacity-30"></div>
-        <div className="container relative mx-auto px-4 pt-16">
+         <div className="container relative mx-auto px-4 pt-16">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="flex justify-center md:justify-end">
                 <Image
@@ -331,27 +331,25 @@ export default function HomeContent() {
                     priority
                 />
             </div>
-            <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
-                <div>
-                    <h1 className="text-4xl md:text-5xl font-extrabold" style={{ color: '#E42828' }}>
-                        MVS <span className="text-foreground">KARNATAKA</span>
-                    </h1>
-                    <h2 className="text-4xl md:text-5xl font-extrabold mt-1 tracking-tight" style={{ color: '#2720E3' }}>
-                        VOCAL FOR LOCAL
-                    </h2>
-                    <p className="text-2xl md:text-3xl font-bold mt-2 tracking-wide" style={{ color: '#E42828' }}>
-                        DIGITAL BUSINESS DIRECTORY
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Regd.No.-Nak/0000247/2023
-                    </p>
-                </div>
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+                    <span className="text-red-600">MVS</span> <span className="text-black dark:text-white">KARNATAKA</span>
+                </h1>
+                <h2 className="text-4xl md:text-5xl font-extrabold mt-1 tracking-tight text-blue-600">
+                    VOCAL FOR LOCAL
+                </h2>
+                <p className="text-2xl md:text-3xl font-bold mt-2 tracking-wide text-red-600">
+                    DIGITAL BUSINESS DIRECTORY
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                    Regd.No.-Nak/0000247/2023
+                </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="container mx-auto px-4 -mt-8 mb-12">
+       <section className="container mx-auto px-4 py-8 sm:py-12">
         <div className="max-w-2xl mx-auto">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
