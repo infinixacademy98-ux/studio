@@ -327,7 +327,7 @@ export default function HomeContent() {
                         alt="MVS Karnataka Logo"
                         width={250}
                         height={250}
-                        className="rounded-full"
+                        className="rounded-full h-48 w-48 md:h-64 md:w-64"
                         priority
                     />
                 </div>
@@ -352,7 +352,7 @@ export default function HomeContent() {
       </section>
 
       <div className="container mx-auto px-4 py-8 sm:py-12">
-      <section className="mb-12">
+        <section className="mb-12">
           <div className="max-w-2xl mx-auto">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -529,5 +529,3 @@ export default function HomeContent() {
     </>
   );
 }
-
-    
