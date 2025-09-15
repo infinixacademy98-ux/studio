@@ -67,6 +67,14 @@ const findRelatedCategoriesFlow = ai.defineFlow(
         return { categories: [] };
     }
     const { output } = await prompt(input);
+
+    // Ensure exact match is included
+    const queryLower = input.query.trim().toLowerCase();
+    const exactMatch = input.existingCategories.find(c => c.toLowerCase() === queryLower);
+    if (exactMatch && !output?.categories.find(c => c.toLowerCase() === queryLower)) {
+        output?.categories.unshift(exactMatch);
+    }
+    
     return output!;
   }
 );
