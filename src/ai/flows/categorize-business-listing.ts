@@ -10,7 +10,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {gemini25Flash} from '@genkit-ai/googleai';
+import {gemini20Flash} from '@genkit-ai/googleai';
 import {z} from 'genkit';
 
 const CategorizeBusinessListingInputSchema = z.object({
@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
   name: 'categorizeBusinessListingPrompt',
   input: {schema: CategorizeBusinessListingInputSchema},
   output: {schema: CategorizeBusinessListingOutputSchema},
-  model: gemini25Flash,
+  model: gemini20Flash,
   prompt: `You are an expert in business categorization. Based on the provided description, determine the most relevant category for the business listing.
 
 Description: {{{description}}}
