@@ -96,7 +96,7 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed }: AdminSideb
                                 )}
                                 >
                                 <link.icon className="h-5 w-5" />
-                                <span className={cn("transition-opacity", isCollapsed && "opacity-0 pointer-events-none")}>{link.label}</span>
+                                <span className={cn("transition-opacity text-base", isCollapsed && "opacity-0 pointer-events-none")}>{link.label}</span>
                                 </Link>
                             </TooltipTrigger>
                             {isCollapsed && (
