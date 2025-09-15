@@ -318,9 +318,16 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative h-screen flex items-end justify-center text-center overflow-hidden bg-hero-pattern bg-cover bg-center">
+      <section className="relative h-screen flex items-center justify-center text-center overflow-hidden bg-hero-pattern bg-cover bg-center">
         <div className="absolute inset-0 bg-black/50"></div>
-        <div className="container relative z-10 mx-auto px-4 text-white pb-20">
+        <div className="container relative z-10 mx-auto px-4 text-white">
+          <Image 
+            src="https://i.postimg.cc/x10P9RQD/mvs-logo.png"
+            alt="MVS Karnataka Logo"
+            width={200}
+            height={200}
+            className="mx-auto mb-6 rounded-full"
+          />
           <h1 className="text-3xl font-extrabold tracking-tight font-headline sm:text-4xl lg:text-5xl">
             Find best businesses in Karnataka
           </h1>
