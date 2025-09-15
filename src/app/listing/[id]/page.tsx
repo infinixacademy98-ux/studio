@@ -202,7 +202,7 @@ function BusinessDetailsPageContent() {
           <Carousel className="w-full">
             <CarouselContent>
               {listing.images.map((img, index) => (
-                <CarouselItem key={index}>
+                <CarouselItem key={img}>
                   <div className="relative h-96 w-full overflow-hidden rounded-lg">
                     <Image
                       src={img}
