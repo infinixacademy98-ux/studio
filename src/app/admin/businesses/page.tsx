@@ -74,7 +74,7 @@ export default function AdminBusinessesPage() {
   }, []);
 
   const handleApprove = async (listingToApprove: Business) => {
-    const { id, ownerId, name } = listingToApprove;
+    const { id } = listingToApprove;
     setIsUpdating(prev => ({ ...prev, [id]: true }));
     try {
       const listingRef = doc(db, "listings", id);
@@ -82,19 +82,21 @@ export default function AdminBusinessesPage() {
         status: "approved",
       });
 
-      if (ownerId) {
-        const notificationsRef = collection(db, "users", ownerId, "notifications");
-        await addDoc(notificationsRef, {
-          message: `Congratulations! Your business listing "${name}" has been approved.`,
-          listingId: id,
-          createdAt: serverTimestamp(),
-          read: false,
-        });
-      }
+      // NOTE: Temporarily removed notification logic due to security rule constraints.
+      // This requires a Cloud Function to implement securely.
+      // if (ownerId) {
+      //   const notificationsRef = collection(db, "users", ownerId, "notifications");
+      //   await addDoc(notificationsRef, {
+      //     message: `Congratulations! Your business listing "${name}" has been approved.`,
+      //     listingId: id,
+      //     createdAt: serverTimestamp(),
+      //     read: false,
+      //   });
+      // }
 
       toast({
         title: "Success!",
-        description: "Listing has been approved and owner notified.",
+        description: "Listing has been approved.",
       });
 
       setListings(prevListings => 
