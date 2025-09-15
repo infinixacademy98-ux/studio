@@ -281,7 +281,9 @@ export default function HomeContent() {
   
   useEffect(() => {
     setCurrentPage(1);
-    scrollToResults();
+    if (searchInitiatedByUserRef.current) {
+        scrollToResults();
+    }
   }, [searchTerm, category, rating, relatedCategories, scrollToResults]);
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
@@ -336,13 +338,13 @@ export default function HomeContent() {
             </div>
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
-                    <span className="text-red-600">MVS</span> <span className="text-black dark:text-white">KARNATAKA</span>
+                    <span className="text-red-600">MVS</span> <span className="text-black dark:text-white">Karnataka.</span>
                 </h1>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mt-1 tracking-tight text-blue-600 whitespace-nowrap">
                     VOCAL FOR LOCAL
                 </h2>
                 <p className="text-xl sm:text-2xl md:text-3xl font-bold mt-2 tracking-wide text-red-600">
-                    DIGITAL BUSINESS DIRECTORY
+                    SALES & SERVICE GROUP.
                 </p>
                 <p className="text-sm sm:text-base text-muted-foreground mt-2">
                     Regd.No.-Nak/0000247/2023
