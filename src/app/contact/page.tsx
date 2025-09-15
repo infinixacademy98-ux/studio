@@ -59,6 +59,15 @@ function ContactPageContent() {
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user) {
+        toast({
+            variant: "destructive",
+            title: "Authentication Required",
+            description: "You must be logged in to send a message.",
+        });
+        return;
+    }
+
     setIsSubmitting(true);
     const result = await submitContactForm(values);
     setIsSubmitting(false);

@@ -39,13 +39,11 @@ import {
 import WithAuthLayout from "@/components/with-auth-layout";
 import { useEffect, useState } from "react";
 import type { Business, Review } from "@/lib/types";
-import { businessListings as staticBusinessListings } from "@/lib/data";
-import { doc, getDoc, updateDoc, arrayUnion, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
-import { cn } from "@/lib/utils";
 
 const LinkTypeIcon: React.FC<{ type: string }> = ({ type }) => {
   switch (type) {
@@ -79,48 +77,47 @@ function BusinessDetailsPageContent() {
   
   const params = useParams();
   const id = params.id as string;
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { toast } = useToast();
 
-  const fetchListing = async () => {
-    if (!id) return;
-    setLoading(true);
+  useEffect(() => {
+    const fetchListing = async () => {
+      if (!id) return;
+      setLoading(true);
 
-    try {
-      const docRef = doc(db, "listings", id);
-      const docSnap = await getDoc(docRef);
+      try {
+        const docRef = doc(db, "listings", id);
+        const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setListing({
-          id: docSnap.id,
-          ...data,
-          createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(),
-        } as Business);
-      } else {
-        const foundInStatic = staticBusinessListings.find((l) => l.id === id);
-        if (foundInStatic) {
-          setListing(foundInStatic);
+        if (docSnap.exists()) {
+          const data = docSnap.data() as Business;
+          
+          // Enforce security rule on the client-side for non-admins
+          if (data.status !== 'approved' && !isAdmin) {
+             setListing(null);
+             return notFound();
+          }
+
+          setListing({
+            id: docSnap.id,
+            ...data,
+            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(),
+          } as Business);
         } else {
+          setListing(null);
           notFound();
         }
-      }
-    } catch (error) {
-      console.error("Error fetching listing:", error);
-      const foundInStatic = staticBusinessListings.find((l) => l.id === id);
-      if (foundInStatic) {
-        setListing(foundInStatic);
-      } else {
+      } catch (error) {
+        console.error("Error fetching listing:", error);
+        setListing(null);
         notFound();
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
+    };
+    
     fetchListing();
-  }, [id]);
+  }, [id, isAdmin]);
   
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,31 +134,17 @@ function BusinessDetailsPageContent() {
     try {
       const reviewToAdd: Review = {
         id: uuidv4(),
-        author: user.email || "Anonymous",
+        author: user.displayName || user.email || "Anonymous",
         rating: newReview.rating,
         comment: newReview.comment,
         date: new Date().toISOString(),
       };
 
       const listingRef = doc(db, "listings", id);
-      const docSnap = await getDoc(listingRef);
-
-      if (!docSnap.exists() && listing) {
-        // This is a static listing, so we need to create it in Firestore first.
-        const listingToCreate = {
-            ...listing,
-            createdAt: serverTimestamp(),
-            reviews: [reviewToAdd], 
-        };
-        // Remove id from the object to avoid saving it in the document body
-        delete (listingToCreate as Partial<Business>).id; 
-        await setDoc(listingRef, listingToCreate);
-      } else {
-        // Document exists, just update it with the new review
-        await updateDoc(listingRef, {
-          reviews: arrayUnion(reviewToAdd),
-        });
-      }
+      
+      await updateDoc(listingRef, {
+        reviews: arrayUnion(reviewToAdd),
+      });
       
       // Optimistically update UI
       setListing(prev => prev ? { ...prev, reviews: [...(prev.reviews || []), reviewToAdd] } : null);

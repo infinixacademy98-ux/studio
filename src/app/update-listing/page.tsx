@@ -10,8 +10,6 @@ import {
   query,
   where,
   getDocs,
-  doc,
-  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { Business } from "@/lib/types";
@@ -29,6 +27,7 @@ function UpdateListingPageContent() {
   useEffect(() => {
     const fetchListing = async () => {
       if (!user) return;
+      setLoadingListing(true);
       try {
         const q = query(
           collection(db, "listings"),
@@ -44,16 +43,22 @@ function UpdateListingPageContent() {
                 title: "No Listing Found",
                 description: "You do not own a business listing to update.",
             });
-            router.push("/");
+            router.push("/add-listing");
         }
       } catch (error) {
         console.error("Error fetching listing:", error);
+         toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not fetch your listing. Please try again.",
+        });
+        router.push("/");
       } finally {
         setLoadingListing(false);
       }
     };
 
-    if (!authLoading) {
+    if (!authLoading && user) {
       fetchListing();
     }
   }, [user, authLoading, router, toast]);
@@ -67,8 +72,7 @@ function UpdateListingPageContent() {
   }
 
   if (!listing) {
-    // This case is handled by the redirect in useEffect, but as a fallback:
-    return <div className="container mx-auto max-w-2xl px-4 py-12 text-center">No listing found to update.</div>;
+    return null; // The user will be redirected by the effect above
   }
 
   return (
