@@ -332,7 +332,7 @@ export default function HomeContent() {
                         priority
                     />
                 </div>
-                <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4 max-w-2xl">
+                <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4 max-w-2xl mt-8">
                     <div>
                         <h1 className="text-4xl md:text-5xl font-extrabold" style={{ color: '#E42828' }}>
                             MVS <span className="text-foreground">KARNATAKA</span>
