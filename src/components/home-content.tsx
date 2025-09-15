@@ -212,6 +212,7 @@ export default function HomeContent() {
   useEffect(() => {
     const handler = setTimeout(() => {
         if (searchTerm.trim().length > 0) {
+            searchInitiatedByUserRef.current = true; // Set flag to scroll after typing
             handleAISearch(searchTerm);
         } else {
             setRelatedCategories([]);
