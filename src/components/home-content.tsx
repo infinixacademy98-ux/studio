@@ -347,67 +347,70 @@ export default function HomeContent() {
                             Regd.No.-Nak/0000247/2023
                         </p>
                     </div>
-                    <div className="w-full">
-                        <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                            type="text"
-                            placeholder="Search for businesses or services"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-12 h-14 rounded-full text-base text-foreground pr-16"
-                        />
-                        <Popover>
-                            <PopoverTrigger asChild>
-                            <Button variant="ghost" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 text-muted-foreground hover:bg-muted rounded-full">
-                                <ListFilter className="h-5 w-5" />
-                                <span className="sr-only">Filter by category</span>
-                            </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-2">
-                            <div className="grid gap-2 text-left">
-                                <h4 className="font-medium text-sm px-2 py-1.5">Categories</h4>
-                                <ScrollArea className="h-72">
-                                <button
-                                    onClick={() => {
-                                    setSearchTerm('');
-                                    setCategory('all');
-                                    }}
-                                    className={cn(
-                                    "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
-                                    category === 'all' && 'bg-accent font-semibold'
-                                    )}
-                                >
-                                    All Categories
-                                </button>
-                                {categories.map((cat) => (
-                                    <button
-                                    key={cat}
-                                    onClick={() => {
-                                        setSearchTerm(cat);
-                                        setCategory(cat);
-                                    }}
-                                    className={cn(
-                                        "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
-                                        category === cat && 'bg-accent font-semibold'
-                                    )}
-                                    >
-                                    {cat}
-                                    </button>
-                                ))}
-                                </ScrollArea>
-                            </div>
-                            </PopoverContent>
-                        </Popover>
-                        {isSearching && <Loader2 className="absolute right-16 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
       </section>
 
       <div className="container mx-auto px-4 py-8 sm:py-12">
+      <section className="mb-12">
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search for businesses or services"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-14 rounded-full text-base text-foreground pr-16"
+              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 text-muted-foreground hover:bg-muted rounded-full">
+                    <ListFilter className="h-5 w-5" />
+                    <span className="sr-only">Filter by category</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-2">
+                  <div className="grid gap-2 text-left">
+                    <h4 className="font-medium text-sm px-2 py-1.5">Categories</h4>
+                    <ScrollArea className="h-72">
+                      <button
+                        onClick={() => {
+                          setSearchTerm('');
+                          setCategory('all');
+                        }}
+                        className={cn(
+                          "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
+                          category === 'all' && 'bg-accent font-semibold'
+                        )}
+                      >
+                        All Categories
+                      </button>
+                      {categories.map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => {
+                            setSearchTerm(cat);
+                            setCategory(cat);
+                          }}
+                          className={cn(
+                            "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
+                            category === cat && 'bg-accent font-semibold'
+                          )}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </ScrollArea>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              {isSearching && <Loader2 className="absolute right-16 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />}
+            </div>
+          </div>
+        </section>
+
         <section className="mb-12 p-6 sm:p-8">
             <h2 className="text-2xl font-bold tracking-tight text-center mb-6 text-primary">
               Browse by Category
