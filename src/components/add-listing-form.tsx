@@ -585,7 +585,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               name="street"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Street Address</FormLabel>
+                  <FormLabel>Business Address</FormLabel>
                   <FormControl>
                     <Input placeholder="College Road" {...field} />
                   </FormControl>
