@@ -46,7 +46,7 @@ export default function Header() {
         title: "Signed Out",
         description: "You have been successfully signed out.",
       });
-      router.push("/");
+      router.push("/signin");
     } catch (error) {
       toast({
         variant: "destructive",
