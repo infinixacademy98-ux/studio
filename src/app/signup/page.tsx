@@ -106,12 +106,12 @@ export default function SignUpPage() {
             <div className="flex justify-center items-center gap-2 mb-4">
                 <Image
                     src="https://i.postimg.cc/9MLgBMfX/image-Edited.png"
-                    alt="MVS Belgaum Logo"
+                    alt="MVS Karnataka Logo"
                     width={40}
                     height={40}
                     className="h-10 w-10 bg-white rounded-full p-1"
                 />
-                <h1 className="text-xl font-bold">MVS Belgaum</h1>
+                <h1 className="text-xl font-bold">MVS Karnataka</h1>
             </div>
             <div className="text-center">
                 <CardTitle className="text-2xl">Create Your Account</CardTitle>

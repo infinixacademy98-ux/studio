@@ -54,12 +54,12 @@ export default function AdminSidebar() {
            <Link href="/" className="flex items-center gap-2 font-semibold">
              <Image 
                 src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
-                alt="MVS Belgaum Logo" 
+                alt="MVS Karnataka Logo" 
                 width={40} 
                 height={40}
                 className="h-8 w-8 bg-white rounded-full p-1"
               />
-            <span className="">MVS Belgaum Admin</span>
+            <span className="">MVS Karnataka Admin</span>
           </Link>
         </div>
         <nav className="flex-1 overflow-auto py-4 px-4 text-sm font-medium">

@@ -174,7 +174,7 @@ export default function EditBusinessPage() {
       const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
       
       const formatUrl = (url?: string) => {
-        if (!url || url.trim() === '') return "";
+        if (!url || url.trim() === '') return null;
         if (!/^https?:\/\//i.test(url)) {
             return 'https://' + url;
         }
@@ -386,9 +386,9 @@ export default function EditBusinessPage() {
                 <CardContent className="space-y-6">
                     <FormField control={form.control} name="street" render={({ field }) => (<FormItem><FormLabel>Street</FormLabel><FormControl><Input placeholder="123 Main St" {...field} /></FormControl><FormMessage /></FormItem>)} />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <FormField control={form.control} name="city" render={({ field }) => (<FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Belgaum" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="city" render={({ field }) => (<FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Bengaluru" {...field} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name="state" render={({ field }) => (<FormItem><FormLabel>State</FormLabel><FormControl><Input placeholder="Karnataka" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name="zip" render={({ field }) => (<FormItem><FormLabel>Zip Code</FormLabel><FormControl><Input placeholder="590001" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="zip" render={({ field }) => (<FormItem><FormLabel>Zip Code</FormLabel><FormControl><Input placeholder="560001" {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </div>
                 </CardContent>
             </Card>

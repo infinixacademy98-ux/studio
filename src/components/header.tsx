@@ -66,12 +66,12 @@ export default function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <Image 
               src="https://i.postimg.cc/9MLgBMfX/image-Edited.png" 
-              alt="MVS Belgaum Logo" 
+              alt="MVS Karnataka Logo" 
               width={40} 
               height={40}
               className="h-10 w-10 bg-white rounded-full p-1"
             />
-            <span className="font-bold">MVS Belgaum</span>
+            <span className="font-bold">MVS Karnataka</span>
           </Link>
         </div>
         

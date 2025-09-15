@@ -8,7 +8,7 @@ export default function Footer() {
             © 2025 All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
-            MVS Belgaum
+            MVS Karnataka
           </p>
         </div>
       </div>

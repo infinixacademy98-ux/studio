@@ -300,12 +300,12 @@ export default function HomeContent() {
   const resultsTitle = useMemo(() => {
     const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     if (searchTerm.trim()) {
-      return `Results for "${capitalize(searchTerm)}" in Belgaum`;
+      return `Results for "${capitalize(searchTerm)}" in Karnataka`;
     }
     if (category !== 'all') {
-      return `${capitalize(category)} Businesses in Belgaum`;
+      return `${capitalize(category)} Businesses in Karnataka`;
     }
-    return 'All Businesses in Belgaum';
+    return 'All Businesses in Karnataka';
   }, [searchTerm, category]);
 
   // Handler for any search action
@@ -322,10 +322,10 @@ export default function HomeContent() {
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container relative z-10 mx-auto px-4 text-white pb-20">
           <h1 className="text-3xl font-extrabold tracking-tight font-headline sm:text-4xl lg:text-5xl">
-            Find best businesses in belgaum
+            Find best businesses in Karnataka
           </h1>
           <p className="mt-4 text-lg sm:text-xl max-w-2xl mx-auto">
-            Discover top-rated restaurants, shops, and services in Belgaum.
+            Discover top-rated restaurants, shops, and services in Karnataka.
           </p>
           <div className="mt-8 mx-auto max-w-xl">
              <div className="relative">

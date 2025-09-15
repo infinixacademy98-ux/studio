@@ -112,7 +112,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       googleMapsUrl: "",
       otherLink: "",
       street: "",
-      city: "Belgaum",
+      city: "",
       state: "Karnataka",
       zip: "",
       facebook: "",
@@ -165,7 +165,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
       
       const formatUrl = (url?: string) => {
-        if (!url || url.trim() === '') return "";
+        if (!url || url.trim() === '') return null;
         if (!/^https?:\/\//i.test(url)) {
             return 'https://' + url;
         }
@@ -307,7 +307,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                 <FormItem>
                   <FormLabel>Business Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Ajanta Cafe" {...field} />
+                    <Input placeholder="e.g., Karnataka Cafe" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
