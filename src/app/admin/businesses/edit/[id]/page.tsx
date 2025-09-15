@@ -15,11 +15,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Trash2, PlusCircle, ArrowLeft } from "lucide-react";
+import { Loader2, Trash2, PlusCircle, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const urlSchema = z.string().url("Please enter a valid URL.").optional().or(z.literal(''));
 
@@ -101,6 +100,8 @@ export default function EditBusinessPage() {
 
   const selectedCategory = form.watch("category");
   const allCategoriesForSelect = [...categories, "Other"];
+  const searchCategories = form.watch("searchCategories") || [];
+  const availableSearchCategories = categories.filter(cat => !searchCategories.includes(cat) && cat !== selectedCategory);
 
 
   useEffect(() => {
@@ -304,48 +305,47 @@ export default function EditBusinessPage() {
                 </CardHeader>
                 <CardContent>
                     <FormField
-                    control={form.control}
-                    name="searchCategories"
-                    render={() => (
-                        <FormItem>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {categories.map((item) => (
-                            <FormField
-                            key={item}
-                            control={form.control}
-                            name="searchCategories"
-                            render={({ field }) => {
-                                return (
-                                <FormItem
-                                    key={item}
-                                    className="flex flex-row items-start space-x-3 space-y-0"
+                        control={form.control}
+                        name="searchCategories"
+                        render={({ field }) => (
+                            <FormItem>
+                            <Select
+                                onValueChange={(value) => {
+                                    if (value && !field.value?.includes(value)) {
+                                        field.onChange([...(field.value || []), value]);
+                                    }
+                                }}
+                                value="" // Reset select after each selection
+                            >
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={loadingCategories ? "Loading..." : "Add a search category"} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {availableSearchCategories.map((cat) => (
+                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <div className="flex flex-wrap gap-2 pt-2">
+                            {field.value?.map((cat) => (
+                                <Badge key={cat} variant="secondary" className="flex items-center gap-1">
+                                {cat}
+                                <button
+                                    type="button"
+                                    onClick={() => field.onChange(field.value?.filter(c => c !== cat))}
+                                    className="rounded-full hover:bg-muted-foreground/20"
                                 >
-                                    <FormControl>
-                                    <Checkbox
-                                        checked={field.value?.includes(item)}
-                                        onCheckedChange={(checked) => {
-                                        return checked
-                                            ? field.onChange([...(field.value || []), item])
-                                            : field.onChange(
-                                                field.value?.filter(
-                                                (value) => value !== item
-                                                )
-                                            )
-                                        }}
-                                    />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                    {item}
-                                    </FormLabel>
-                                </FormItem>
-                                )
-                            }}
-                            />
-                        ))}
-                        </div>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                                    <X className="h-3 w-3" />
+                                </button>
+                                </Badge>
+                            ))}
+                            </div>
+                            <FormMessage />
+                            </FormItem>
+                        )}
                     />
                 </CardContent>
             </Card>

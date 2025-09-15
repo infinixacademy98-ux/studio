@@ -19,16 +19,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Wand2, PlusCircle, Trash2 } from "lucide-react";
+import { Loader2, Wand2, PlusCircle, Trash2, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { collection, addDoc, doc, updateDoc, serverTimestamp, getDocs, query, where, writeBatch } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, serverTimestamp, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./auth-provider";
 import { useRouter } from "next/navigation";
 import type { Business } from "@/lib/types";
 import { categorizeBusinessListing } from "@/ai/flows/categorize-business-listing";
+import { Badge } from "./ui/badge";
+import { cn } from "@/lib/utils";
 
 const urlSchema = z.string().url("Please enter a valid URL.").optional().or(z.literal(''));
 
@@ -284,6 +285,8 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
   };
 
   const selectedCategory = form.watch("category");
+  const searchCategories = form.watch("searchCategories") || [];
+  const availableSearchCategories = categories.filter(cat => !searchCategories.includes(cat) && cat !== selectedCategory);
 
   return (
     <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
@@ -377,58 +380,54 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                 </FormItem>
               )}
             />
-            
-            <FormField
-              control={form.control}
-              name="searchCategories"
-              render={() => (
-                <FormItem>
-                  <div className="mb-4">
-                    <FormLabel className="text-base">Search Categories</FormLabel>
-                    <FormDescription>
-                      Select additional categories where you want your business to appear in search results.
-                    </FormDescription>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {categories.map((item) => (
-                    <FormField
-                      key={item}
-                      control={form.control}
-                      name="searchCategories"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item}
-                            className="flex flex-row items-start space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...(field.value || []), item])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== item
-                                        )
-                                      )
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {item}
-                            </FormLabel>
-                          </FormItem>
-                        )
-                      }}
-                    />
-                  ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
+            <FormField
+                control={form.control}
+                name="searchCategories"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Search Categories</FormLabel>
+                    <FormDescription>
+                        Select additional categories where your business should appear.
+                    </FormDescription>
+                    <Select
+                        onValueChange={(value) => {
+                            if (value && !field.value?.includes(value)) {
+                                field.onChange([...(field.value || []), value]);
+                            }
+                        }}
+                        value="" // Reset select after each selection
+                    >
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder={loadingCategories ? "Loading..." : "Add a search category"} />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {availableSearchCategories.map((cat) => (
+                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <div className="flex flex-wrap gap-2 pt-2">
+                    {field.value?.map((cat) => (
+                        <Badge key={cat} variant="secondary" className="flex items-center gap-1">
+                        {cat}
+                        <button
+                            type="button"
+                            onClick={() => field.onChange(field.value?.filter(c => c !== cat))}
+                            className="rounded-full hover:bg-muted-foreground/20"
+                        >
+                            <X className="h-3 w-3" />
+                        </button>
+                        </Badge>
+                    ))}
+                    </div>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FormField
