@@ -132,24 +132,19 @@ export default function HomeContent() {
         const firestoreListings = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
-            createdAt: doc.data().createdAt.toDate(), // Convert Timestamp to Date
+            createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(), // Convert Timestamp to Date
         })) as Business[];
 
-        // Combine with static data, avoiding duplicates
-        const firestoreIds = new Set(firestoreListings.map(l => l.id));
-        const uniqueStaticListings = staticBusinessListings.filter(l => !firestoreIds.has(l.id));
-
-        const combinedListings = [...firestoreListings, ...uniqueStaticListings];
-        setListings(combinedListings);
+        setListings(firestoreListings);
 
       } catch (error) {
-        console.error("Error fetching data from Firestore, falling back to static data.", error);
+        console.error("Error fetching data from Firestore.", error);
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Could not fetch data. Displaying sample listings.",
+          description: "Could not fetch data. Please try again later.",
         });
-        setListings(staticBusinessListings);
+        setListings([]);
       } finally {
         setLoading(false);
       }
@@ -288,7 +283,7 @@ export default function HomeContent() {
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
   const indexOfLastListing = currentPage * listingsPerPage;
-  const indexOfFirstListing = indexOfLastListing - indexOfLastListing;
+  const indexOfFirstListing = indexOfLastListing - listingsPerPage;
   const currentListings = filteredListings.slice(indexOfFirstListing, indexOfLastListing);
 
   const handleNextPage = () => {

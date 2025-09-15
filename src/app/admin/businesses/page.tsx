@@ -206,7 +206,7 @@ export default function AdminBusinessesPage() {
                                 </Link>
                             </Button>
                             <Button variant="destructive" size="sm" onClick={() => setListingToDelete(listing)} disabled={isDeleting[listing.id]}>
-                              {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                              {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                               Delete
                             </Button>
                           </TableCell>
