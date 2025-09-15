@@ -25,10 +25,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function AdminUsersPage() {
   const { toast } = useToast();
@@ -140,7 +141,13 @@ export default function AdminUsersPage() {
                            </Badge>
                         </TableCell>
                         <TableCell>{formatDate(user.createdAt)}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right space-x-2">
+                          <Button asChild variant="outline" size="sm">
+                            <Link href={`/admin/users/edit/${user.id}`}>
+                                <Edit className="h-4 w-4" />
+                                <span className="sr-only">Edit User</span>
+                            </Link>
+                          </Button>
                           <Button
                             variant="destructive"
                             size="sm"
