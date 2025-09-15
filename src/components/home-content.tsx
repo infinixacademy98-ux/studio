@@ -317,7 +317,7 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative bg-background overflow-hidden pt-16">
+      <section className="relative bg-background overflow-hidden pt-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 to-transparent opacity-30"></div>
          <div className="container relative mx-auto px-4 py-8 sm:py-12">
            <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
@@ -327,21 +327,21 @@ export default function HomeContent() {
                     alt="MVS Karnataka Logo"
                     width={200}
                     height={200}
-                    className="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 object-contain"
+                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 object-contain rounded-full"
                     priority
                 />
             </div>
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
                     <span className="text-red-600">MVS</span> <span className="text-black dark:text-white">KARNATAKA</span>
                 </h1>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-1 tracking-tight text-blue-600 whitespace-nowrap">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mt-1 tracking-tight text-blue-600 whitespace-nowrap">
                     VOCAL FOR LOCAL
                 </h2>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold mt-2 tracking-wide text-red-600">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold mt-2 tracking-wide text-red-600">
                     DIGITAL BUSINESS DIRECTORY
                 </p>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-2">
+                <p className="text-sm sm:text-base text-muted-foreground mt-2">
                     Regd.No.-Nak/0000247/2023
                 </p>
             </div>
