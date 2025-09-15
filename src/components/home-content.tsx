@@ -325,9 +325,9 @@ export default function HomeContent() {
                 <Image
                     src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png"
                     alt="MVS Karnataka Logo"
-                    width={250}
-                    height={250}
-                    className="h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 object-contain rounded-full"
+                    width={300}
+                    height={300}
+                    className="h-56 w-56 sm:h-64 sm:w-64 md:h-72 md:w-72 object-contain rounded-full"
                     priority
                 />
             </div>
