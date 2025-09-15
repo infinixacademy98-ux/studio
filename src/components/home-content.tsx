@@ -132,19 +132,28 @@ export default function HomeContent() {
         const firestoreListings = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
-            createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(), // Convert Timestamp to Date
+            createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(),
         })) as Business[];
+        
+        // Merge static and firestore listings, giving priority to firestore data
+        const combinedListings = [...firestoreListings];
+        const firestoreIds = new Set(firestoreListings.map(l => l.id));
+        staticBusinessListings.forEach(staticListing => {
+            if (!firestoreIds.has(staticListing.id)) {
+                combinedListings.push(staticListing);
+            }
+        });
 
-        setListings(firestoreListings);
+        setListings(combinedListings);
 
       } catch (error) {
         console.error("Error fetching data from Firestore.", error);
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Could not fetch data. Please try again later.",
+          description: "Could not fetch data. Displaying static data.",
         });
-        setListings([]);
+        setListings(staticBusinessListings); // Fallback to static data on error
       } finally {
         setLoading(false);
       }
@@ -525,3 +534,5 @@ export default function HomeContent() {
     </>
   );
 }
+
+    
