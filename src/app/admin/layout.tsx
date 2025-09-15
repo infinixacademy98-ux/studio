@@ -70,7 +70,7 @@ export default function AdminLayout({
                         alt="MVS Karnataka Logo" 
                         width={40} 
                         height={40}
-                        className="h-8 w-8 transition-all group-hover:scale-110"
+                        className="h-8 w-8 transition-all group-hover:scale-110 object-contain"
                       />
                     <span className="sr-only">MVS Karnataka</span>
                   </Link>
