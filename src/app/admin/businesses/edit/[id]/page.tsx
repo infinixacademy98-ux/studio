@@ -322,7 +322,7 @@ export default function EditBusinessPage() {
                                         <SelectValue placeholder={loadingCategories ? "Loading..." : "Add a search category"} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent position="popper">
                                     {availableSearchCategories.map((cat) => (
                                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                                     ))}
