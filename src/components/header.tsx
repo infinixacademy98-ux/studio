@@ -69,7 +69,7 @@ export default function Header() {
               alt="MVS Karnataka Logo" 
               width={48} 
               height={48}
-              className="h-10 w-10 object-contain bg-white rounded-full p-0.5"
+              className="h-10 w-10 rounded-full object-cover"
             />
             <span className="font-bold">MVS Karnataka</span>
           </Link>
