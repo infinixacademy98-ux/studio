@@ -206,7 +206,8 @@ export default function AdminBusinessesPage() {
                                 </Link>
                             </Button>
                             <Button variant="destructive" size="sm" onClick={() => setListingToDelete(listing)} disabled={isDeleting[listing.id]}>
-                              {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                              {isDeleting[listing.id] ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                              Delete
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -281,6 +282,14 @@ export default function AdminBusinessesPage() {
                             {selectedListing.address.street}, {selectedListing.address.city}, {selectedListing.address.state}, {selectedListing.address.zip}
                         </p>
                     </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <p className="col-span-1 font-semibold text-right">Reference By</p>
+                        <p className="col-span-3">{selectedListing.referenceBy || 'N/A'}</p>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <p className="col-span-1 font-semibold text-right">Caste &amp; Category</p>
+                        <p className="col-span-3">{selectedListing.casteAndCategory || 'N/A'}</p>
+                    </div>
                 </div>
                 <DialogFooter>
                     <Button variant="secondary" onClick={() => setSelectedListing(null)}>Close</Button>
@@ -315,5 +324,3 @@ export default function AdminBusinessesPage() {
     </>
   );
 }
-
-    

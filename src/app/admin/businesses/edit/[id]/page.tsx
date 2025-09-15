@@ -44,6 +44,8 @@ const formSchema = z.object({
   youtube: urlSchema,
   status: z.enum(["pending", "approved", "rejected"]),
   searchCategories: z.array(z.string()).optional(),
+  referenceBy: z.string().min(1, "Reference is required."),
+  casteAndCategory: z.string().min(1, "Caste & Category is required."),
 }).refine(data => {
     if (data.category === 'Other') {
         return !!data.otherCategory && data.otherCategory.length > 0;
@@ -89,6 +91,8 @@ export default function EditBusinessPage() {
       youtube: "",
       status: "pending",
       searchCategories: [],
+      referenceBy: "",
+      casteAndCategory: "",
     },
   });
 
@@ -152,6 +156,8 @@ export default function EditBusinessPage() {
             youtube: data.contact.socials?.youtube || "",
             status: data.status,
             searchCategories: data.searchCategories || [],
+            referenceBy: data.referenceBy || "",
+            casteAndCategory: data.casteAndCategory || "",
           });
         } else {
           toast({ variant: "destructive", title: "Error", description: "Listing not found." });
@@ -189,6 +195,8 @@ export default function EditBusinessPage() {
         category: categoryToSave,
         searchCategories: values.searchCategories || [],
         status: values.status,
+        referenceBy: values.referenceBy,
+        casteAndCategory: values.casteAndCategory,
         contact: {
           phone: values.phone,
           email: values.email,
@@ -392,6 +400,26 @@ export default function EditBusinessPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader><CardTitle>Additional Information</CardTitle></CardHeader>
+                <CardContent className="space-y-6">
+                    <FormField control={form.control} name="referenceBy" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Reference By (Full Name &amp; Mobile Number)</FormLabel>
+                            <FormControl><Input placeholder="Your answer" {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <FormField control={form.control} name="casteAndCategory" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Caste &amp; Category</FormLabel>
+                            <FormControl><Input placeholder="Your answer" {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                </CardContent>
+            </Card>
             
             <Card>
                 <CardHeader><CardTitle>Images</CardTitle></CardHeader>
@@ -426,5 +454,3 @@ export default function EditBusinessPage() {
     </div>
   );
 }
-
-    

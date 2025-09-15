@@ -47,6 +47,8 @@ export interface Business {
   ownerId: string;
   createdAt: any;
   timing?: string;
+  referenceBy: string;
+  casteAndCategory: string;
 }
 
 export interface Message {

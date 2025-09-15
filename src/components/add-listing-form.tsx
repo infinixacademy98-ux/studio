@@ -51,6 +51,8 @@ const formSchema = z.object({
   instagram: urlSchema,
   youtube: urlSchema,
   searchCategories: z.array(z.string()).optional(),
+  referenceBy: z.string().min(1, "Reference is required."),
+  casteAndCategory: z.string().min(1, "Caste & Category is required."),
 }).refine(data => {
     if (data.category === 'Other') {
         return !!data.otherCategory && data.otherCategory.length > 0;
@@ -120,6 +122,8 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       instagram: "",
       youtube: "",
       searchCategories: [],
+      referenceBy: "",
+      casteAndCategory: "",
     },
   });
 
@@ -147,6 +151,8 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         instagram: existingListing.contact.socials?.instagram || "",
         youtube: existingListing.contact.socials?.youtube || "",
         searchCategories: existingListing.searchCategories || [],
+        referenceBy: existingListing.referenceBy || "",
+        casteAndCategory: existingListing.casteAndCategory || "",
       });
     }
   }, [isUpdateMode, existingListing, form, categories]);
@@ -178,6 +184,8 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         category: categoryToSave,
         searchCategories: values.searchCategories || [],
         description: values.description,
+        referenceBy: values.referenceBy,
+        casteAndCategory: values.casteAndCategory,
         contact: {
           phone: values.phone,
           email: values.email,
@@ -627,6 +635,34 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                 )}
               />
             </div>
+            
+            <h3 className="text-lg font-medium pt-4 border-t">Additional Information</h3>
+            <FormField
+              control={form.control}
+              name="referenceBy"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Reference By (Full Name &amp; Mobile Number)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your answer" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="casteAndCategory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Caste &amp; Category</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your answer" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
 
             <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
@@ -639,5 +675,3 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
     </Card>
   );
 }
-
-    
