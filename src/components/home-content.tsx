@@ -317,17 +317,17 @@ export default function HomeContent() {
 
   return (
     <>
-      <section className="relative bg-background pt-24 pb-8 overflow-hidden">
+      <section className="relative bg-background pt-24 pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 to-transparent opacity-30"></div>
-        <div className="container relative mx-auto px-4 text-center">
+        <div className="container relative mx-auto px-4 text-center pt-16">
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
                 <div className="flex-shrink-0">
                     <Image
-                        src="https://i.postimg.cc/x10P9RQD/mvs-logo.png"
+                        src="https://i.postimg.cc/9MLgBMfX/image-Edited.png"
                         alt="MVS Karnataka Logo"
                         width={250}
                         height={250}
-                        className="rounded-full h-48 w-48 md:h-64 md:w-64"
+                        className="rounded-full object-cover h-48 w-48 md:h-64 md:w-64"
                         priority
                     />
                 </div>
@@ -336,7 +336,7 @@ export default function HomeContent() {
                         <h1 className="text-4xl md:text-5xl font-extrabold" style={{ color: '#E42828' }}>
                             MVS <span className="text-foreground">KARNATAKA</span>
                         </h1>
-                        <h2 className="text-4xl md:text-6xl font-extrabold mt-1 tracking-tight" style={{ color: '#2720E3' }}>
+                        <h2 className="text-4xl md:text-5xl font-extrabold mt-1 tracking-tight" style={{ color: '#2720E3' }}>
                             VOCAL FOR LOCAL
                         </h2>
                         <p className="text-2xl md:text-3xl font-bold mt-2 tracking-wide" style={{ color: '#E42828' }}>
