@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Wand2, PlusCircle, Trash2, X } from "lucide-react";
+import { Loader2, Wand2, PlusCircle, Trash2, X, MessageSquare } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { collection, addDoc, doc, updateDoc, serverTimestamp, getDocs } from "firebase/firestore";
@@ -598,6 +598,21 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               )}
             />
 
+            <div className="rounded-lg bg-blue-50 dark:bg-blue-900/50 p-4">
+                <div className="flex items-start gap-4">
+                    <MessageSquare className="h-6 w-6 text-blue-600 dark:text-blue-300 mt-1 flex-shrink-0" />
+                    <div>
+                        <h4 className="font-semibold text-blue-800 dark:text-blue-200">Verification Documents Required</h4>
+                        <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                            Please send the following documents via WhatsApp for verification:
+                        </p>
+                        <ul className="list-disc list-inside text-sm text-blue-700 dark:text-blue-300 mt-2 space-y-1">
+                            <li>Aadhar Card</li>
+                            <li>Business Card</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
             <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
