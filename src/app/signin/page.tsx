@@ -137,7 +137,7 @@ export default function SignInPage() {
                     alt="MVS Karnataka Logo"
                     width={40}
                     height={40}
-                    className="h-10 w-10 object-contain"
+                    className="h-10 w-10 object-contain bg-white rounded-md p-1"
                 />
                 <h1 className="text-xl font-bold">MVS Karnataka</h1>
             </div>
