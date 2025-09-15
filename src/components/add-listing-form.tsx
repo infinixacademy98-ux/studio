@@ -604,7 +604,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                     <div>
                         <h4 className="font-semibold text-blue-800 dark:text-blue-200">Verification Documents Required</h4>
                         <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                            Please send the following documents via WhatsApp for verification:
+                            Please send the following documents via WhatsApp to <a href="https://wa.me/919008358456" target="_blank" rel="noopener noreferrer" className="font-bold underline">9008358456</a> for verification:
                         </p>
                         <ul className="list-disc list-inside text-sm text-blue-700 dark:text-blue-300 mt-2 space-y-1">
                             <li>Aadhar Card</li>
