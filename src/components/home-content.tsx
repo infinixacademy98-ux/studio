@@ -113,6 +113,7 @@ export default function HomeContent() {
   const { toast } = useToast();
   const { user } = useAuth();
   const resultsRef = useRef<HTMLDivElement>(null);
+  const searchInitiatedByUserRef = useRef(false);
   
   const listingsPerPage = 20;
 
@@ -174,9 +175,12 @@ export default function HomeContent() {
     checkUserListing();
   }, [user]);
 
-  const scrollToResults = () => {
-    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+  const scrollToResults = useCallback(() => {
+    if (searchInitiatedByUserRef.current) {
+        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        searchInitiatedByUserRef.current = false;
+    }
+  }, []);
 
   const handleAISearch = useCallback(async (currentSearchTerm: string) => {
     if (currentSearchTerm.trim().length < 3) {
@@ -191,7 +195,6 @@ export default function HomeContent() {
         existingCategories: categories,
       });
       setRelatedCategories(result.categories);
-      scrollToResults();
     } catch (error) {
       console.error("Failed to fetch related categories:", error);
       toast({
@@ -277,10 +280,8 @@ export default function HomeContent() {
   
   useEffect(() => {
     setCurrentPage(1);
-    if(searchTerm || category !== 'all' || rating !== 'all') {
-      scrollToResults();
-    }
-  }, [searchTerm, category, rating, relatedCategories]);
+    scrollToResults();
+  }, [searchTerm, category, rating, relatedCategories, scrollToResults]);
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -288,12 +289,12 @@ export default function HomeContent() {
   const currentListings = filteredListings.slice(indexOfFirstListing, indexOfLastListing);
 
   const handleNextPage = () => {
+    searchInitiatedByUserRef.current = true;
     setCurrentPage((prev) => Math.min(prev + 1, pageCount));
-    scrollToResults();
   };
   const handlePrevPage = () => {
+    searchInitiatedByUserRef.current = true;
     setCurrentPage((prev) => Math.max(prev - 1, 1));
-     scrollToResults();
   };
 
   const resultsTitle = useMemo(() => {
@@ -309,6 +310,7 @@ export default function HomeContent() {
 
   // Handler for any search action
   const handleSearchAction = (newSearchTerm = "", newCategory = "all") => {
+    searchInitiatedByUserRef.current = true;
     setSearchTerm(newSearchTerm);
     setCategory(newCategory);
     setRelatedCategories([]); // Clear AI categories on new action
@@ -373,8 +375,7 @@ export default function HomeContent() {
                   <ScrollArea className="h-72">
                     <button
                       onClick={() => {
-                        setSearchTerm('');
-                        setCategory('all');
+                        handleSearchAction('', 'all');
                       }}
                       className={cn(
                         "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
@@ -387,8 +388,7 @@ export default function HomeContent() {
                       <button
                         key={cat}
                         onClick={() => {
-                          setSearchTerm(cat);
-                          setCategory(cat);
+                           handleSearchAction(cat, cat);
                         }}
                         className={cn(
                           "w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent",
