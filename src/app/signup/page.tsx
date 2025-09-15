@@ -33,8 +33,9 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email." }),
+  phone: z.string().optional(),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters." }),
@@ -56,8 +57,9 @@ export default function SignUpPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      fullName: "",
       email: "",
+      phone: "",
       password: "",
     },
   });
@@ -69,8 +71,9 @@ export default function SignUpPage() {
       const user = userCredential.user;
       
       await setDoc(doc(db, "users", user.uid), {
-        name: values.name,
+        name: values.fullName,
         email: user.email,
+        phone: values.phone || null,
         role: "user",
         createdAt: new Date(),
       });
@@ -109,7 +112,7 @@ export default function SignUpPage() {
                     alt="MVS Karnataka Logo"
                     width={40}
                     height={40}
-                    className="h-10 w-10 rounded-full object-cover dark:bg-white"
+                    className="h-10 w-10 rounded-full object-cover dark:bg-white dark:-translate-x-1"
                 />
                 <h1 className="text-xl font-bold">MVS Karnataka</h1>
             </div>
@@ -125,13 +128,13 @@ export default function SignUpPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="name"
+                name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Full Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Your Name"
+                        placeholder="Your Full Name"
                         {...field}
                         disabled={isLoading}
                       />
@@ -149,6 +152,23 @@ export default function SignUpPage() {
                     <FormControl>
                       <Input
                         placeholder="m@example.com"
+                        {...field}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="+91 12345 67890"
                         {...field}
                         disabled={isLoading}
                       />
