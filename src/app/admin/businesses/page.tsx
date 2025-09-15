@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, doc, updateDoc, query, orderBy, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { Business } from "@/lib/types";
+import type { Business, Link as BusinessLink } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -252,29 +252,18 @@ export default function AdminBusinessesPage() {
                         <p className="col-span-1 font-semibold text-right">Phone</p>
                         <p className="col-span-3">{selectedListing.contact.phone}</p>
                     </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <p className="col-span-1 font-semibold text-right">Website</p>
-                        <p className="col-span-3">{selectedListing.contact.website || 'N/A'}</p>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <p className="col-span-1 font-semibold text-right">Other Link</p>
-                        <p className="col-span-3">{selectedListing.contact.otherLink || 'N/A'}</p>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <p className="col-span-1 font-semibold text-right">Facebook</p>
-                        <p className="col-span-3">{selectedListing.contact.socials?.facebook || 'N/A'}</p>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <p className="col-span-1 font-semibold text-right">Instagram</p>
-                        <p className="col-span-3">{selectedListing.contact.socials?.instagram || 'N/A'}</p>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <p className="col-span-1 font-semibold text-right">WhatsApp</p>
-                        <p className="col-span-3">{selectedListing.contact.socials?.whatsapp || 'N/A'}</p>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <p className="col-span-1 font-semibold text-right">YouTube</p>
-                        <p className="col-span-3">{selectedListing.contact.socials?.youtube || 'N/A'}</p>
+                     <div className="grid grid-cols-4 items-start gap-4">
+                        <p className="col-span-1 font-semibold text-right">Links</p>
+                        <div className="col-span-3">
+                            {(selectedListing.contact.links || []).length > 0 ? (
+                                (selectedListing.contact.links || []).map((link: BusinessLink, index: number) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                        <span className="font-medium capitalize">{link.type}:</span>
+                                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">{link.url}</a>
+                                    </div>
+                                ))
+                            ) : "N/A"}
+                        </div>
                     </div>
                      <div className="grid grid-cols-4 items-center gap-4">
                         <p className="col-span-1 font-semibold text-right">Address</p>

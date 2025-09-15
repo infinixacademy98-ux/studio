@@ -47,6 +47,30 @@ import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
 
+const LinkTypeIcon: React.FC<{ type: string }> = ({ type }) => {
+  switch (type) {
+    case "website": return <Globe className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+    case "googleMaps": return <Map className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+    case "facebook": return <Facebook className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+    case "instagram": return <Instagram className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+    case "youtube": return <Youtube className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+    case "whatsapp": return <MessageSquare className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+    default: return <LinkIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary" />;
+  }
+};
+
+const getLinkText = (type: string) => {
+    switch (type) {
+        case 'website': return 'Website';
+        case 'googleMaps': return 'Business on Google';
+        case 'facebook': return 'Facebook';
+        case 'instagram': return 'Instagram';
+        case 'youtube': return 'YouTube';
+        case 'whatsapp': return 'WhatsApp';
+        default: return 'More Info';
+    }
+}
+
 function BusinessDetailsPageContent() {
   const [listing, setListing] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
@@ -168,7 +192,6 @@ function BusinessDetailsPageContent() {
     (listing.reviews || []).reduce((acc, review) => acc + review.rating, 0) /
     ((listing.reviews || []).length || 1);
 
-  const socials = listing.contact.socials;
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -293,24 +316,12 @@ function BusinessDetailsPageContent() {
                   <Mail className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
                   <span className="group-hover:text-primary">{listing.contact.email}</span>
                 </a>
-                 {listing.contact.website && (
-                  <a href={listing.contact.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                    <Globe className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
-                    <span className="group-hover:text-primary">Website</span>
-                  </a>
-                )}
-                 {listing.contact.googleMapsUrl && (
-                  <a href={listing.contact.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                    <Map className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
-                    <span className="group-hover:text-primary">Business on Google</span>
-                  </a>
-                )}
-                 {listing.contact.otherLink && (
-                  <a href={listing.contact.otherLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                    <LinkIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
-                    <span className="group-hover:text-primary">More Info</span>
-                  </a>
-                )}
+                {(listing.contact.links || []).map((link, index) => (
+                    <a key={index} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
+                        <LinkTypeIcon type={link.type} />
+                        <span className="group-hover:text-primary capitalize">{getLinkText(link.type)}</span>
+                    </a>
+                ))}
               </div>
               <Separator />
               <div className="flex items-start gap-3">
@@ -320,21 +331,6 @@ function BusinessDetailsPageContent() {
                     {listing.address.city}, {listing.address.state}<br/>
                     {listing.address.zip}
                  </p>
-              </div>
-              <Separator />
-               <div className="flex justify-start items-center gap-4 pt-2">
-                  <a href={socials?.facebook || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.facebook ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
-                      <Facebook className="h-6 w-6 text-[#1877F2]" />
-                  </a>
-                  <a href={socials?.instagram || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.instagram ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
-                      <Instagram className="h-6 w-6 text-[#E4405F]" />
-                  </a>
-                  <a href={socials?.youtube || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.youtube ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
-                      <Youtube className="h-6 w-6 text-[#FF0000]" />
-                  </a>
-                   <a href={socials?.whatsapp || "#"} target="_blank" rel="noopener noreferrer" className={cn("transition-opacity", !socials?.whatsapp ? "opacity-50 pointer-events-none" : "hover:opacity-80")}>
-                      <MessageSquare className="h-6 w-6 text-[#25D366]" />
-                  </a>
               </div>
             </CardContent>
           </Card>

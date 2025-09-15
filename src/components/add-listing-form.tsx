@@ -3,7 +3,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import {
   Form,
@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Wand2 } from "lucide-react";
+import { Loader2, Wand2, PlusCircle, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -32,6 +32,11 @@ import { categorizeBusinessListing } from "@/ai/flows/categorize-business-listin
 
 const urlSchema = z.string().url("Please enter a valid URL.").optional().or(z.literal(''));
 
+const linkSchema = z.object({
+  type: z.enum(["website", "googleMaps", "facebook", "whatsapp", "instagram", "youtube", "other"]),
+  url: z.string().url("Please enter a valid URL."),
+});
+
 const formSchema = z.object({
   name: z.string().min(2, "Business name must be at least 2 characters."),
   category: z.string().min(1, "Please select a category."),
@@ -39,20 +44,14 @@ const formSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters."),
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
-  website: urlSchema,
-  googleMapsUrl: urlSchema,
-  otherLink: urlSchema,
   street: z.string().min(5, "Please enter a street address."),
   city: z.string().min(2, "Please enter a city."),
   state: z.string().min(2, "Please enter a state."),
   zip: z.string().min(5, "Please enter a zip code."),
-  facebook: urlSchema,
-  whatsapp: urlSchema,
-  instagram: urlSchema,
-  youtube: urlSchema,
   searchCategories: z.array(z.string()).optional(),
   referenceBy: z.string().min(1, "Reference is required."),
   casteAndCategory: z.string().min(1, "Caste & Category is required."),
+  links: z.array(linkSchema).optional(),
 }).refine(data => {
     if (data.category === 'Other') {
         return !!data.otherCategory && data.otherCategory.length > 0;
@@ -79,6 +78,31 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
   
   const isUpdateMode = !!existingListing;
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      category: "",
+      otherCategory: "",
+      description: "",
+      phone: "",
+      email: "",
+      street: "",
+      city: "",
+      state: "Karnataka",
+      zip: "",
+      searchCategories: [],
+      referenceBy: "",
+      casteAndCategory: "",
+      links: [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "links",
+  });
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -101,31 +125,6 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
     fetchCategories();
   }, [toast]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      category: "",
-      otherCategory: "",
-      description: "",
-      phone: "",
-      email: "",
-      website: "",
-      googleMapsUrl: "",
-      otherLink: "",
-      street: "",
-      city: "",
-      state: "Karnataka",
-      zip: "",
-      facebook: "",
-      whatsapp: "",
-      instagram: "",
-      youtube: "",
-      searchCategories: [],
-      referenceBy: "",
-      casteAndCategory: "",
-    },
-  });
 
   const allCategoriesForSelect = [...categories, "Other"];
 
@@ -139,20 +138,14 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         description: existingListing.description,
         phone: existingListing.contact.phone,
         email: existingListing.contact.email,
-        website: existingListing.contact.website,
-        googleMapsUrl: existingListing.contact.googleMapsUrl,
-        otherLink: existingListing.contact.otherLink,
         street: existingListing.address.street,
         city: existingListing.address.city,
         state: existingListing.address.state,
         zip: existingListing.address.zip,
-        facebook: existingListing.contact.socials?.facebook || "",
-        whatsapp: existingListing.contact.socials?.whatsapp || "",
-        instagram: existingListing.contact.socials?.instagram || "",
-        youtube: existingListing.contact.socials?.youtube || "",
         searchCategories: existingListing.searchCategories || [],
         referenceBy: existingListing.referenceBy || "",
         casteAndCategory: existingListing.casteAndCategory || "",
+        links: existingListing.contact.links || [],
       });
     }
   }, [isUpdateMode, existingListing, form, categories]);
@@ -171,7 +164,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
       const categoryToSave = values.category === 'Other' ? values.otherCategory : values.category;
       
       const formatUrl = (url?: string) => {
-        if (!url || url.trim() === '') return null;
+        if (!url || url.trim() === '') return undefined;
         if (!/^https?:\/\//i.test(url)) {
             return 'https://' + url;
         }
@@ -189,15 +182,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
         contact: {
           phone: values.phone,
           email: values.email,
-          website: formatUrl(values.website),
-          googleMapsUrl: formatUrl(values.googleMapsUrl),
-          otherLink: formatUrl(values.otherLink),
-          socials: {
-            facebook: formatUrl(values.facebook),
-            whatsapp: formatUrl(values.whatsapp),
-            instagram: formatUrl(values.instagram),
-            youtube: formatUrl(values.youtube),
-          },
+          links: (values.links || []).map(link => ({...link, url: formatUrl(link.url) as string})),
         },
         address: {
           street: values.street,
@@ -474,108 +459,58 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="website"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Website (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="googleMapsUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Google Maps URL (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://maps.app.goo.gl/..." {...field} />
-                  </FormControl>
-                   <FormDescription>
-                        Link to your business on Google Maps.
-                    </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="otherLink"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Other Link (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., https://facebook.com/your-page" {...field} />
-                  </FormControl>
-                   <FormDescription>
-                        A link to your social media, menu, or another relevant page.
-                    </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <h3 className="text-lg font-medium pt-4 border-t">Social Media (Optional)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <FormField
-                    control={form.control}
-                    name="facebook"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Facebook</FormLabel>
-                        <FormControl>
-                            <Input placeholder="https://facebook.com/your-page" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="whatsapp"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>WhatsApp</FormLabel>
-                        <FormControl>
-                            <Input placeholder="https://wa.me/your-number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="instagram"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Instagram</FormLabel>
-                        <FormControl>
-                            <Input placeholder="https://instagram.com/your-profile" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="youtube"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>YouTube</FormLabel>
-                        <FormControl>
-                            <Input placeholder="https://youtube.com/your-channel" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
+            <div>
+              <FormLabel>Links (Optional)</FormLabel>
+              <FormDescription className="mb-2">Add links to your website, social media, or other pages.</FormDescription>
+              <div className="space-y-4">
+                  {fields.map((field, index) => (
+                      <div key={field.id} className="flex items-start gap-2">
+                          <FormField
+                              control={form.control}
+                              name={`links.${index}.type`}
+                              render={({ field }) => (
+                                  <FormItem className="w-1/3">
+                                      <Select onValueChange={field.onChange} value={field.value}>
+                                          <FormControl>
+                                              <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+                                          </FormControl>
+                                          <SelectContent>
+                                              <SelectItem value="website">Website</SelectItem>
+                                              <SelectItem value="googleMaps">Google Maps</SelectItem>
+                                              <SelectItem value="facebook">Facebook</SelectItem>
+                                              <SelectItem value="instagram">Instagram</SelectItem>
+                                              <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                                              <SelectItem value="youtube">YouTube</SelectItem>
+                                              <SelectItem value="other">Other</SelectItem>
+                                          </SelectContent>
+                                      </Select>
+                                       <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
+                           <FormField
+                              control={form.control}
+                              name={`links.${index}.url`}
+                              render={({ field }) => (
+                                  <FormItem className="flex-1">
+                                      <FormControl><Input placeholder="https://example.com" {...field} /></FormControl>
+                                      <FormMessage />
+                                  </FormItem>
+                              )}
+                          />
+                          <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
+                  ))}
+                  <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => append({ type: "website", url: "" })}
+                  >
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add Link
+                  </Button>
+              </div>
             </div>
             
             <h3 className="text-lg font-medium pt-4 border-t">Address</h3>

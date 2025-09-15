@@ -8,20 +8,15 @@ export interface Review {
   date: string;
 }
 
-export interface Socials {
-  facebook?: string;
-  whatsapp?: string;
-  instagram?: string;
-  youtube?: string;
+export interface Link {
+  type: 'facebook' | 'whatsapp' | 'instagram' | 'youtube' | 'website' | 'googleMaps' | 'other';
+  url: string;
 }
 
 export interface Contact {
   phone: string;
   email: string;
-  website: string;
-  googleMapsUrl?: string;
-  otherLink?: string;
-  socials?: Socials;
+  links?: Link[];
 }
 
 export interface Address {
