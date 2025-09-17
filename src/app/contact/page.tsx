@@ -43,9 +43,9 @@ function ContactPageContent() {
     }
 
     setIsSubmitting(true);
+    // Pass the essential user object; the action will fetch the name.
     const result = await submitContactForm(values, {
       uid: user.uid,
-      name: user.displayName,
       email: user.email,
     });
     setIsSubmitting(false);
