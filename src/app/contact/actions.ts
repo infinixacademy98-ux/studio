@@ -45,7 +45,7 @@ export async function submitContactForm(
       userId: user.uid,
       name: userName, // Use the guaranteed name from Firestore
       email: user.email || "N/A",
-      subject: "User Message", // Add a default subject to ensure validation passes
+      subject: "User Message",
       createdAt: serverTimestamp(),
     });
     
