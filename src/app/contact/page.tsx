@@ -11,8 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, MessageSquare, Bug, Lightbulb, Phone, Mail, MapPin } from "lucide-react";
+import { Loader2, Phone, Mail, MapPin } from "lucide-react";
 import { submitContactForm } from "./actions";
 import { useAuth } from "@/components/auth-provider";
 import Header from "@/components/header";
@@ -22,9 +21,7 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   phone: z.string().optional(),
-  subject: z.enum(["suggestion", "bug", "general"], {
-    required_error: "Please select a feedback type.",
-  }),
+  subject: z.string().min(5, "Subject must be at least 5 characters."),
   message: z.string().min(10, "Message must be at least 10 characters long."),
 });
 
@@ -39,7 +36,7 @@ function ContactPageContent() {
       name: user?.displayName || "",
       email: user?.email || "",
       phone: "",
-      subject: "general",
+      subject: "",
       message: "",
     },
   });
@@ -51,7 +48,7 @@ function ContactPageContent() {
         name: user.displayName || "",
         email: user.email || "",
         phone: "",
-        subject: "general",
+        subject: "",
         message: "",
       });
     }
@@ -81,7 +78,7 @@ function ContactPageContent() {
         name: user?.displayName || "",
         email: user?.email || "",
         phone: "",
-        subject: "general",
+        subject: "",
         message: "",
       });
     } else {
@@ -176,39 +173,19 @@ function ContactPageContent() {
                     />
 
                     <FormField
-                    control={form.control}
-                    name="subject"
-                    render={({ field }) => (
+                        control={form.control}
+                        name="subject"
+                        render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Subject</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormLabel>Subject</FormLabel>
                             <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a type of feedback" />
-                            </SelectTrigger>
+                            <Input placeholder="What is your message about?" {...field} />
                             </FormControl>
-                            <SelectContent>
-                            <SelectItem value="suggestion">
-                                <div className="flex items-center gap-2">
-                                    <Lightbulb className="h-4 w-4" /> Suggestion
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="bug">
-                                <div className="flex items-center gap-2">
-                                    <Bug className="h-4 w-4" /> Bug Report
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="general">
-                                <div className="flex items-center gap-2">
-                                    <MessageSquare className="h-4 w-4" /> General Feedback
-                                </div>
-                            </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage />
+                            <FormMessage />
                         </FormItem>
-                    )}
+                        )}
                     />
+                    
 
                     <FormField
                     control={form.control}
