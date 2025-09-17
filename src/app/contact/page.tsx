@@ -13,10 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, MessageSquare, Bug, Lightbulb, Phone, Mail, MapPin } from "lucide-react";
-import WithAuthLayout from "@/components/with-auth-layout";
 import { submitContactForm } from "./actions";
 import { useAuth } from "@/components/auth-provider";
-import { cn } from "@/lib/utils";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -141,7 +141,7 @@ function ContactPageContent() {
                         <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                            <Input placeholder="Your Name" {...field} />
+                            <Input placeholder="Your Name" {...field} disabled={!!user?.displayName} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -241,8 +241,12 @@ function ContactPageContent() {
 
 export default function ContactPage() {
     return (
-        <WithAuthLayout>
-            <ContactPageContent />
-        </WithAuthLayout>
+        <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">
+                <ContactPageContent />
+            </main>
+            <Footer />
+        </div>
     )
 }
