@@ -18,8 +18,9 @@ export async function submitContactForm(
   userId: string | null
 ) {
   try {
+    const validatedData = formSchema.parse(data);
     await addDoc(collection(db, "messages"), {
-      ...data,
+      ...validatedData,
       userId: userId,
       createdAt: serverTimestamp(),
     });
