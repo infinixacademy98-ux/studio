@@ -25,17 +25,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { submitContactForm } from "./actions";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
+  name: z.string().min(2, { message: "Please enter your name." }),
+  email: z.string().email({ message: "Please enter a valid email." }),
   message: z
     .string()
     .min(10, { message: "Message must be at least 10 characters." })
     .max(1000, { message: "Message must be less than 1000 characters." }),
 });
-
 
 function ContactPageContent() {
   const { user } = useAuth();
@@ -45,9 +47,21 @@ function ContactPageContent() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
+      email: "",
       message: "",
     },
   });
+  
+  useEffect(() => {
+    if (user) {
+        form.reset({
+            name: user.displayName || '',
+            email: user.email || '',
+            message: ''
+        })
+    }
+  }, [user, form])
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) {
@@ -61,6 +75,8 @@ function ContactPageContent() {
     setIsSubmitting(true);
     try {
       const result = await submitContactForm({
+        name: values.name,
+        email: values.email,
         message: values.message,
         userId: user.uid,
       });
@@ -70,7 +86,11 @@ function ContactPageContent() {
           title: "Message Sent!",
           description: "Thank you for your message. We will get back to you shortly.",
         });
-        form.reset();
+        form.reset({
+            name: user.displayName || '',
+            email: user.email || '',
+            message: ''
+        });
       } else {
         throw new Error(result.error);
       }
@@ -94,7 +114,7 @@ function ContactPageContent() {
         <h1 className="text-4xl font-extrabold tracking-tight font-headline lg:text-5xl">Get in Touch</h1>
         <p className="mt-4 text-lg text-muted-foreground">
           We'd love to hear from you. Reach out with any questions, feedback, or inquiries.
-        </p>
+        p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-12">
@@ -124,7 +144,7 @@ function ContactPageContent() {
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
               <CardDescription>
-                Logged in as {user?.email}. Your name and email will be sent with your message.
+                Your details are pre-filled. Just type your message and send.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -133,6 +153,34 @@ function ContactPageContent() {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-6"
                 >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                            <Input placeholder="Your Name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                            <Input placeholder="your@email.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                  </div>
                   <FormField
                     control={form.control}
                     name="message"
@@ -165,7 +213,6 @@ function ContactPageContent() {
     </div>
   );
 }
-
 
 export default function ContactPage() {
     return (

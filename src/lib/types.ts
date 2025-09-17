@@ -58,7 +58,6 @@ export interface Message {
   id: string;
   name: string;
   email: string;
-  phone?: string | null;
   message: string;
   createdAt: any;
   userId: string;

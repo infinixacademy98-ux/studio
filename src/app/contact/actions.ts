@@ -3,15 +3,18 @@
 
 import { z } from "zod";
 import { db } from "@/lib/firebase";
-import { addDoc, collection, doc, getDoc, serverTimestamp } from "firebase/firestore";
-import type { UserDoc } from "@/lib/types";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const formSchema = z.object({
-  message: z.string().min(10),
+  name: z.string().min(2, { message: "Name is required." }),
+  email: z.string().email({ message: "A valid email is required." }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
   userId: z.string(),
 });
 
 export async function submitContactForm(input: {
+  name: string;
+  email: string;
   message: string;
   userId: string;
 }): Promise<{ success: true } | { success: false; error: string }> {
@@ -21,24 +24,13 @@ export async function submitContactForm(input: {
     return { success: false, error: "Invalid input." };
   }
 
-  const { message, userId } = validation.data;
+  const { name, email, message, userId } = validation.data;
 
   try {
-    // Fetch user details from the 'users' collection
-    const userRef = doc(db, "users", userId);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      return { success: false, error: "User not found." };
-    }
-
-    const userData = userSnap.data() as UserDoc;
-
     // Save the message to the 'messages' collection
     await addDoc(collection(db, "messages"), {
-      name: userData.name,
-      email: userData.email,
-      phone: userData.phone || null,
+      name: name,
+      email: email,
       message: message,
       createdAt: serverTimestamp(),
       userId: userId,
