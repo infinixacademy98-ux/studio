@@ -1,5 +1,4 @@
 
-
 export interface Review {
   id: string;
   author: string;
@@ -53,4 +52,14 @@ export interface UserDoc {
     phone?: string;
     role: 'user' | 'admin';
     createdAt: any;
+}
+
+export interface Message {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  message: string;
+  createdAt: any;
+  userId: string;
 }

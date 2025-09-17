@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, query, where, orderBy, Timestamp, limit } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy, Timestamp, limit,getCountFromServer } from "firebase/firestore";
 import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Building2, Users, Clock, MailCheck, Eye } from "lucide-react";
+import { Loader2, Building2, Users, Clock, Mail, Eye } from "lucide-react";
 import { format } from "date-fns";
 
 export default function AdminDashboardPage() {
@@ -30,6 +30,7 @@ export default function AdminDashboardPage() {
     totalBusinesses: 0,
     pendingApprovals: 0,
     newSignups: 0,
+    totalMessages: 0,
   });
   const [recentListings, setRecentListings] = useState<Business[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
@@ -46,11 +47,13 @@ export default function AdminDashboardPage() {
         setLoadingStats(true);
         try {
           // Fetch Listings
-          const listingsQuery = query(collection(db, "listings"));
-          const listingsSnapshot = await getDocs(listingsQuery);
-          const listingsData = listingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Business));
-          const totalBusinesses = listingsData.length;
-          const pendingApprovals = listingsData.filter(l => l.status === 'pending').length;
+          const listingsColl = collection(db, "listings");
+          const listingsSnapshot = await getCountFromServer(listingsColl);
+          const pendingListingsQuery = query(collection(db, "listings"), where("status", "==", "pending"));
+          const pendingListingsSnapshot = await getCountFromServer(pendingListingsQuery);
+
+          const totalBusinesses = listingsSnapshot.data().count;
+          const pendingApprovals = pendingListingsSnapshot.data().count;
 
           // Fetch Users
           const oneWeekAgo = new Date();
@@ -59,25 +62,30 @@ export default function AdminDashboardPage() {
           const usersSnapshot = await getDocs(usersQuery);
           const newSignups = usersSnapshot.size;
 
+          // Fetch Messages count
+          const messagesColl = collection(db, "messages");
+          const messagesSnapshot = await getCountFromServer(messagesColl);
+          const totalMessages = messagesSnapshot.data().count;
+
           setStats({
             totalBusinesses,
             pendingApprovals,
             newSignups,
+            totalMessages
           });
 
           // Fetch recent pending listings
           const recentListingsQuery = query(
             collection(db, "listings"),
-            where("status", "==", "pending")
+            where("status", "==", "pending"),
+            orderBy("createdAt", "desc"),
+            limit(5)
           );
           const recentListingsSnapshot = await getDocs(recentListingsQuery);
           const recentListingsData = recentListingsSnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
-            createdAt: doc.data().createdAt,
-          } as Business))
-          .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime())
-          .slice(0, 5);
+          } as Business));
           
           setRecentListings(recentListingsData);
 
@@ -110,6 +118,7 @@ export default function AdminDashboardPage() {
     { title: "Total Businesses", value: stats.totalBusinesses, icon: Building2, href: "/admin/businesses" },
     { title: "Pending Approvals", value: stats.pendingApprovals, icon: Clock, href: "/admin/businesses" },
     { title: "New Sign-ups (7d)", value: stats.newSignups, icon: Users, href: "/admin/users" },
+    { title: "Total Messages", value: stats.totalMessages, icon: Mail, href: "/admin/messages" },
   ];
 
   return (
@@ -118,7 +127,7 @@ export default function AdminDashboardPage() {
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card, index) => (
           <Link href={card.href} key={index}>
             <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
@@ -167,7 +176,7 @@ export default function AdminDashboardPage() {
                         <TableCell>{formatDate(listing.createdAt)}</TableCell>
                         <TableCell className="text-right">
                           <Button asChild variant="outline" size="sm">
-                            <Link href="/admin/businesses">
+                            <Link href={`/admin/businesses/edit/${listing.id}`}>
                               <Eye className="mr-2 h-4 w-4" /> View
                             </Link>
                           </Button>
