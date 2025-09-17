@@ -13,8 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Loader2, Phone, Mail, MapPin } from "lucide-react";
 import { submitContactForm } from "./actions";
 import { useAuth } from "@/components/auth-provider";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+import WithAuthLayout from "@/components/with-auth-layout";
 
 const formSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters long."),
@@ -33,6 +32,7 @@ function ContactPageContent() {
   });
   
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    // WithAuthLayout should prevent this, but it's good practice
     if (!user) {
         toast({
             variant: "destructive",
@@ -43,7 +43,7 @@ function ContactPageContent() {
     }
 
     setIsSubmitting(true);
-    // Pass the essential user object; the action will fetch the name.
+    // Pass the essential user object; the action will fetch the name from firestore.
     const result = await submitContactForm(values, {
       uid: user.uid,
       email: user.email,
@@ -136,12 +136,8 @@ function ContactPageContent() {
 
 export default function ContactPage() {
     return (
-        <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">
-                <ContactPageContent />
-            </main>
-            <Footer />
-        </div>
+       <WithAuthLayout>
+            <ContactPageContent />
+        </WithAuthLayout>
     )
 }
