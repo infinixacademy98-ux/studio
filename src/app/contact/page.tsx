@@ -114,7 +114,7 @@ function ContactPageContent() {
         <h1 className="text-4xl font-extrabold tracking-tight font-headline lg:text-5xl">Get in Touch</h1>
         <p className="mt-4 text-lg text-muted-foreground">
           We'd love to hear from you. Reach out with any questions, feedback, or inquiries.
-        p>
+        </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-12">
