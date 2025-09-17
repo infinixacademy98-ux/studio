@@ -4,7 +4,6 @@
 import { z } from "zod";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { auth } from "@/lib/firebase";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -14,12 +13,14 @@ const formSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters."),
 });
 
-export async function submitContactForm(data: z.infer<typeof formSchema>) {
+export async function submitContactForm(
+  data: z.infer<typeof formSchema>,
+  userId: string | null
+) {
   try {
-    const user = auth.currentUser;
     await addDoc(collection(db, "messages"), {
       ...data,
-      userId: user?.uid || null,
+      userId: userId,
       createdAt: serverTimestamp(),
     });
     return { success: true };

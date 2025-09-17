@@ -69,7 +69,7 @@ function ContactPageContent() {
     }
 
     setIsSubmitting(true);
-    const result = await submitContactForm(values);
+    const result = await submitContactForm(values, user.uid);
     setIsSubmitting(false);
 
     if (result.success) {
