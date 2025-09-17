@@ -126,12 +126,6 @@ export default function Header() {
                     <span>About</span>
                   </Link>
                 </DropdownMenuItem>
-                 <DropdownMenuItem asChild>
-                  <Link href="/contact">
-                    <Mail className="mr-2 h-4 w-4" />
-                    <span>Contact</span>
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
