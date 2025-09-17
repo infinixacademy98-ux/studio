@@ -46,16 +46,6 @@ export interface Business {
   casteAndCategory: string;
 }
 
-export interface Message {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  subject: string;
-  message: string;
-  createdAt: any;
-}
-
 export interface UserDoc {
     id: string;
     name: string;

@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "./ui/button";
-import { Home, Building2, MessageSquare, LogOut, AppWindow, Users } from "lucide-react";
+import { Home, Building2, LogOut, AppWindow, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -27,7 +27,6 @@ interface AdminSidebarProps {
 const navLinks = [
   { href: "/admin/dashboard", icon: Home, label: "Dashboard" },
   { href: "/admin/businesses", icon: Building2, label: "Businesses" },
-  { href: "/admin/messages", icon: MessageSquare, label: "Messages" },
   { href: "/admin/categories", icon: AppWindow, label: "Categories" },
   { href: "/admin/users", icon: Users, label: "Users" },
 ];

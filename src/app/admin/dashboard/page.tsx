@@ -7,7 +7,7 @@ import { collection, getDocs, query, where, orderBy, Timestamp, limit } from "fi
 import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/components/auth-provider";
-import type { Business, Message, UserDoc } from "@/lib/types";
+import type { Business, UserDoc } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -30,7 +30,6 @@ export default function AdminDashboardPage() {
     totalBusinesses: 0,
     pendingApprovals: 0,
     newSignups: 0,
-    totalMessages: 0,
   });
   const [recentListings, setRecentListings] = useState<Business[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
@@ -60,16 +59,10 @@ export default function AdminDashboardPage() {
           const usersSnapshot = await getDocs(usersQuery);
           const newSignups = usersSnapshot.size;
 
-          // Fetch Messages
-          const messagesQuery = query(collection(db, "messages"));
-          const messagesSnapshot = await getDocs(messagesQuery);
-          const totalMessages = messagesSnapshot.size;
-
           setStats({
             totalBusinesses,
             pendingApprovals,
             newSignups,
-            totalMessages
           });
 
           // Fetch recent pending listings
@@ -117,7 +110,6 @@ export default function AdminDashboardPage() {
     { title: "Total Businesses", value: stats.totalBusinesses, icon: Building2, href: "/admin/businesses" },
     { title: "Pending Approvals", value: stats.pendingApprovals, icon: Clock, href: "/admin/businesses" },
     { title: "New Sign-ups (7d)", value: stats.newSignups, icon: Users, href: "/admin/users" },
-    { title: "Total Messages", value: stats.totalMessages, icon: MailCheck, href: "/admin/messages" },
   ];
 
   return (
@@ -126,7 +118,7 @@ export default function AdminDashboardPage() {
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {statCards.map((card, index) => (
           <Link href={card.href} key={index}>
             <Card className="transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] hover:-translate-y-1">
