@@ -86,7 +86,6 @@ export default function AdminLayout({
                   <Link href="/admin/businesses" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">Businesses</Link>
                   <Link href="/admin/categories" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">Categories</Link>
                   <Link href="/admin/users" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">Users</Link>
-                  <Link href="/admin/messages" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">Messages</Link>
                 </nav>
               </SheetContent>
             </Sheet>

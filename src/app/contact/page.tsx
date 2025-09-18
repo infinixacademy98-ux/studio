@@ -2,9 +2,7 @@
 "use client";
 
 import WithAuthLayout from "@/components/with-auth-layout";
-import { Phone, Mail, MapPin, Loader2 } from "lucide-react";
-import { useActionState, useEffect, useRef } from "react";
-import { useFormStatus } from "react-dom";
+import { Phone, Mail, MapPin } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -18,42 +16,21 @@ import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { submitContactForm } from "./actions";
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      Send Message
-    </Button>
-  );
-}
 
 function ContactPageContent() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const formRef = useRef<HTMLFormElement>(null);
-  
-  const initialState = { type: "", message: "", errors: null };
-  const [state, formAction] = useActionState(submitContactForm, initialState);
 
-  useEffect(() => {
-    if (state.type === "success") {
-      toast({
-        title: "Success!",
-        description: state.message,
-      });
-      formRef.current?.reset();
-    } else if (state.type === "error" && state.message) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: state.message,
-      });
-    }
-  }, [state, toast]);
-  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      variant: "destructive",
+      title: "Submission Failed",
+      description:
+        "Message submission is temporarily disabled. Please contact us directly via email.",
+    });
+  };
+
   return (
     <div className="container mx-auto max-w-6xl px-4 py-12">
       <div className="text-center mb-12">
@@ -94,25 +71,24 @@ function ContactPageContent() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form ref={formRef} action={formAction} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
                       <Input id="name" name="name" defaultValue={user?.displayName || ""} />
-                      {state.errors?.name && <p className="text-sm font-medium text-destructive">{state.errors.name[0]}</p>}
                     </div>
                     <div className="space-y-2">
                        <Label htmlFor="email">Email</Label>
                       <Input id="email" name="email" type="email" defaultValue={user?.email || ""} />
-                      {state.errors?.email && <p className="text-sm font-medium text-destructive">{state.errors.email[0]}</p>}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="message">Message</Label>
                     <Textarea id="message" name="message" placeholder="Your message..." className="min-h-[150px]" />
-                    {state.errors?.message && <p className="text-sm font-medium text-destructive">{state.errors.message[0]}</p>}
                   </div>
-                 <SubmitButton />
+                 <Button type="submit" className="w-full">
+                    Send Message
+                  </Button>
               </form>
             </CardContent>
           </Card>
