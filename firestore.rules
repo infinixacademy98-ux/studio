@@ -1,49 +1,63 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    //
-    // DEFAULT (Deny all reads and writes)
-    //
-    match /{document=**} {
-      allow read, write: if false;
+    
+    // Helper function to check for admin role
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Listings
+    match /listings/{listingId} {
+      // Anyone can read approved listings
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      
+      // Only authenticated users can create listings
+      allow create: if request.auth != null;
+      
+      // Only the owner or an admin can update
+      allow update: if request.auth.uid == resource.data.ownerId || isAdmin();
+      
+      // Only an admin can delete
+      allow delete: if isAdmin();
+    }
+
+    // Categories
+    match /categories/{categoryId} {
+      // Anyone can read categories
+      allow read: if true;
+      
+      // Only admins can create, update, or delete categories
+      allow write: if isAdmin();
     }
     
-    //
-    // USERS
-    //
+    // Users
     match /users/{userId} {
-      // Allow user to read their own data
-      allow read: if request.auth != null && request.auth.uid == userId;
-      // Allow user to create their own user document upon signup
-      allow create: if request.auth != null && request.auth.uid == userId;
-      // Admins can read/write any user document
-      allow read, write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
+      // A user can read/update their own data. Admins can read/update any user data.
+      allow read, update: if request.auth.uid == userId || isAdmin();
+      
+      // Anyone can create a user document (on signup)
+      allow create: if true;
 
-    //
-    // LISTINGS
-    //
-    match /listings/{listingId} {
-      // Allow anyone to read approved listings
-      allow read: if resource.data.status == 'approved';
-      // Allow authenticated users to create a listing
-      allow create: if request.auth != null;
-      // Allow the owner of the listing or an admin to update it
-      allow update: if request.auth.uid == resource.data.ownerId 
-                      || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      // Allow only admins to delete listings
-      allow delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
+      // Admins can delete users (from the admin panel)
+      allow delete: if isAdmin();
 
-    //
-    // CATEGORIES
-    //
-    match /categories/{categoryId} {
-        // Allow anyone to read categories
-        allow read: if true;
-        // Allow only admins to create or delete categories
-        allow create, delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Notifications subcollection
+      match /notifications/{notificationId} {
+        allow read, write: if request.auth.uid == userId;
+      }
+    }
+    
+    // Messages
+    match /messages/{messageId} {
+      // Anyone can create a message
+      allow create: if true;
+
+      // Only admins can read, update, or delete messages
+      allow read, update, delete: if isAdmin();
     }
   }
 }

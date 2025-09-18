@@ -2,18 +2,8 @@
 "use client";
 
 import WithAuthLayout from "@/components/with-auth-layout";
-import { Phone, Mail, MapPin } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Phone, Mail, MapPin, Loader2 } from "lucide-react";
+import { useFormState, useFormStatus } from "react-dom";
 import {
   Card,
   CardContent,
@@ -25,66 +15,45 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { submitContactForm } from "./actions";
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Please enter your name." }),
-  email: z.string().email({ message: "Please enter a valid email." }),
-  message: z
-    .string()
-    .min(10, { message: "Message must be at least 10 characters." })
-    .max(1000, { message: "Message must be less than 1000 characters." }),
-});
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      Send Message
+    </Button>
+  );
+}
 
 function ContactPageContent() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      message: "",
-    },
-  });
+  const formRef = useRef<HTMLFormElement>(null);
   
-  useEffect(() => {
-    if (user) {
-        form.reset({
-            name: user.displayName || '',
-            email: user.email || '',
-            message: ''
-        })
-    }
-  }, [user, form])
+  const initialState = { type: "", message: "", errors: null };
+  const [state, formAction] = useFormState(submitContactForm, initialState);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!user) {
+  useEffect(() => {
+    if (state.type === "success") {
+      toast({
+        title: "Success!",
+        description: state.message,
+      });
+      formRef.current?.reset();
+    } else if (state.type === "error" && state.message) {
       toast({
         variant: "destructive",
-        description: "You must be signed in to send a message.",
+        title: "Error",
+        description: state.message,
       });
-      return;
     }
-
-    setIsSubmitting(true);
-    
-    // Placeholder logic since server action was removed
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    toast({
-      title: "Feature Unavailable",
-      description: "The messaging feature is currently under maintenance. Please try again later.",
-      variant: "destructive"
-    });
-
-    setIsSubmitting(false);
-  }
-
+  }, [state, toast]);
+  
   return (
     <div className="container mx-auto max-w-6xl px-4 py-12">
       <div className="text-center mb-12">
@@ -121,68 +90,30 @@ function ContactPageContent() {
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
               <CardDescription>
-                Your details are pre-filled. Just type your message and send.
+                Fill out the form below and we'll get back to you.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                            <Input placeholder="Your Name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                            <Input placeholder="your@email.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
+              <form ref={formRef} action={formAction} className="space-y-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" name="name" defaultValue={user?.displayName || ""} />
+                      {state.errors?.name && <p className="text-sm font-medium text-destructive">{state.errors.name[0]}</p>}
+                    </div>
+                    <div className="space-y-2">
+                       <Label htmlFor="email">Email</Label>
+                      <Input id="email" name="email" type="email" defaultValue={user?.email || ""} />
+                      {state.errors?.email && <p className="text-sm font-medium text-destructive">{state.errors.email[0]}</p>}
+                    </div>
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Your message..."
-                            className="min-h-[150px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Send Message
-                  </Button>
-                </form>
-              </Form>
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea id="message" name="message" placeholder="Your message..." className="min-h-[150px]" />
+                    {state.errors?.message && <p className="text-sm font-medium text-destructive">{state.errors.message[0]}</p>}
+                  </div>
+                 <SubmitButton />
+              </form>
             </CardContent>
           </Card>
         </div>
