@@ -27,7 +27,6 @@ import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { submitContactForm } from "./actions";
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
@@ -73,39 +72,17 @@ function ContactPageContent() {
     }
 
     setIsSubmitting(true);
-    try {
-      const result = await submitContactForm({
-        name: values.name,
-        email: values.email,
-        message: values.message,
-        userId: user.uid,
-      });
+    
+    // Placeholder logic since server action was removed
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (result.success) {
-        toast({
-          title: "Message Sent!",
-          description: "Thank you for your message. We will get back to you shortly.",
-        });
-        form.reset({
-            name: user.displayName || '',
-            email: user.email || '',
-            message: ''
-        });
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Submission Failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "An unknown error occurred. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    toast({
+      title: "Feature Unavailable",
+      description: "The messaging feature is currently under maintenance. Please try again later.",
+      variant: "destructive"
+    });
+
+    setIsSubmitting(false);
   }
 
   return (
