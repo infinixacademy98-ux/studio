@@ -3,7 +3,8 @@
 
 import WithAuthLayout from "@/components/with-auth-layout";
 import { Phone, Mail, MapPin, Loader2 } from "lucide-react";
-import { useActionState, useFormStatus } from "react";
+import { useActionState, useEffect, useRef } from "react";
+import { useFormStatus } from "react-dom";
 import {
   Card,
   CardContent,
@@ -15,7 +16,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { submitContactForm } from "./actions";
