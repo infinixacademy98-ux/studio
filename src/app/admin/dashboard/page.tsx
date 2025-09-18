@@ -78,7 +78,6 @@ export default function AdminDashboardPage() {
           const recentListingsQuery = query(
             collection(db, "listings"),
             where("status", "==", "pending"),
-            orderBy("createdAt", "desc"),
             limit(5)
           );
           const recentListingsSnapshot = await getDocs(recentListingsQuery);
