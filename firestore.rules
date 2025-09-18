@@ -1,37 +1,49 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    //
+    // DEFAULT (Deny all reads and writes)
+    //
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    //
+    // USERS
+    //
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Allow user to read their own data
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Allow user to create their own user document upon signup
+      allow create: if request.auth != null && request.auth.uid == userId;
+      // Admins can read/write any user document
+      allow read, write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    //
+    // LISTINGS
+    //
     match /listings/{listingId} {
-      allow read: if resource.data.status == 'approved' || (request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
-      allow create, update, delete: if request.auth != null && (request.auth.uid == resource.data.ownerId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      // Allow anyone to read approved listings
+      allow read: if resource.data.status == 'approved';
+      // Allow authenticated users to create a listing
+      allow create: if request.auth != null;
+      // Allow the owner of the listing or an admin to update it
+      allow update: if request.auth.uid == resource.data.ownerId 
+                      || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Allow only admins to delete listings
+      allow delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    //
+    // CATEGORIES
+    //
     match /categories/{categoryId} {
-      allow read: if true;
-      allow create, update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    match /messages/{messageId} {
-      allow read, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      
-      // Allow any authenticated user to create a message, and validate the data.
-      allow create: if request.auth != null
-        && request.resource.data.name is string
-        && request.resource.data.email is string
-        && request.resource.data.message is string
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.createdAt == request.time;
-    }
-
-    // Fallback for user notifications (if needed in the future)
-    match /users/{userId}/notifications/{notificationId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+        // Allow anyone to read categories
+        allow read: if true;
+        // Allow only admins to create or delete categories
+        allow create, delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
   }
 }
