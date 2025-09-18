@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -30,7 +31,7 @@ const linkSchema = z.object({
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
-  images: z.array(z.object({ url: z.string().url("Please enter a valid URL.") })).min(1, "At least one image is required."),
+  images: z.array(z.object({ url: z.string().url("Please enter a valid URL.") })).min(1, "At least one image is required.").max(2, "You can upload a maximum of 2 images."),
   category: z.string().min(1, "Please select a category."),
   otherCategory: z.string().optional(),
   phone: z.string().min(10, "Please enter a valid phone number."),
@@ -53,6 +54,20 @@ const formSchema = z.object({
     message: "Please specify the category",
     path: ["otherCategory"],
 });
+
+const casteOptions = [
+    "SC",
+    "ST",
+    "OBC - I",
+    "OBC - 2A",
+    "OBC - 2B",
+    "OBC - 3A",
+    "MARATHA - 3B",
+    "General (0pen)",
+    "VNT",
+    "DNT",
+    "NT",
+];
 
 export default function EditBusinessPage() {
   const params = useParams();
@@ -440,7 +455,18 @@ export default function EditBusinessPage() {
                     <FormField control={form.control} name="casteAndCategory" render={({ field }) => (
                         <FormItem>
                             <FormLabel>Caste &amp; Category</FormLabel>
-                            <FormControl><Input placeholder="Your answer" {...field} /></FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a caste/category" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {casteOptions.map(option => (
+                                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             <FormMessage />
                         </FormItem>
                     )} />
@@ -448,7 +474,7 @@ export default function EditBusinessPage() {
             </Card>
             
             <Card>
-                <CardHeader><CardTitle>Images</CardTitle></CardHeader>
+                <CardHeader><CardTitle>Images (Max 2)</CardTitle></CardHeader>
                 <CardContent>
                      <div className="space-y-4">
                         {imageFields.map((field, index) => (
@@ -463,7 +489,7 @@ export default function EditBusinessPage() {
                                 )}
                             />
                         ))}
-                        <Button type="button" variant="outline" size="sm" onClick={() => appendImage({ url: "" })}>
+                        <Button type="button" variant="outline" size="sm" onClick={() => appendImage({ url: "" })} disabled={imageFields.length >= 2}>
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Add Image
                         </Button>

@@ -46,7 +46,7 @@ const formSchema = z.object({
   category: z.string().min(1, "Please select a category."),
   otherCategory: z.string().optional(),
   description: z.string().min(10, "Description must be at least 10 characters."),
-  images: z.array(imageSchema).min(1, "At least one image URL is required."),
+  images: z.array(imageSchema).min(1, "At least one image URL is required.").max(2, "You can upload a maximum of 2 images."),
   phone: z.string().min(10, "Please enter a valid phone number."),
   email: z.string().email("Please enter a valid email address."),
   street: z.string().min(5, "Please enter a street address."),
@@ -71,6 +71,20 @@ type AddListingFormProps = {
   suggestCategoryAction?: (description: string) => Promise<{ category: string } | { error: string }>;
   existingListing?: Business | null;
 };
+
+const casteOptions = [
+    "SC",
+    "ST",
+    "OBC - I",
+    "OBC - 2A",
+    "OBC - 2B",
+    "OBC - 3A",
+    "MARATHA - 3B",
+    "General (0pen)",
+    "VNT",
+    "DNT",
+    "NT",
+];
 
 export default function AddListingForm({ suggestCategoryAction, existingListing = null }: AddListingFormProps) {
   const { toast } = useToast();
@@ -425,8 +439,8 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
             />
 
             <div>
-              <FormLabel>Images</FormLabel>
-              <FormDescription className="mb-2">Add one or more public URLs to your business images.</FormDescription>
+              <FormLabel>Images (Max 2)</FormLabel>
+              <FormDescription className="mb-2">Add one or two public URLs to your business images.</FormDescription>
               <div className="space-y-4">
                 {imageFields.map((field, index) => (
                   <FormField
@@ -448,7 +462,7 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
                     )}
                   />
                 ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => appendImage({ url: "" })}>
+                <Button type="button" variant="outline" size="sm" onClick={() => appendImage({ url: "" })} disabled={imageFields.length >= 2}>
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Add Image
                 </Button>
@@ -625,9 +639,18 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Caste &amp; Category</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Your answer" {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a caste/category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {casteOptions.map(option => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
