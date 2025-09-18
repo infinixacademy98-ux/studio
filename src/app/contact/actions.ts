@@ -27,7 +27,6 @@ export async function submitContactForm(input: {
   const { name, email, message, userId } = validation.data;
 
   try {
-    // Save the message to the 'messages' collection
     await addDoc(collection(db, "messages"), {
       name: name,
       email: email,
