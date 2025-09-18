@@ -40,6 +40,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.instagram.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'kaidonix.grexa.site',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
