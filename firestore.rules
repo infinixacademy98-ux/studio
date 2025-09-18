@@ -3,63 +3,62 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Helper function to check if a user has an 'admin' role
     function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Users:
-    // - Anyone can create their own user document.
-    // - Only the user themselves or an admin can update their document.
-    // - Only admins can delete user documents.
-    // - User and Admin can read user document
+    // Users collection rules
     match /users/{userId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth.uid == userId || isAdmin();
-      allow update: if request.auth.uid == userId || isAdmin();
-      allow delete: if isAdmin();
+      // Admins can read and write any user document
+      allow read, write: if isAdmin();
+      // A user can read or update their own document
+      allow read, update: if request.auth.uid == userId;
     }
 
-    // Listings:
-    // - Authenticated users can create listings.
-    // - Anyone can read approved listings.
-    // - Admins can read any listing regardless of status.
-    // - Only the owner or an admin can update a listing.
-    // - Only admins can delete listings.
+    // Listings collection rules
     match /listings/{listingId} {
+      // Anyone can read approved listings
+      allow read: if resource.data.status == 'approved';
+      // Admins can read any listing regardless of status
+      allow read: if isAdmin();
+      
+      // Logged-in users can create new listings
       allow create: if request.auth != null;
-      allow read: if resource.data.status == 'approved' || (request.auth != null && isAdmin());
+
+      // Only the owner or an admin can update a listing
       allow update: if request.auth.uid == resource.data.ownerId || isAdmin();
+
+      // Only admins can delete a listing
       allow delete: if isAdmin();
     }
-
-    // Categories:
-    // - Anyone can read the list of categories.
-    // - Only admins can create, update, or delete categories.
+    
+    // Categories collection rules
     match /categories/{categoryId} {
-      allow read: if true;
-      allow write: if isAdmin();
+        // Anyone can read categories
+        allow read: if true;
+        // Only admins can write to categories
+        allow write: if isAdmin();
     }
     
-    // Messages:
-    // - Any authenticated user can create a message.
-    // - The message data must be valid (correct fields and types).
-    // - Only admins can read or delete messages.
-    match /messages/{messageId} {
-      allow create: if request.auth != null
-                    && request.resource.data.name is string
-                    && request.resource.data.email is string
-                    && request.resource.data.message is string
-                    && request.resource.data.userId == request.auth.uid
-                    && request.resource.data.createdAt == request.time;
-      allow read, delete: if isAdmin();
-    }
-    
-    // Notifications (subcollection of users)
-    // - Only the user can read their own notifications.
-    // - Notifications are created by backend functions (implicitly allowed), not clients.
+    // Notifications subcollection rules
     match /users/{userId}/notifications/{notificationId} {
-        allow read, update: if request.auth.uid == userId;
-        allow create, delete: if false; // Prevent client-side creation/deletion
+        // A user can read/write their own notifications
+        allow read, write: if request.auth.uid == userId;
+    }
+
+    // Messages collection rules
+    match /messages/{messageId} {
+      // Any authenticated user can create a message.
+      allow create: if request.auth != null && 
+                       'name' in request.resource.data && request.resource.data.name is string &&
+                       'email' in request.resource.data && request.resource.data.email is string &&
+                       'message' in request.resource.data && request.resource.data.message is string &&
+                       'userId' in request.resource.data && request.resource.data.userId == request.auth.uid &&
+                       'createdAt' in request.resource.data && request.resource.data.createdAt == request.time;
+      // Only admins can read or delete messages.
+      allow read, delete: if isAdmin();
     }
   }
 }

@@ -9,7 +9,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name is required." }),
   email: z.string().email({ message: "A valid email is required." }),
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
-  userId: z.string(),
+  userId: z.string().min(1, { message: "User ID is required." }),
 });
 
 export async function submitContactForm(input: {
