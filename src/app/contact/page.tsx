@@ -3,7 +3,7 @@
 
 import WithAuthLayout from "@/components/with-auth-layout";
 import { Phone, Mail, MapPin, Loader2 } from "lucide-react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react";
 import {
   Card,
   CardContent,
@@ -36,7 +36,7 @@ function ContactPageContent() {
   const formRef = useRef<HTMLFormElement>(null);
   
   const initialState = { type: "", message: "", errors: null };
-  const [state, formAction] = useFormState(submitContactForm, initialState);
+  const [state, formAction] = useActionState(submitContactForm, initialState);
 
   useEffect(() => {
     if (state.type === "success") {
