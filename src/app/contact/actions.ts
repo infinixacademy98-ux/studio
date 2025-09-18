@@ -14,10 +14,21 @@ const formSchema = z.object({
     .max(1000, { message: "Message must be less than 1000 characters." }),
 });
 
+export type FormState = {
+    type?: "success" | "error";
+    message: string;
+    errors?: {
+        name?: string[];
+        email?: string[];
+        message?: string[];
+    };
+}
+
+
 export async function submitContactForm(
-  prevState: any,
+  prevState: FormState,
   formData: FormData
-) {
+): Promise<FormState> {
   const validatedFields = formSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),

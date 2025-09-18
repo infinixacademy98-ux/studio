@@ -1,8 +1,10 @@
 
 "use client";
 
+import { useEffect } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import WithAuthLayout from "@/components/with-auth-layout";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, Loader2, Send } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,20 +18,51 @@ import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { submitContactForm, type FormState } from "./actions";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Sending...
+        </>
+      ) : (
+        <>
+         <Send className="mr-2 h-4 w-4" />
+          Send Message
+        </>
+      )}
+    </Button>
+  );
+}
 
 function ContactPageContent() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      variant: "destructive",
-      title: "Submission Failed",
-      description:
-        "Message submission is temporarily disabled. Please contact us directly via email.",
-    });
-  };
+  const initialState: FormState = { message: "" };
+  const [state, formAction] = useFormState(submitContactForm, initialState);
+
+  useEffect(() => {
+    if (state.type === "success") {
+      toast({
+        title: "Success!",
+        description: state.message,
+      });
+      // Optionally reset the form here if needed
+    } else if (state.type === "error" && state.message && !state.errors) {
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description: state.message,
+      });
+    }
+  }, [state, toast]);
+
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-12">
@@ -71,24 +104,25 @@ function ContactPageContent() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form action={formAction} className="space-y-6">
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
                       <Input id="name" name="name" defaultValue={user?.displayName || ""} />
+                       {state.errors?.name && <p className="text-sm font-medium text-destructive">{state.errors.name[0]}</p>}
                     </div>
                     <div className="space-y-2">
                        <Label htmlFor="email">Email</Label>
                       <Input id="email" name="email" type="email" defaultValue={user?.email || ""} />
+                      {state.errors?.email && <p className="text-sm font-medium text-destructive">{state.errors.email[0]}</p>}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="message">Message</Label>
                     <Textarea id="message" name="message" placeholder="Your message..." className="min-h-[150px]" />
+                    {state.errors?.message && <p className="text-sm font-medium text-destructive">{state.errors.message[0]}</p>}
                   </div>
-                 <Button type="submit" className="w-full">
-                    Send Message
-                  </Button>
+                 <SubmitButton />
               </form>
             </CardContent>
           </Card>

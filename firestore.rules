@@ -3,38 +3,50 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Admins have full access to everything.
-    match /{path=**} {
-      allow read, write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+
+    // Helper function to check if a user is an admin
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Users can create their own user document on sign-up, and can read/update their own data.
-    match /users/{userId} {
-      allow create: if request.auth != null;
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // User notifications can only be accessed by the user themselves.
-    match /users/{userId}/notifications/{notificationId} {
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Anyone can read approved listings. Authenticated users can create listings and update their own.
+    // Listings can be read by anyone if approved, or by admin/owner otherwise
     match /listings/{listingId} {
-      allow read: if resource.data.status == 'approved';
+      allow read: if resource.data.status == 'approved' ||
+                     (request.auth != null && (isAdmin() || request.auth.uid == resource.data.ownerId));
       allow create: if request.auth != null;
-      allow update: if request.auth != null && request.resource.data.ownerId == request.auth.uid;
-    }
+      allow update: if request.auth != null && (isAdmin() || request.auth.uid == resource.data.ownerId);
+      allow delete: if isAdmin();
 
-    // Anyone can read the list of categories.
-    match /categories/{categoryId} {
+      // Reviews are part of the listing subcollection
+      match /reviews/{reviewId} {
         allow read: if true;
+        allow create: if request.auth != null;
+      }
     }
 
-    // Any authenticated user can submit a message.
-    match /messages/{messageId} {
-        allow create: if request.auth != null;
+    // Categories are public for reading, admin for writing
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
+
+    // Users collection rules
+    match /users/{userId} {
+      allow read: if request.auth != null && (isAdmin() || request.auth.uid == userId);
+      allow write: if isAdmin(); // Only admins can change roles, etc.
+
+      // Notifications subcollection
+      match /notifications/{notificationId} {
+          allow read, write: if request.auth.uid == userId;
+      }
+    }
+    
+    // Messages can be created by anyone, but only read/deleted by admins
+    match /messages/{messageId} {
+      allow create: if true;
+      allow read, delete: if isAdmin();
+    }
+
   }
 }

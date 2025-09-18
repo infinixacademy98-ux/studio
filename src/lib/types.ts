@@ -53,3 +53,11 @@ export interface UserDoc {
     role: 'user' | 'admin';
     createdAt: any;
 }
+
+export interface Message {
+    id: string;
+    name: string;
+    email: string;
+    message: string;
+    createdAt: any;
+}
