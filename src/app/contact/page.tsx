@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useEffect, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import WithAuthLayout from "@/components/with-auth-layout";
 import { Phone, Mail, MapPin, Loader2, Send } from "lucide-react";
 import {
@@ -45,7 +45,7 @@ function ContactPageContent() {
   const { toast } = useToast();
 
   const initialState: FormState = { message: "" };
-  const [state, formAction] = useFormState(submitContactForm, initialState);
+  const [state, formAction] = useActionState(submitContactForm, initialState);
 
   useEffect(() => {
     if (state.type === "success") {
