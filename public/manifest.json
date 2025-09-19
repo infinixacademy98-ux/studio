@@ -1,0 +1,21 @@
+{
+  "name": "MVS Karnataka",
+  "short_name": "MVS-KA",
+  "description": "Your guide to businesses in Karnataka.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FACC15",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

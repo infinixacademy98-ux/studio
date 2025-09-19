@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata: Metadata = {
   title: "MVS Karnataka",
   description: "Your guide to businesses in Karnataka.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
