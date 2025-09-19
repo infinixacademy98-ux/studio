@@ -11,7 +11,7 @@ export default function Footer() {
             MVS Karnataka
           </p>
            <p className="text-base text-foreground mt-2">
-            Created by Infinix Academy <a href="https://wa.me/916360236070" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">6360236070</a>
+            Made by Infinix Academy <a href="https://wa.me/916360236070" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">6360236070</a>
           </p>
         </div>
       </div>
