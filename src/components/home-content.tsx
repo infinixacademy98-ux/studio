@@ -332,7 +332,7 @@ export default function HomeContent() {
            <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
             <div className="flex-shrink-0">
                 <Image
-                    src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png"
+                    src="https://i.postimg.cc/pL15Hyf8/Untitled-design-7.png"
                     alt="MVS Karnataka Logo"
                     width={180}
                     height={180}
@@ -534,5 +534,3 @@ export default function HomeContent() {
     </>
   );
 }
-
-    

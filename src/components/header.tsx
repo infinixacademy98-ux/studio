@@ -65,7 +65,7 @@ export default function Header() {
         <div className="mr-auto flex items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Image 
-              src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png" 
+              src="https://i.postimg.cc/pL15Hyf8/Untitled-design-7.png" 
               alt="MVS Karnataka Logo" 
               width={48} 
               height={48}

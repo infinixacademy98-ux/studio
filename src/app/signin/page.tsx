@@ -133,7 +133,7 @@ export default function SignInPage() {
         <CardHeader className="py-8">
            <div className="flex justify-center items-center gap-2 mb-4">
                 <Image
-                    src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png"
+                    src="https://i.postimg.cc/pL15Hyf8/Untitled-design-7.png"
                     alt="MVS Karnataka Logo"
                     width={40}
                     height={40}

@@ -65,7 +65,7 @@ export default function AdminSidebar({ isOpen }: AdminSidebarProps) {
                "flex items-center gap-2 font-semibold"
             )}>
              <Image 
-                src="https://i.postimg.cc/zvWd6GrJ/413-531-px-2.png" 
+                src="https://i.postimg.cc/pL15Hyf8/Untitled-design-7.png" 
                 alt="MVS Karnataka Logo" 
                 width={40} 
                 height={40}
