@@ -10,6 +10,9 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground">
             MVS Karnataka
           </p>
+           <p className="text-sm text-muted-foreground mt-2">
+            Created by Infinix Academy 6360236070
+          </p>
         </div>
       </div>
     </footer>
