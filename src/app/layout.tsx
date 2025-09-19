@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#fbbf24" />
+        <link rel="icon" href="/icons/maskable_icon_x192.png" />
         <link rel="apple-touch-icon" href="/icons/maskable_icon_x192.png" />
       </head>
       <body
