@@ -341,8 +341,8 @@ export default function HomeContent() {
                 />
             </div>
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-                    <span className="text-red-600 text-5xl sm:text-6xl md:text-7xl">MVS</span> <span className="text-black dark:text-white">Karnataka.</span>
+                <h1 className="font-extrabold tracking-tight">
+                    <span className="text-red-600 text-6xl sm:text-7xl md:text-8xl">MVS</span> <span className="text-black dark:text-white text-3xl sm:text-4xl">Karnataka.</span>
                 </h1>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mt-1 tracking-tight text-blue-600 whitespace-nowrap">
                     VOCAL FOR LOCAL
