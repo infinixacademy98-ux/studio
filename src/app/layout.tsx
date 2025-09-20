@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#fbbf24" />
+        <meta name="theme-color" content="#FF7F50" />
       </head>
       <body
         className={cn(
