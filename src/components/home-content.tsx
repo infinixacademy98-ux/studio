@@ -200,7 +200,6 @@ export default function HomeContent() {
   }, [listings]);
 
   const filteredListings = useMemo(() => {
-    setIsSearching(true);
     let newFilteredListings = listings;
 
     // Filter by Rating
@@ -226,10 +225,23 @@ export default function HomeContent() {
       newFilteredListings = newFilteredListings.filter(listing => listing.category === category);
     }
     
-    setIsSearching(false);
     return newFilteredListings;
 
   }, [searchTerm, category, rating, listings]);
+
+  
+  useEffect(() => {
+    const searching = searchTerm.trim().length > 0 || category !== 'all' || rating !== 'all';
+    setIsSearching(searching);
+    if (searching) {
+      const timer = setTimeout(() => {
+        setIsSearching(false);
+      }, 500); // Simulate search delay
+      return () => clearTimeout(timer);
+    } else {
+        setIsSearching(false);
+    }
+  }, [searchTerm, category, rating]);
 
   
   useEffect(() => {
@@ -271,6 +283,11 @@ export default function HomeContent() {
     setCategory(newCategory);
   };
 
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    searchInitiatedByUserRef.current = true;
+    setSearchTerm(e.target.value);
+  }
+
 
   return (
     <>
@@ -290,7 +307,7 @@ export default function HomeContent() {
             </div>
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <h1 className="font-extrabold tracking-tight">
-                    <span className="text-red-600 text-6xl sm:text-7xl md:text-8xl">MVS</span> <span className="text-black dark:text-white text-lg sm:text-xl">Karnataka.</span>
+                    <span className="text-red-600 text-7xl sm:text-8xl md:text-9xl">MVS</span> <span className="text-black dark:text-white text-base sm:text-lg">Karnataka.</span>
                 </h1>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mt-1 tracking-tight text-blue-600 whitespace-nowrap">
                     VOCAL FOR LOCAL
@@ -314,7 +331,7 @@ export default function HomeContent() {
               type="text"
               placeholder="Search for businesses or services"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchInputChange}
               className="pl-12 h-12 rounded-full text-base text-foreground pr-14"
             />
             <Popover>
