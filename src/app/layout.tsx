@@ -24,7 +24,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#fbbf24" />
-        <link rel="apple-touch-icon" href="/maskable_icon_x192.png" />
       </head>
       <body
         className={cn(
