@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Wand2, PlusCircle, Trash2, X, MessageSquare } from "lucide-react";
+import { Loader2, PlusCircle, Trash2, X, MessageSquare } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { collection, addDoc, getDocs, serverTimestamp, doc, updateDoc } from "firebase/firestore";
@@ -68,7 +68,6 @@ const formSchema = z.object({
 });
 
 type AddListingFormProps = {
-  suggestCategoryAction?: (description: string) => Promise<{ category: string } | { error: string }>;
   existingListing?: Business | null;
 };
 
@@ -86,12 +85,11 @@ const casteOptions = [
     "NT",
 ];
 
-export default function AddListingForm({ suggestCategoryAction, existingListing = null }: AddListingFormProps) {
+export default function AddListingForm({ existingListing = null }: AddListingFormProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuggesting, setIsSuggesting] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   
@@ -257,42 +255,6 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
     }
   }
 
-
-  const handleSuggestCategory = async () => {
-    if (!suggestCategoryAction) return;
-
-    const description = form.getValues("description");
-    setIsSuggesting(true);
-    const result = await suggestCategoryAction(description);
-    setIsSuggesting(false);
-    
-    if ("category" in result) {
-      const suggestedCategory = result.category;
-      const normalizedSuggested = suggestedCategory.trim().toLowerCase();
-      
-      const existingCategory = allCategoriesForSelect.find(c => c.toLowerCase() === normalizedSuggested);
-
-      if (existingCategory && existingCategory !== 'Other') {
-        form.setValue("category", existingCategory, { shouldValidate: true });
-        form.setValue("otherCategory", "", { shouldValidate: true });
-      } else {
-        form.setValue("category", "Other", { shouldValidate: true });
-        form.setValue("otherCategory", suggestedCategory.trim(), { shouldValidate: true });
-      }
-
-       toast({
-        title: "Category Suggested!",
-        description: `We've suggested "${suggestedCategory}" based on your description.`,
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: result.error,
-      });
-    }
-  };
-
   const selectedCategory = form.watch("category");
   const searchCategories = form.watch("searchCategories") || [];
   const availableSearchCategories = categories.filter(cat => !searchCategories.includes(cat) && cat !== selectedCategory);
@@ -343,48 +305,34 @@ export default function AddListingForm({ suggestCategoryAction, existingListing 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Primary Category</FormLabel>
-                    <div className="flex gap-2 items-start">
-                      <div className="flex-1 space-y-2">
-                        <Select onValueChange={field.onChange} value={field.value} disabled={loadingCategories}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={loadingCategories ? "Loading categories..." : "Select a category"} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {allCategoriesForSelect.map((cat) => (
-                              <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                         {selectedCategory === 'Other' && (
-                            <FormField
-                            control={form.control}
-                            name="otherCategory"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormControl>
-                                    <Input placeholder="Please specify category" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                        )}
-                      </div>
-                      
-                      {!isUpdateMode && suggestCategoryAction && (
-                        <Button type="button" variant="outline" onClick={handleSuggestCategory} disabled={isSuggesting}>
-                          {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
-                          Suggest
-                        </Button>
+                    <div className="space-y-2">
+                      <Select onValueChange={field.onChange} value={field.value} disabled={loadingCategories}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={loadingCategories ? "Loading categories..." : "Select a category"} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {allCategoriesForSelect.map((cat) => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                       {selectedCategory === 'Other' && (
+                          <FormField
+                          control={form.control}
+                          name="otherCategory"
+                          render={({ field }) => (
+                              <FormItem>
+                              <FormControl>
+                                  <Input placeholder="Please specify category" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                              </FormItem>
+                          )}
+                          />
                       )}
                     </div>
-                  {!isUpdateMode && (
-                    <FormDescription>
-                        Can't decide? Type a description and let AI suggest a category.
-                    </FormDescription>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}

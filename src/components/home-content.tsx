@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { findRelatedCategories } from "@/ai/flows/find-related-categories";
 import { useToast } from "@/hooks/use-toast";
 import { collection, getDocs, query, where, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -107,7 +106,6 @@ export default function HomeContent() {
   const [rating, setRating] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSearching, setIsSearching] = useState(false);
-  const [relatedCategories, setRelatedCategories] = useState<string[]>([]);
   const [userHasListing, setUserHasListing] = useState(false);
   
   const { toast } = useToast();
@@ -186,49 +184,6 @@ export default function HomeContent() {
     }
   }, []);
 
-  const handleAISearch = useCallback(async (currentSearchTerm: string) => {
-    if (currentSearchTerm.trim().length < 3) {
-      setRelatedCategories([]);
-      setIsSearching(false);
-      return;
-    }
-    setIsSearching(true);
-    try {
-      const result = await findRelatedCategories({
-        query: currentSearchTerm,
-        existingCategories: categories,
-      });
-      setRelatedCategories(result.categories);
-    } catch (error) {
-      console.error("Failed to fetch related categories:", error);
-      toast({
-        variant: "destructive",
-        title: "Search Error",
-        description: "Could not perform smart search. Please try again.",
-      });
-      setRelatedCategories([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [toast, categories]);
-  
-  // Debounce effect for AI search
-  useEffect(() => {
-    const handler = setTimeout(() => {
-        if (searchTerm.trim().length > 0) {
-            searchInitiatedByUserRef.current = true; // Set flag to scroll after typing
-            handleAISearch(searchTerm);
-        } else {
-            setRelatedCategories([]);
-        }
-    }, 500); // 500ms delay
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm, handleAISearch]);
-
-
   const getAverageRating = (listing: Business) => {
     const reviews = listing.reviews || [];
     if (reviews.length === 0) {
@@ -245,6 +200,7 @@ export default function HomeContent() {
   }, [listings]);
 
   const filteredListings = useMemo(() => {
+    setIsSearching(true);
     let newFilteredListings = listings;
 
     // Filter by Rating
@@ -255,32 +211,25 @@ export default function HomeContent() {
       });
     }
 
-    // Filter by Search Term (which can be text or AI-driven categories)
+    // Filter by Search Term
     if (searchTerm.trim()) {
-      if (relatedCategories.length > 0) {
-        const relatedCategoriesLower = relatedCategories.map(c => c.toLowerCase());
-        newFilteredListings = newFilteredListings.filter(listing =>
-          relatedCategoriesLower.includes(listing.category.toLowerCase()) || 
-          (listing.searchCategories || []).some(sc => relatedCategoriesLower.includes(sc.toLowerCase()))
-        );
-      } else {
-        const searchTermLower = searchTerm.toLowerCase();
-        newFilteredListings = newFilteredListings.filter(listing =>
-          listing.name.toLowerCase().includes(searchTermLower) ||
-          listing.description.toLowerCase().includes(searchTermLower) ||
-          listing.category.toLowerCase().includes(searchTermLower) ||
-          (listing.searchCategories || []).some(sc => sc.toLowerCase().includes(searchTermLower))
-        );
-      }
+      const searchTermLower = searchTerm.toLowerCase();
+      newFilteredListings = newFilteredListings.filter(listing =>
+        listing.name.toLowerCase().includes(searchTermLower) ||
+        listing.description.toLowerCase().includes(searchTermLower) ||
+        listing.category.toLowerCase().includes(searchTermLower) ||
+        (listing.searchCategories || []).some(sc => sc.toLowerCase().includes(searchTermLower))
+      );
     } 
     // Filter by Category Dropdown (only if no search term)
     else if (category !== 'all') {
       newFilteredListings = newFilteredListings.filter(listing => listing.category === category);
     }
     
+    setIsSearching(false);
     return newFilteredListings;
 
-  }, [searchTerm, category, rating, listings, relatedCategories]);
+  }, [searchTerm, category, rating, listings]);
 
   
   useEffect(() => {
@@ -288,7 +237,7 @@ export default function HomeContent() {
     if (searchInitiatedByUserRef.current) {
         scrollToResults();
     }
-  }, [searchTerm, category, rating, relatedCategories, scrollToResults]);
+  }, [searchTerm, category, rating, scrollToResults]);
 
   const pageCount = Math.ceil(filteredListings.length / listingsPerPage);
   const indexOfLastListing = currentPage * listingsPerPage;
@@ -320,7 +269,6 @@ export default function HomeContent() {
     searchInitiatedByUserRef.current = true;
     setSearchTerm(newSearchTerm);
     setCategory(newCategory);
-    setRelatedCategories([]); // Clear AI categories on new action
   };
 
 
@@ -342,7 +290,7 @@ export default function HomeContent() {
             </div>
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <h1 className="font-extrabold tracking-tight">
-                    <span className="text-red-600 text-6xl sm:text-8xl md:text-9xl">MVS</span> <span className="text-black dark:text-white text-lg sm:text-xl">Karnataka.</span>
+                    <span className="text-red-600 text-6xl sm:text-7xl md:text-8xl">MVS</span> <span className="text-black dark:text-white text-lg sm:text-xl">Karnataka.</span>
                 </h1>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mt-1 tracking-tight text-blue-600 whitespace-nowrap">
                     VOCAL FOR LOCAL
